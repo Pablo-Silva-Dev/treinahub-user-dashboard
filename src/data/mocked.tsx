@@ -1,93 +1,61 @@
 const menuItems = [
   {
-    title: "Usuários",
+    title: "Treinamentos",
     actions: [
       {
-        title: "Cadastrar usuário",
-        link: "cadastrar-usuario",
+        title: "Acessar meus treinamentos",
+        link: "meus-treinamentos",
       },
       {
-        title: "Gerenciar usuários",
-        link: "gerenciar-usuarios",
-      },
-    ],
-    icon: "users",
-  },
-  {
-    title: "Cursos",
-    actions: [
-      {
-        title: "Cadastrar curso",
-        link: "cadastrar-curso",
-      },
-      {
-        title: "Gerenciar cursos",
-        link: "gerenciar-cursos",
+        title: "Continuar de onde parei",
+        link: "meus-treinamentos",
       },
     ],
     icon: "book-open",
   },
   {
-    title: "Módulos",
+    title: "Meu perfil",
     actions: [
       {
-        title: "Cadastrar módulo",
-        link: "cadastrar-modulo",
+        title: "Visualizar meu perfil",
+        link: "visualizar-meu-perfil",
       },
       {
-        title: "Gerenciar módulos",
-        link: "gerenciar-modulos",
+        title: "Visualizar meus dados",
+        link: "atualizar-meus-dados",
       },
     ],
-    icon: "book",
-  },
-  {
-    title: "Tutores",
-    actions: [
-      {
-        title: "Cadastrar tutor",
-        link: "cadastrar-tutor",
-      },
-      {
-        title: "Gerenciar tutores",
-        link: "gerenciar-tutores",
-      },
-    ],
-    icon: "user-check",
-  },
-  {
-    title: "Videoaulas",
-    actions: [
-      {
-        title: "Cadastrar videoaula",
-        link: "cadastrar-videoaula",
-      },
-      {
-        title: "Gerenciar videoaulas",
-        link: "gerenciar-videoaulas",
-      },
-    ],
-    icon: "play-circle",
+    icon: "user",
   },
   {
     title: "Certificados",
     actions: [
       {
-        title: "Consultar certificados",
-        link: "consultar-certificados",
+        title: "Acessar meus certificados",
+        link: "acessar-meus-certificados",
       },
     ],
     icon: "star",
   },
   {
-    title: "Outras ações",
+    title: "Perguntas frequentes",
     actions: [
       {
-        title: "Acompanhar progresso do usuário",
-        link: "acompanhar-progresso-do-usuario",
-      }
+        title: "Consultar FAQ",
+        link: "consultar-faq",
+      },
     ],
-    icon: "plus-circle",
+    icon: "help-circle",
+  },
+  {
+    title: "Suporte",
+    actions: [
+      {
+        title: "Acessar suporte",
+        link: "acessar-suporte",
+      },
+    ],
+    icon: "message-square",
   },
 ];
 
@@ -1059,7 +1027,7 @@ const dashboardMetrics = [
     title: "Cursos publicados",
     iconName: "book-open",
     metric: 12,
-    link: "/dashboard/gerenciar-cursos",
+    link: "/dashboard/meus-treinamentos",
   },
   {
     title: "Módulos registrados",
