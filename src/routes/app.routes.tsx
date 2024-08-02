@@ -6,6 +6,7 @@ import { Home } from "@/screens/app/Home";
 import { DashboardLayout } from "@/screens/app/layout";
 import { ManageClasses } from "@/screens/app/ManageClasses";
 import { ManageCourses } from "@/screens/app/ManageCourses";
+import { SupportPage } from "@/screens/app/Support";
 import { ErrorPage } from "@/screens/error";
 import { ReactNode } from "react";
 
@@ -38,6 +39,10 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard/consultar-certificados",
     element: <ConsultCertificates />,
+  },
+  {
+    path: "/dashboard/acessar-suporte",
+    element: <SupportPage />,
   },
 ];
 
