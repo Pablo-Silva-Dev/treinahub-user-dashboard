@@ -7,6 +7,7 @@ import { Home } from "@/screens/app/Home";
 import { DashboardLayout } from "@/screens/app/layout";
 import { ManageClasses } from "@/screens/app/ManageClasses";
 import { ManageCourses } from "@/screens/app/ManageCourses";
+import { Profile } from "@/screens/app/Profile";
 import { SupportPage } from "@/screens/app/Support";
 import { ErrorPage } from "@/screens/error";
 import { ReactNode } from "react";
@@ -44,6 +45,10 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard/consultar-faq",
     element: <FAQPage />,
+  },
+  {
+    path: "/dashboard/visualizar-meu-perfil",
+    element: <Profile />,
   },
   {
     path: "/dashboard/acessar-suporte",

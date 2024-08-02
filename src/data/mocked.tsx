@@ -21,7 +21,7 @@ const menuItems = [
         link: "visualizar-meu-perfil",
       },
       {
-        title: "Visualizar meus dados",
+        title: "Atualizar meus dados",
         link: "atualizar-meus-dados",
       },
     ],
