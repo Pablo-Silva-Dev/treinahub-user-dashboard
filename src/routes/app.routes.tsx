@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { NotFound } from "@/screens/404";
 import { ConsultCertificates } from "@/screens/app/ConsultCertificates";
+import { FAQPage } from "@/screens/app/FAQ";
 import { Home } from "@/screens/app/Home";
 import { DashboardLayout } from "@/screens/app/layout";
 import { ManageClasses } from "@/screens/app/ManageClasses";
@@ -39,6 +40,10 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard/consultar-certificados",
     element: <ConsultCertificates />,
+  },
+  {
+    path: "/dashboard/consultar-faq",
+    element: <FAQPage />,
   },
   {
     path: "/dashboard/acessar-suporte",

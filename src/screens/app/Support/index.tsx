@@ -15,11 +15,11 @@ export function SupportPage() {
   };
 
   return (
-    <div className="w-full flex flex-col p-8 ml-4">
+    <div className="w-full flex flex-col p-8 md:pl-[80px]">
       <ScreenTitleIcon screenTitle="Suporte" iconName="message-square" />
       <Subtitle
         content={`Entre em contato com o suporte através do canal do Whastapp: ${whatsappSupportContactNumber}`}
-        className="my-5"
+        className="mt-6 mb-4 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%]"
       />
       <button
         className="text-sm md:text-md text-gray-50 bg-green-600 w-[240px] flex justify-center items-center rounded-md p-4 font-secondary"
