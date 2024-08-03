@@ -47,7 +47,7 @@ const appRoutesBase: route[] = [
     element: <FAQPage />,
   },
   {
-    path: "/dashboard/visualizar-meu-perfil",
+    path: "/dashboard/acessar-meu-perfil",
     element: <Profile />,
   },
   {

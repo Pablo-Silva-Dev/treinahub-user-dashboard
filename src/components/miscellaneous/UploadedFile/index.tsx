@@ -10,9 +10,10 @@ export interface IFile {
 interface UploadedFileProps {
   file: IFile;
   onCancel: () => void;
+  imgWidth?: number;
 }
 
-export function UploadedFile({ file, onCancel }: UploadedFileProps) {
+export function UploadedFile({ file, onCancel, imgWidth }: UploadedFileProps) {
   const { name, uri, size, type } = file;
   return (
     <div className="flex flex-col items-start w-full">
@@ -37,7 +38,7 @@ export function UploadedFile({ file, onCancel }: UploadedFileProps) {
         </span>
       </div>
       {type && type.includes("image") ? (
-        <img src={uri} alt={name} width={160} />
+        <img src={uri} alt={name} width={imgWidth ? imgWidth : 160} />
       ) : (
         <video
           src={uri}

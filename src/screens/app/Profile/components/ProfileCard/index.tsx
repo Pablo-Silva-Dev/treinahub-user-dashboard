@@ -1,17 +1,19 @@
 import { IUser } from "@/interfaces/dtos/User";
-import { Avatar } from "@material-tailwind/react";
-import { MdEdit } from "react-icons/md";
+import { Avatar, Tooltip } from "@material-tailwind/react";
+import { MdEdit, MdOutlinePhotoCamera } from "react-icons/md";
 
 interface ProfileCardProps {
   user: IUser;
   avatar_url: string;
   onUpdateProfile: () => void;
+  onUpdateAvatar: () => void;
 }
 
 export function ProfileCard({
   user,
   avatar_url,
   onUpdateProfile,
+  onUpdateAvatar,
 }: ProfileCardProps) {
   return (
     <div className="w-full lg:w-[90%] bg-white dark:bg-slate-700 flex flex-col lg:flex-row p-5 rounded-md">
@@ -71,7 +73,17 @@ export function ProfileCard({
 
       <div className="flex flex-col">
         <div className="w-full flex flex-1 flex-col justify-around items-center mr-3">
-          <Avatar src={avatar_url} size="xl" />
+          <div className="flex flex-row">
+            <Avatar src={avatar_url} size="xl" />
+            <Tooltip content="Atualizar foto de perfil">
+              <button
+                className="flex justify-center items-center bg-primary-light h-6 w-6 lg:h-7 lg:w-7 rounded-full mt-[40px] ml-[-12px] z-10"
+                onClick={onUpdateAvatar}
+              >
+                <MdOutlinePhotoCamera className="text-gray-50 h-4 w-4" />
+              </button>
+            </Tooltip>
+          </div>
           <button
             className=" flex flex-row justify-center  items-center border-2 border-gray-800 p-2 rounded-md w-[240px] text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 mt-4"
             onClick={onUpdateProfile}

@@ -17,12 +17,8 @@ const menuItems = [
     title: "Meu perfil",
     actions: [
       {
-        title: "Visualizar meu perfil",
-        link: "visualizar-meu-perfil",
-      },
-      {
-        title: "Atualizar meus dados",
-        link: "atualizar-meus-dados",
+        title: "Acessar meu perfil",
+        link: "acessar-meu-perfil",
       },
     ],
     icon: "user",
@@ -1641,5 +1637,6 @@ export {
   modules,
   tutors,
   userMetrics,
-  users,
+  users
 };
+
