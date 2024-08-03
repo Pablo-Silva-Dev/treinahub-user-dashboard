@@ -1053,277 +1053,39 @@ const dashboardMetrics = [
 
 const certificates = [
   {
-    course: {
-      name: "React Native 2.0",
-      description: "Aprenda a criar aplicações mobile para iOS e Android",
-      duration: "120 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 7456,
-    },
-    user: {
-      name: "Lucio Silva Reis",
-    },
+    courseName: "React Native 2.0",
+    coverUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
+    emissionDate: "11/12/2023",
+    userName: "Lucio Silva Reis",
   },
   {
-    course: {
-      name: "React Avançado",
-      description: "Aprofunde-se em conceitos avançados do React",
-      duration: "220 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 76896,
-    },
-    user: {
-      name: "Oswaldo Silva Reis",
-    },
+    courseName: "React Avançado",
+    coverUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
+    emissionDate: "08/09/2023",
+    userName: "Oswaldo Silva Reis",
   },
   {
-    course: {
-      name: "NodeJS para Iniciantes",
-      description: "Aprenda o básico do NodeJS para desenvolvimento backend",
-      duration: "160 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32453,
-    },
-    user: {
-      name: "Pablo Silva Reis",
-    },
+    courseName: "NodeJS para Iniciantes",
+    coverUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
+    emissionDate: "30/04/2023",
+    userName: "Pablo Silva Reis",
   },
   {
-    course: {
-      name: "PHP Essencial",
-      description: "Curso essencial de PHP para desenvolvimento web",
-      duration: "120 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Pablo Silva Reis",
-    },
+    courseName: "PHP Essencial",
+    coverUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
+    emissionDate: "24/06/2023",
+    userName: "Pablo Silva Reis",
   },
   {
-    course: {
-      name: "Java para Iniciantes",
-      description: "Introdução ao Java para iniciantes",
-      duration: "200 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 52487,
-    },
-    user: {
-      name: "Celia Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Kotlin para Android",
-      description: "Desenvolvimento de aplicativos Android com Kotlin",
-      duration: "120 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 3246,
-    },
-    user: {
-      name: "Joana Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Flutter e Dart",
-      description: "Criação de aplicativos multiplataforma com Flutter e Dart",
-      duration: "80 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Caroline Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Python para Ciência de Dados",
-      description: "Uso de Python em projetos de ciência de dados",
-      duration: "220 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 56856,
-    },
-    user: {
-      name: "Caroline Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Inteligência Artificial com Python",
-      description: "Introdução à inteligência artificial usando Python",
-      duration: "300 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Caroline Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Desenvolvimento Web com Django",
-      description: "Construa aplicações web robustas com Django",
-      duration: "170 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 554,
-    },
-    user: {
-      name: "Pablo Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Ruby on Rails",
-      description: "Desenvolvimento web ágil com Ruby on Rails",
-      duration: "120 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Pablo Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "DevOps com Docker",
-      description: "Implantação de aplicações usando Docker",
-      duration: "120 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 2487,
-    },
-    user: {
-      name: "Joao Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Introdução ao Kubernetes",
-      description: "Gerenciamento de contêineres com Kubernetes",
-      duration: "20 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Sara Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "TypeScript Avançado",
-      description: "Aprofunde-se em conceitos avançados de TypeScript",
-      duration: "150 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Pablo Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Angular para Iniciantes",
-      description: "Construa aplicações web com Angular",
-      duration: "230 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Nicole Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Vue.js Essencial",
-      description: "Desenvolvimento de interfaces web com Vue.js",
-      duration: "120 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 123123,
-    },
-    user: {
-      name: "Julio Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "SQL para Análise de Dados",
-      description: "Manipulação e análise de dados com SQL",
-      duration: "100 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Rodrigo Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "MongoDB para Desenvolvedores",
-      description: "Uso de MongoDB em aplicações modernas",
-      duration: "90 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Alice Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Desenvolvimento com GraphQL",
-      description: "Criação de APIs eficientes com GraphQL",
-      duration: "120 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Samela Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "C# para Desenvolvimento de Jogos",
-      description: "Uso de C# na criação de jogos com Unity",
-      duration: "120 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Sabrina Silva Reis",
-    },
-  },
-  {
-    course: {
-      name: "Swift para iOS",
-      description: "Desenvolvimento de aplicativos iOS com Swift",
-      duration: "170 horas",
-      cover_url:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
-      students: 32487,
-    },
-    user: {
-      name: "Pamela Silva Reis",
-    },
+    courseName: "Java para Iniciantes",
+    coverUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
+    emissionDate: "11/01/2023",
+    userName: "Celia Silva Reis",
   },
 ];
 
@@ -1637,6 +1399,5 @@ export {
   modules,
   tutors,
   userMetrics,
-  users
+  users,
 };
-

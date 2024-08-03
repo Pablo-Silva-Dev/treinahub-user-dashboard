@@ -1,8 +1,6 @@
-import { ICourse } from "./Course";
-
 export interface ICertificate {
-  user: {
-    name: string;
-  };
-  course: ICourse;
+  userName: string;
+  courseName: string;
+  emissionDate: string;
+  coverUrl: string;
 }
