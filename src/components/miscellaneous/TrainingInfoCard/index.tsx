@@ -1,4 +1,5 @@
 import { collapseLongString } from "@/utils/formats";
+import ProgressBar from "@ramonak/react-progress-bar";
 import Feather from "feather-icons-react";
 import { useState } from "react";
 import { Collapse } from "react-collapse";
@@ -12,6 +13,7 @@ interface TrainingInfoCardProps {
   totalCourseClasses: number;
   totalWatchedClasses: number;
   onSeeTraining: () => void;
+  onSeeCertificate?: () => void;
 }
 
 export function TrainingInfoCard({
@@ -23,20 +25,28 @@ export function TrainingInfoCard({
   totalCourseClasses,
   totalWatchedClasses,
   onSeeTraining,
+  onSeeCertificate,
 }: TrainingInfoCardProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
   const descriptionCollapsedLength = description.length / 2;
 
+  const totalCourseProgressPercentage =
+    totalWatchedClasses > 0
+      ? Number(Number(totalWatchedClasses / totalCourseClasses) * 100).toFixed(
+          0
+        )
+      : 0;
+
   return (
-    <div className="w-full sm:w-[320px] lg:w-[400px] flex flex-col shadow-sm bg-white dark:bg-slate-900 rounded-md mr-0 md:mr-8">
+    <div className="w-full max-w-[480px] flex flex-col shadow-sm bg-white dark:bg-slate-900 rounded-md mr-0 md:mr-8">
       <img
         src={cover_url}
         alt="info_card_placeholder"
         className="w-full aspect-auto"
       />
       <div className="w-full p-4 flex flex-col ">
-        <span className="text-gray-800 dark:text-gray-50 text-sm md:text-lg font-bold font-secondary mb-1">
+        <span className="text-gray-800 dark:text-gray-50 text-[13px] md:text-[14px] font-bold font-secondary mb-1">
           {training}
         </span>
         <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
@@ -65,42 +75,128 @@ export function TrainingInfoCard({
             </button>
           )}
         </div>
-        <div className="w-full h-[1px] bg-gray-200 dark:bg-slate-600 mt-2 mb-4" />
-        <div className="flex w-full flex-row mb-2 items-center justify-between">
-          <div className="flex flex-row items-center">
-            <Feather
-              icon="play-circle"
-              className="mr-2 dark:text-white text-gray-800"
-            />
-            <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
-              {lastClassName}
-            </span>
+        <div className="w-full h-[1px] bg-gray-200 dark:bg-slate-600 mt-2 mb-2" />
+        {totalWatchedClasses === 0 ? (
+          <div className="flex flex-col w-full">
+            <div className="flex flex-row mb-3 ml-1">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                {totalWatchedClasses} de
+              </span>
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                {totalCourseClasses} aulas assistidas
+              </span>
+            </div>
+            <div className="w-full">
+              <button
+                className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
+                onClick={onSeeCertificate}
+              >
+                Iniciar treinamento
+              </button>
+            </div>
           </div>
-          <div className="flex flex-row">
-            <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
-              Duração:
-            </span>
-            <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
-              {lastClassDuration}
-            </span>
+        ) : totalWatchedClasses < totalCourseClasses ? (
+          <div className="w-full flex flex-col">
+            <div className="flex flex-row mb-3 ml-1 items-center">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                {totalWatchedClasses} de
+              </span>
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                {totalCourseClasses} aulas assistidas
+              </span>
+            </div>
+
+            <div className="flex flex-row mb-3 ml-[-12px] items-center">
+              <ProgressBar
+                completed={totalCourseProgressPercentage}
+                maxCompleted={100}
+                height="8px"
+                labelSize="0px"
+                width="80px"
+                borderRadius="2px"
+                bgColor="#0267FF"
+                className="ml-4"
+              />
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[11px] font-primary text-pretty ml-2">
+                {totalCourseProgressPercentage}% concluído
+              </span>
+            </div>
+
+            <div className="w-full flex flex-col p-3 rounded-md  bg-gray-100 dark:bg-slate-700 mb-3">
+              <div className="flex flex-row items-center mb-1">
+                <Feather
+                  icon="play-circle"
+                  className="mr-2 dark:text-white text-gray-800"
+                />
+                <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+                  {lastClassName}
+                </span>
+              </div>
+              <div className="flex flex-row mt-1">
+                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                  Duração:
+                </span>
+                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                  {lastClassDuration}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-row justify-between items-center">
+              <button
+                className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
+                onClick={onSeeTraining}
+              >
+                Continuar aula
+              </button>
+            </div>
           </div>
-        </div>
-        <div className="flex flex-row mb-3 ml-1">
-          <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
-            {totalWatchedClasses} de
-          </span>
-          <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
-            {totalCourseClasses} aulas assistidas
-          </span>
-        </div>
-        <div className="flex flex-row justify-between items-center">
-          <button
-            className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
-            onClick={onSeeTraining}
-          >
-            Continuar aula
-          </button>
-        </div>
+        ) : (
+          <div className="flex flex-col">
+            <div className="flex flex-row mb-3 ml-1 items-center">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                {totalWatchedClasses} de
+              </span>
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                {totalCourseClasses} aulas assistidas
+              </span>
+            </div>
+
+            <div className="flex flex-row mb-3 ml-[-12px] items-center">
+              <ProgressBar
+                completed={totalCourseProgressPercentage}
+                maxCompleted={100}
+                height="8px"
+                labelSize="0px"
+                width="80px"
+                borderRadius="2px"
+                bgColor="#0267FF"
+                className="ml-4"
+              />
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty ml-2">
+                {totalCourseProgressPercentage}% concluído
+              </span>
+            </div>
+
+            <div className="flex flex-col justify- items-start">
+              <div className="flex flex-row items-center mb-3">
+                <Feather
+                  icon="star"
+                  className="mr-2 dark:text-white text-gray-800"
+                />
+                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                  Treinamento concluído!
+                </span>
+              </div>
+              <button
+                className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
+                onClick={onSeeCertificate}
+              >
+                Ver certificado
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
