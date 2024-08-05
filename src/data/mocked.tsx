@@ -1054,6 +1054,8 @@ const certificates = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
     emissionDate: "11/12/2023",
     userName: "Lucio Silva Reis",
+    totalWatchedClasses: 9,
+    totalCourseClasses: 12,
   },
   {
     courseName: "React Avançado",
@@ -1061,6 +1063,8 @@ const certificates = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
     emissionDate: "08/09/2023",
     userName: "Oswaldo Silva Reis",
+    totalWatchedClasses: 12,
+    totalCourseClasses: 12,
   },
   {
     courseName: "NodeJS para Iniciantes",
@@ -1068,6 +1072,8 @@ const certificates = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
     emissionDate: "30/04/2023",
     userName: "Pablo Silva Reis",
+    totalWatchedClasses: 4,
+    totalCourseClasses: 12,
   },
   {
     courseName: "PHP Essencial",
@@ -1075,6 +1081,8 @@ const certificates = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
     emissionDate: "24/06/2023",
     userName: "Pablo Silva Reis",
+    totalWatchedClasses: 12,
+    totalCourseClasses: 12,
   },
   {
     courseName: "Java para Iniciantes",
@@ -1082,6 +1090,8 @@ const certificates = [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyYVWu68oFmJYoMCvfy0PfgnKi9cFCtFptfg&s",
     emissionDate: "11/01/2023",
     userName: "Celia Silva Reis",
+    totalWatchedClasses: 10,
+    totalCourseClasses: 12,
   },
 ];
 
