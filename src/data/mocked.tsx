@@ -4,8 +4,8 @@ const menuItems = [
     actions: [
       {
         title: "Acessar meus treinamentos",
-        link: "meus-treinamentos",
-      }
+        link: "acessar-meus-treinamentos",
+      },
     ],
     icon: "book-open",
   },
@@ -1385,6 +1385,69 @@ const faqQuestions = [
   },
 ];
 
+const trainingClasses = [
+  {
+    name: "Registrando um novo usuário",
+    duration: "18:29",
+    url: "https://example.com/registrando-usuario",
+    wasWatched: true,
+  },
+  {
+    name: "Listando aulas",
+    duration: "12:17",
+    url: "https://example.com/listando-aulas",
+    wasWatched: false,
+  },
+  {
+    name: "Deleteando módulos",
+    duration: "50:11",
+    url: "https://example.com/deleteando-modulos",
+    wasWatched: true,
+  },
+  {
+    name: "Atualizando informações do perfil",
+    duration: "40:00",
+    url: "https://example.com/atualizando-perfil",
+    wasWatched: false,
+  },
+  {
+    name: "Adicionando aulas ao curso",
+    duration: "35:00",
+    url: "https://example.com/adicionando-aulas",
+    wasWatched: true,
+  },
+  {
+    name: "Configurando notificações",
+    duration: "08:20",
+    url: "https://example.com/configurando-notificacoes",
+    wasWatched: false,
+  },
+  {
+    name: "Gerenciando permissões de usuário",
+    duration: "16:54",
+    url: "https://example.com/gerenciando-permissoes",
+    wasWatched: true,
+  },
+  {
+    name: "Integrando com API externa",
+    duration: "12:33",
+    url: "https://example.com/integrando-api",
+    wasWatched: false,
+  },
+  {
+    name: "Otimizando desempenho da aplicação",
+    duration: "45:07",
+    url: "https://example.com/otimizando-desempenho",
+    wasWatched: true,
+  },
+  {
+    name: "Monitorando logs e erros",
+    duration: "33:42",
+    url: "https://example.com/monitorando-logs",
+    wasWatched: false,
+  },
+];
+
 export {
   certificates,
   classes,
@@ -1393,6 +1456,7 @@ export {
   faqQuestions,
   menuItems,
   modules,
+  trainingClasses,
   tutors,
   userMetrics,
   users,

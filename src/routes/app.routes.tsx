@@ -7,6 +7,8 @@ import { Home } from "@/screens/app/Home";
 import { DashboardLayout } from "@/screens/app/layout";
 import { Profile } from "@/screens/app/Profile";
 import { SupportPage } from "@/screens/app/Support";
+import { Trainings } from "@/screens/app/Trainings";
+import { WatchTraining } from "@/screens/app/WatchTraining";
 import { ErrorPage } from "@/screens/error";
 import { ReactNode } from "react";
 
@@ -31,6 +33,14 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard/acessar-meus-certificados",
     element: <Certificates />,
+  },
+  {
+    path: "/dashboard/acessar-meus-treinamentos",
+    element: <Trainings />,
+  },
+  {
+    path: "/dashboard/assistir-treinamento",
+    element: <WatchTraining />,
   },
   {
     path: "/dashboard/consultar-faq",
