@@ -146,7 +146,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <LoadingBar ref={ref as never} height={4} color="#0267FF" />
       <Toaster />
       <div className="flex flex-row w-full min-h-screen">
-        <nav className="hidden xl:flex flex-col w-[320px] min-h-screen overflow-auto p-8 bg-white dark:bg-slate-900 items-start">
+        <nav className="hidden xl:flex flex-col w-[280px] min-h-screen overflow-auto p-6 bg-white dark:bg-slate-900 items-start">
           <Link to="/dashboard">
             <img
               src={logo_text}
