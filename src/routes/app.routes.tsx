@@ -5,8 +5,6 @@ import { Certificates } from "@/screens/app/Certificates";
 import { FAQPage } from "@/screens/app/FAQ";
 import { Home } from "@/screens/app/Home";
 import { DashboardLayout } from "@/screens/app/layout";
-import { ManageClasses } from "@/screens/app/ManageClasses";
-import { ManageCourses } from "@/screens/app/ManageCourses";
 import { Profile } from "@/screens/app/Profile";
 import { SupportPage } from "@/screens/app/Support";
 import { ErrorPage } from "@/screens/error";
@@ -29,14 +27,6 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard",
     element: <Home />,
-  },
-  {
-    path: "/dashboard/meus-treinamentos",
-    element: <ManageCourses />,
-  },
-  {
-    path: "/dashboard/gerenciar-videoaulas",
-    element: <ManageClasses />,
   },
   {
     path: "/dashboard/acessar-meus-certificados",

@@ -5,11 +5,7 @@ const menuItems = [
       {
         title: "Acessar meus treinamentos",
         link: "meus-treinamentos",
-      },
-      {
-        title: "Continuar de onde parei",
-        link: "meus-treinamentos",
-      },
+      }
     ],
     icon: "book-open",
   },
