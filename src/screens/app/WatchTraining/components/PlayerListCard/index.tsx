@@ -17,7 +17,7 @@ export function PlayerListCard({ classes }: PlayerListCardProps) {
   const MAX_CLASS_TITLE_LENGTH = 32;
 
   return (
-    <div className="w-full flex flex-col bg-white dark:bg-slate-900 p-4 rounded-md shadow-md">
+    <div className="w-full flex flex-col bg-white dark:bg-slate-900 p-4 rounded-md shadow-md h-[400px] md:h-[480px] xl:h-[580px] overflow-y-auto">
       <h3 className="text-gray-800 dark:text-gray-50 text-[13px] md:text-[14px] font-bold mb-3 text-left">
         Conteúdo
       </h3>
