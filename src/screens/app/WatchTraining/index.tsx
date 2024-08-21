@@ -10,9 +10,9 @@ import { PreviousClassCard } from "./components/PreviousClassCard";
 // TODO-Pablo: Get screen title according to the training
 export function WatchTraining() {
   const bitmovinStreamUrl =
-    "https://d3s0eno9fs7c1j.cloudfront.net/5e49edfd-f262-4d24-9a25-743dfa783064/index.m3u8";
+    "https://pscodepscoursetrack.blob.core.windows.net/bitmovin-output/listando20usuc3a1rios203video.mov/hls/manifest/stream.m3u8";
   return (
-    <div className="w-full flex flex-col p-8 md:pl-[80px]">
+    <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
       <div className="mb-2">
         <ScreenTitleIcon
           screenTitle="Treinamento de Software de Laço"
@@ -20,8 +20,8 @@ export function WatchTraining() {
         />
       </div>
       <div className="w-full flex flex-col xl:flex-row">
-        <div className="w-full  xl:w-[50%] flex flex-col">
-          <div className="flex flex-col  w-full  mr-[400px] aspect-video min-h-[200px] ">
+        <div className="w-full  xl:w-[55%] flex flex-col">
+          <div className="flex flex-col  w-full aspect-video min-h-[200px] ">
             <Player
               url={bitmovinStreamUrl}
               controls
@@ -59,7 +59,7 @@ export function WatchTraining() {
             />
           </div>
         </div>
-        <div className="w-full xl:w-[35%] xl:max-w-[640px] xl:ml-6">
+        <div className="w-full xl:w-[35%] xl:max-w-[480px] xl:ml-6">
           <PlayerListCard classes={trainingClasses} />
         </div>
       </div>
