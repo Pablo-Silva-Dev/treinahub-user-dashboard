@@ -26,4 +26,5 @@ declare module "@material-tailwind/react" {
   export const Breadcrumbs: React.FC<BreadcrumbsProps>;
   export const ListItem: React.FC<ListItemProps>;
   export const Spinner: React.FC<SpinnerProps>;
+  export const Checkbox: React.FC<Checkbox>;
 }
