@@ -49,7 +49,7 @@ export const userTerms = [
     title: "Leis Aplicáveis e Resolução de Conflitos",
     texts: [
       "Estes termos serão regidos e interpretados de acordo com as leis do Brasil, sem considerar conflitos de disposições legais.",
-      "Em caso de qualquer disputa ou controvérsia relacionada ao uso desta plataforma, as partes concordam em submeter-se à jurisdição exclusiva dos tribunais de João Monlevade, Minas Gerais, Brasil.",
+      "Em caso de qualquer disputa ou controvérsia relacionada ao uso desta plataforma, as partes concordam em comparecer ao fórum de João Monlevade, Minas Gerais, Brasil.",
     ],
   },
 ];
