@@ -166,7 +166,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 className="flex  justify-start border-none mb-[-12px]"
                 onClick={() => handleOpenedAccordionIndexes(idx)}
               >
-                <ListItem
+                  <ListItem
                   className={`text-[12px] lg:text-[14px] text-black dark:text-white hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                 >
                   <FeatherIcon
@@ -343,7 +343,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     className={` mb-1 p-0 text-[12px] font-bold`}
                   >
                     <ListItem
-                      className={`  text-primary dark:text-primary-light font-regular font-poppinshover:text-blue-700 hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800`}
+                      className={`text-primary dark:text-primary-light font-light font-poppinshover:text-blue-700 hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                     >
                       {action.title}
                     </ListItem>
