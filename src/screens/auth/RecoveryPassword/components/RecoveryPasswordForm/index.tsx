@@ -71,7 +71,7 @@ export default function RecoveryPasswordForm({
       </div>
       <div className="w-full mt-2">
         <Button
-          onClick={() => {}}
+          onClick={() => {console.log("pending")}}
           title="Receber Código"
           disabled={!cpfValue || !emailValue}
         />

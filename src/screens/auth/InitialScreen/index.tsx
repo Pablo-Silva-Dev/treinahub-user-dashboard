@@ -33,7 +33,7 @@ export function InitialScreen() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [setIsLoading, signIn, usersRepository]);
 
   return (
     <div className="flex flex-col lg:mt-[16vh] items-center lg:mb-2 mb-8">

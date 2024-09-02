@@ -32,7 +32,7 @@ export function Home() {
               lastClassDuration="14:32"
               totalCourseClasses={12}
               totalWatchedClasses={4}
-              onSeeTraining={() => {}}
+              onSeeTraining={() => {console.log('pending')}}
             />
           </div>
         </div>

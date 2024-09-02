@@ -40,12 +40,12 @@ export function WatchTraining() {
             <PreviousClassCard
               classDuration="13:22"
               classTitle="Como registrar novos usuários"
-              onSeeClass={() => {}}
+              onSeeClass={() => {console.log("pending")}}
             />
             <NextClassCard
               classDuration="13:22"
               classTitle="Como registrar novos usuários de maneira inteligente"
-              onSeeClass={() => {}}
+              onSeeClass={() => {console.log("pending")}}
             />
           </div>
           <div className="w-full flex flex-col p-4 mb-4">
