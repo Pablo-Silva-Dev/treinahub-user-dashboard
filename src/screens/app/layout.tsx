@@ -152,9 +152,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <img
               src={logo_text}
               alt="logo-text"
-              width={240}
-              height={120}
-              className="mb-8"
+              width={200}
+              className="mb-4"
             />
           </Link>
           {menuItems.map((item, idx) => (
@@ -187,7 +186,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     className={`mb-1 p-0 text-[13px] font-bold text-black dark:text-white`}
                   >
                     <ListItem
-                      className={`text-primary dark:text-primary-light font-light font-poppinshover:text-blue-700 hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
+                      className={`text-primary dark:text-primary-light font-light font-poppins hover:text-blue-700 hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                     >
                       {action.title}
                     </ListItem>
@@ -298,19 +297,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       >
         <nav className="flex flex-col w-full h-screen overflow-auto p-4 bg-white dark:bg-slate-900 items-start overflow-x-hidden ">
           <div className="w-full flex flew-row justify-end mr-4 mb-[-16px] mt-1">
-            <Button
+            <button
               className="p-1 bg-transparent"
               onClick={handleToggleMobileMenuModal}
             >
               <MdClose className="w-5 h-5 text-black dark:text-white" />
-            </Button>
+            </button>
           </div>
           <Link to="/dashboard">
             <img
               src={logo_text}
               alt="logo-text"
-              width={240}
-              height={120}
+              width={200}
               className="mb-4 mt-8"
             />
           </Link>
@@ -324,8 +322,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 className="flex  justify-start border-none mb-[-12px]"
                 onClick={() => handleOpenedAccordionIndexes(idx)}
               >
-                <ListItem
-                  className={`text-[12px] lg:text-[14px] text-black dark:text-white hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800`}
+               <ListItem
+                  className={`text-[12px] lg:text-[14px] text-black dark:text-white hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                 >
                   <FeatherIcon
                     icon={item.icon}
@@ -343,7 +341,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     key={action.title}
                     className={` mb-1 p-0 text-[12px] font-bold`}
                   >
-                    <ListItem
+                   <ListItem
                       className={`text-primary dark:text-primary-light font-light font-poppinshover:text-blue-700 hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                     >
                       {action.title}
