@@ -4,6 +4,7 @@ export interface IAuthenticateUserRequest {
 }
 
 export interface IAuthenticateUserResponse {
+  name: string;
   email: string;
   token: string;
 }
