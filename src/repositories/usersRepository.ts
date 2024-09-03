@@ -6,7 +6,7 @@ import {
   IGetRecoveryPasswordCodeByEmailDTO,
   IGetRecoveryPasswordCodeBySMSDTO,
   IUsersRepository,
-} from "./interfaces/usersRepositoryInterfaces";
+} from "./interfaces/usersRepository";
 
 export class UsersRepository implements IUsersRepository {
   async authenticateUser(

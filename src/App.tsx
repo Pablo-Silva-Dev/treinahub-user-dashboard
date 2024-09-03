@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import Routes from "./routes";
 import { useThemeStore } from "./store/theme";
@@ -5,6 +6,7 @@ import "./styles/globals.css";
 
 function App() {
   const { theme } = useThemeStore();
+  const queryClient = new QueryClient();
 
   useEffect(() => {
     if (theme) {
@@ -17,9 +19,11 @@ function App() {
   }, [theme]);
 
   return (
-    <div className="w-full overflow-hidden mr-5">
-      <Routes />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="w-full overflow-hidden mr-5">
+        <Routes />
+      </div>
+    </QueryClientProvider>
   );
 }
 

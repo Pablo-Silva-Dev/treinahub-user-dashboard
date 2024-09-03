@@ -79,10 +79,10 @@ export function TrainingInfoCard({
         {totalWatchedClasses === 0 ? (
           <div className="flex flex-col w-full">
             <div className="flex flex-row mb-3 ml-1">
-              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalWatchedClasses} de
               </span>
-              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalCourseClasses} aulas assistidas
               </span>
             </div>
@@ -91,17 +91,17 @@ export function TrainingInfoCard({
                 className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
                 onClick={onSeeCertificate}
               >
-                Iniciar treinamento
+                Acessar videoaulas
               </button>
             </div>
           </div>
         ) : totalWatchedClasses < totalCourseClasses ? (
           <div className="w-full flex flex-col">
-            <div className="flex flex-row mb-3 ml-1 items-center">
-              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+            <div className="flex flex-row mb-3 ml-1 items-evenly bg-red-200">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalWatchedClasses} de
               </span>
-              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalCourseClasses} aulas assistidas
               </span>
             </div>
@@ -154,10 +154,10 @@ export function TrainingInfoCard({
         ) : (
           <div className="flex flex-col">
             <div className="flex flex-row mb-3 ml-1 items-center">
-              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalWatchedClasses} de
               </span>
-              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalCourseClasses} aulas assistidas
               </span>
             </div>
