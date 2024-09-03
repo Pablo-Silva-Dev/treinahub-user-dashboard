@@ -16,3 +16,8 @@ export interface IGetTrainingMetricsDTO {
   user_id: string;
   training_id: string;
 }
+
+export interface ICreateTrainingMetricsDTO {
+  user_id: string;
+  training_id: string;
+}

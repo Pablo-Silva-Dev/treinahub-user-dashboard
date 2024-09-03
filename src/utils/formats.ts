@@ -42,15 +42,47 @@ const formatDate = (date: string) => {
 };
 
 const formatDateAmericanPattern = (dateString: string) => {
-  const [month, day, year] = dateString.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-}
+  const [month, day, year] = dateString.split("/");
+  return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+};
+
+const formatTimeString = (time: string): string => {
+  // Split the input time string "HH:MM:SS" into separate parts
+  const [hoursStr, minutesStr, secondsStr] = time.split(":");
+  let hours = parseInt(hoursStr, 10);
+  let minutes = parseInt(minutesStr, 10);
+  const seconds = parseInt(secondsStr, 10);
+
+  // Round the minutes based on the seconds value
+  if (seconds >= 30) {
+    minutes += 1;
+  }
+
+  // If minutes exceed 59, increment hours and reset minutes
+  if (minutes >= 60) {
+    minutes -= 60;
+    hours += 1;
+  }
+
+  // Determine the appropriate format based on the values of hours and minutes
+  if (hours === 0) {
+    // Only minutes are present
+    return `${minutes} ${minutes === 1 ? "minuto" : "minutos"}`;
+  } else if (minutes === 0) {
+    // Only whole hours are present
+    return `${hours} ${hours === 1 ? "hora" : "horas"}`;
+  } else {
+    // Both hours and minutes are present
+    return `${hours} ${hours === 1 ? "hora" : "horas"} e ${minutes} ${minutes === 1 ? "minuto" : "minutos"}`;
+  }
+};
 
 export {
   collapseLongString,
   formatDate,
+  formatDateAmericanPattern,
   formatFirstAndLastName,
   formatPhoneNumber,
+  formatTimeString,
   unformatPhoneNumber,
-  formatDateAmericanPattern
 };

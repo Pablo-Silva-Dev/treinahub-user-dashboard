@@ -12,7 +12,7 @@ interface IClass {
 interface PlayerListCardProps {
   classes: IClass[];
 }
-
+//TODO-pablo: add button to remove a watched video class and update training metrics at once
 export function PlayerListCard({ classes }: PlayerListCardProps) {
   const MAX_CLASS_TITLE_LENGTH = 32;
 

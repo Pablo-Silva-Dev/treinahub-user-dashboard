@@ -2,7 +2,7 @@ import { api, IApiSuccessResponse } from "@/services/api";
 import { ITrainingDTO } from "./dtos/TrainingDTO";
 import { ITrainingsRepository } from "./interfaces/trainingsRepository";
 
-export class TrainingsRepositories implements ITrainingsRepository {
+export class TrainingsRepository implements ITrainingsRepository {
   async listTrainings(): Promise<ITrainingDTO[]> {
     try {
       const response =

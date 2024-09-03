@@ -1,5 +1,11 @@
-import { ITrainingMetricsDTO } from "../dtos/TrainingMetricDTO";
+import {
+  ICreateTrainingMetricsDTO,
+  ITrainingMetricsDTO,
+} from "../dtos/TrainingMetricDTO";
 
 export interface ITrainingMetricsRepository {
   listTrainingMetricsByUser(userId: string): Promise<ITrainingMetricsDTO[]>;
+  createTrainingMetrics(
+    data: ICreateTrainingMetricsDTO
+  ): Promise<ITrainingMetricsDTO>;
 }

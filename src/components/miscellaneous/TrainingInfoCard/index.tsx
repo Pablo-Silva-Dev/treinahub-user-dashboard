@@ -8,24 +8,30 @@ interface TrainingInfoCardProps {
   training: string;
   description: string;
   cover_url: string;
-  lastClassName: string;
-  lastClassDuration: string;
+  totalTrainingDuration: string;
+  lastClassName: string | null;
+  lastClassDuration: string | null;
   totalCourseClasses: number;
   totalWatchedClasses: number;
   onSeeTraining: () => void;
   onSeeCertificate?: () => void;
+  onStartTraining?: () => void;
+  userStartedTraining: boolean;
 }
 
 export function TrainingInfoCard({
   cover_url,
   training,
   description,
+  totalTrainingDuration,
   lastClassName,
   lastClassDuration,
   totalCourseClasses,
   totalWatchedClasses,
   onSeeTraining,
   onSeeCertificate,
+  onStartTraining,
+  userStartedTraining,
 }: TrainingInfoCardProps) {
   const [isCollapsed, setIsCollapsed] = useState(true);
 
@@ -39,7 +45,7 @@ export function TrainingInfoCard({
       : 0;
 
   return (
-    <div className="w-full max-w-[480px] flex flex-col shadow-sm bg-white dark:bg-slate-900 rounded-md mr-0 md:mr-8">
+    <div className="w-full max-w-[480px] flex flex-col shadow-sm bg-white dark:bg-slate-700 rounded-md mr-0 md:mr-8">
       <img
         src={cover_url}
         alt="info_card_placeholder"
@@ -76,8 +82,16 @@ export function TrainingInfoCard({
           )}
         </div>
         <div className="w-full h-[1px] bg-gray-200 dark:bg-slate-600 mt-2 mb-2" />
-        {totalWatchedClasses === 0 ? (
+        {totalWatchedClasses === 0 && !userStartedTraining ? (
           <div className="flex flex-col w-full">
+            <div className="flex flex-row mb-1 ml-1">
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1 mb-2">
+                Duração do treinamento:
+              </span>
+              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1 mb-2">
+                {totalTrainingDuration}
+              </span>
+            </div>
             <div className="flex flex-row mb-3 ml-1">
               <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalWatchedClasses} de
@@ -89,15 +103,16 @@ export function TrainingInfoCard({
             <div className="w-full">
               <button
                 className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
-                onClick={onSeeCertificate}
+                //TODO-PABLO: Navigate to specific training video classes after creating new training metrics
+                onClick={onStartTraining}
               >
-                Acessar videoaulas
+                Iniciar treinamento
               </button>
             </div>
           </div>
         ) : totalWatchedClasses < totalCourseClasses ? (
           <div className="w-full flex flex-col">
-            <div className="flex flex-row mb-3 ml-1 items-evenly bg-red-200">
+            <div className="flex flex-row mb-3 ml-1 items-evenly">
               <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalWatchedClasses} de
               </span>
@@ -121,8 +136,14 @@ export function TrainingInfoCard({
                 {totalCourseProgressPercentage}% concluído
               </span>
             </div>
-
-            <div className="w-full flex flex-col p-3 rounded-md  bg-gray-100 dark:bg-slate-700 mb-3">
+            <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary mb-2">
+              Assitir aula
+            </span>
+            <button
+              className="w-full flex flex-col p-3 rounded-md  bg-gray-100 dark:bg-slate-600 mb-3"
+              //TODO-PABLO: Navigate to specific training video class ready to be played
+              onClick={onSeeTraining}
+            >
               <div className="flex flex-row items-center mb-1">
                 <Feather
                   icon="play-circle"
@@ -133,23 +154,14 @@ export function TrainingInfoCard({
                 </span>
               </div>
               <div className="flex flex-row mt-1">
-                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                   Duração:
                 </span>
                 <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
                   {lastClassDuration}
                 </span>
               </div>
-            </div>
-
-            <div className="flex flex-row justify-between items-center">
-              <button
-                className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
-                onClick={onSeeTraining}
-              >
-                Continuar aula
-              </button>
-            </div>
+            </button>
           </div>
         ) : (
           <div className="flex flex-col">
@@ -178,23 +190,19 @@ export function TrainingInfoCard({
               </span>
             </div>
 
-            <div className="flex flex-col justify- items-start">
-              <div className="flex flex-row items-center mb-3">
-                <Feather
-                  icon="star"
-                  className="mr-2 dark:text-white text-gray-800"
-                />
-                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
-                  Treinamento concluído!
-                </span>
-              </div>
-              <button
-                className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
-                onClick={onSeeCertificate}
-              >
-                Ver certificado
-              </button>
+            <div className="flex flex-row items-center mb-4">
+              <Feather icon="star" className="mr-2 text-orange-300" />
+              <span className="text-gray-800 dark:text-gray-50 text-[12px] lg:text-[14px] font-primary text-pretty">
+                Treinamento concluído!
+              </span>
             </div>
+            <button
+              className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 rounded-md w-full p-4"
+              //TODO-Pablo open specific certificate modal on Training screen
+              onClick={onSeeCertificate}
+            >
+              Ver certificado
+            </button>
           </div>
         )}
       </div>

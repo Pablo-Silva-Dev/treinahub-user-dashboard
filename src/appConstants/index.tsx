@@ -14,6 +14,7 @@ const FILE_TYPE_UNSUPPORTED_MESSAGE =
   "Formato inválido. Forneça um arquivo do tipo  ";
 const NAVIGATION_TIMER = 1000;
 const PRIMARY_COLOR = "#0267FF";
+const SUCCESS_COLOR = "#049810";
 
 const SUPPORT_STARTING_MESSAGE =
   "Você está acessando o suporte. Para iniciar o atendimento, informe sua dúvida.";
@@ -33,5 +34,6 @@ export {
   PHONE_INVALID_MESSAGE,
   PRIMARY_COLOR,
   REQUIRED_FIELD_MESSAGE,
+  SUCCESS_COLOR,
   SUPPORT_STARTING_MESSAGE,
 };

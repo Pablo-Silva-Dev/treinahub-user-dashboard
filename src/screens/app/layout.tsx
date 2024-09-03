@@ -16,7 +16,6 @@ import {
   AccordionHeader,
   Avatar,
   Breadcrumbs,
-  Button,
   ListItem,
 } from "@material-tailwind/react";
 import FeatherIcon from "feather-icons-react";
@@ -139,7 +138,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       ref.current.staticStart();
       ref.current.complete();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.location.pathname]);
 
   return (
@@ -149,12 +148,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="flex flex-row w-full min-h-screen">
         <nav className="hidden xl:flex flex-col w-[280px] min-h-screen overflow-auto p-6 bg-white dark:bg-slate-900 items-start">
           <Link to="/dashboard">
-            <img
-              src={logo_text}
-              alt="logo-text"
-              width={200}
-              className="mb-4"
-            />
+            <img src={logo_text} alt="logo-text" width={200} className="mb-4" />
           </Link>
           {menuItems.map((item, idx) => (
             <Accordion
@@ -166,7 +160,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 className="flex  justify-start border-none mb-[-12px]"
                 onClick={() => handleOpenedAccordionIndexes(idx)}
               >
-                  <ListItem
+                <ListItem
                   className={`text-[12px] lg:text-[14px] text-black dark:text-white hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                 >
                   <FeatherIcon
@@ -186,7 +180,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     className={`mb-1 p-0 text-[13px] font-bold text-black dark:text-white`}
                   >
                     <ListItem
-                      className={`text-primary dark:text-primary-light font-light font-poppins hover:text-blue-700 hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
+                      className={`text-primary dark:text-primary-light font-light font-poppins hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                     >
                       {action.title}
                     </ListItem>
@@ -322,7 +316,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 className="flex  justify-start border-none mb-[-12px]"
                 onClick={() => handleOpenedAccordionIndexes(idx)}
               >
-               <ListItem
+                <ListItem
                   className={`text-[12px] lg:text-[14px] text-black dark:text-white hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                 >
                   <FeatherIcon
@@ -341,7 +335,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     key={action.title}
                     className={` mb-1 p-0 text-[12px] font-bold`}
                   >
-                   <ListItem
+                    <ListItem
                       className={`text-primary dark:text-primary-light font-light font-poppinshover:text-blue-700 hover:text-slate-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-slate-800 focus:text-slate-800 dark:focus:text-gray-200 focus:bg-gray-200 dark:focus:bg-slate-800 font-secondary`}
                     >
                       {action.title}

@@ -28,6 +28,7 @@ export function WatchTraining() {
               width="100%"
               height="100%"
               volume={1}
+              //TODO-pablo: call end-point to add the watched video and update training metrics at once
               onEnded={() => console.log("Video ended")}
             />
           </div>
