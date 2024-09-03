@@ -2,23 +2,33 @@ import { LinkButton } from "@/components/buttons/LinkButton";
 import { Text } from "@/components/typography/Text";
 import { Dispatch, SetStateAction } from "react";
 import VerificationInput from "react-verification-input";
+import { RecoveryPasswordByEmailInputs } from "../RecoveryPasswordByEmailForm";
+import { RecoveryPasswordBySMSInputs } from "../RecoveryPasswordBySMS";
 
 interface CodeInputCardProps {
   code: string;
   onChangeCode: Dispatch<SetStateAction<string>>;
   isInvalidCode: boolean;
-  emailAddress: string;
-  onResendCode: () => void;
+  email: string;
+  cpf: string;
+  phone: string;
+  formType: "email" | "sms";
+  onResendCodeByEmail: (data: RecoveryPasswordByEmailInputs) => void;
+  onResendCodeBySMS: (data: RecoveryPasswordBySMSInputs) => void;
   ableToResendCode?: boolean;
   timeToResendCode?: number;
 }
 
 export default function CodeInputCard({
-  emailAddress,
+  email,
+  cpf,
+  phone,
   code,
   isInvalidCode,
   onChangeCode,
-  onResendCode,
+  onResendCodeByEmail,
+  onResendCodeBySMS,
+  formType,
   ableToResendCode,
   timeToResendCode,
 }: CodeInputCardProps) {
@@ -28,7 +38,9 @@ export default function CodeInputCard({
     <div className="max-w-lg bg-gray-50 dark:bg-slate-800 p-6 shadow-xl rounded-lg mx-auto w-[90%] md:w-[400px]  mb-[40px] lg:mb-0">
       <div className="w-full flex flex-row mb-4 p-4">
         <Text
-          content={`Informe o código numérico de 6 dígitos que enviamos para ${emailAddress}`}
+          content={`Informe o código numérico de 6 dígitos que enviamos para ${
+            formType === "email" ? email : phone
+          }`}
         />
       </div>
       <div className="w-full flex flex-col items-center mb-6">
@@ -64,7 +76,11 @@ export default function CodeInputCard({
       )}
       <LinkButton
         title="Reenviar código"
-        onClick={onResendCode}
+        onClick={
+          formType === "email"
+            ? () => onResendCodeByEmail({ email, cpf })
+            : () => onResendCodeBySMS({ phone })
+        }
         disabled={!ableToResendCode}
       />
     </div>

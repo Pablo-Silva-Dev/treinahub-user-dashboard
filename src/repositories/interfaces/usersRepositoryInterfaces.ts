@@ -11,6 +11,15 @@ export interface IAuthenticateUserResponse {
   token: string;
 }
 
+export interface IGetRecoveryPasswordCodeByEmailDTO {
+  cpf: string;
+  email: string;
+}
+
+export interface IGetRecoveryPasswordCodeBySMSDTO {
+  phone: string;
+}
+
 export interface IUsersRepository {
   authenticateUser(
     user: IAuthenticateUserRequest
