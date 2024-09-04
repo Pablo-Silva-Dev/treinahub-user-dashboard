@@ -77,6 +77,24 @@ const formatTimeString = (time: string): string => {
   }
 };
 
+const secondsToFullTimeString = (durationInSeconds: number): string => {
+  const hours = Math.floor(durationInSeconds / 3600);
+  const minutes = Math.floor((durationInSeconds % 3600) / 60);
+  const seconds = durationInSeconds % 60;
+
+  const hourString = hours > 0 ? `${hours} hora${hours > 1 ? 's' : ''}` : '';
+  const minuteString = minutes > 0 ? `${minutes} minuto${minutes > 1 ? 's' : ''}` : '';
+  const secondString = seconds > 0 ? `${seconds} segundo${seconds > 1 ? 's' : ''}` : '';
+
+  if (hours > 0) {
+    return `${hourString}${minutes > 0 ? ` e ${minuteString}` : ''}`;
+  } else if (minutes > 0) {
+    return `${minuteString}${seconds > 0 ? ` e ${secondString}` : ''}`;
+  } else {
+    return secondString;
+  }
+};
+
 export {
   collapseLongString,
   formatDate,
@@ -85,4 +103,5 @@ export {
   formatPhoneNumber,
   formatTimeString,
   unformatPhoneNumber,
+  secondsToFullTimeString
 };

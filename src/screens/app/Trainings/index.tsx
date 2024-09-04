@@ -25,9 +25,8 @@ export function Trainings() {
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
 
-  //TODO-Pablo: Add training id to navigation to navigate to the corresponding training
-  const handleSeeTraining = () => {
-    navigate("/dashboard/assistir-treinamento");
+  const handleSeeTraining = (trainingId: string) => {
+    navigate(`/dashboard/assistir-treinamento?trainingId=${trainingId}`);
   };
 
   const handleSeeCertificate = () => {
@@ -150,7 +149,7 @@ export function Trainings() {
                       ? true
                       : false
                   }
-                  onSeeTraining={handleSeeTraining}
+                  onSeeTraining={() => handleSeeTraining(training.id)}
                   onSeeCertificate={handleSeeCertificate}
                   onStartTraining={() =>
                     handleCreateTrainingMetrics({

@@ -21,3 +21,10 @@ export interface ICreateTrainingMetricsDTO {
   user_id: string;
   training_id: string;
 }
+
+export interface IUpdateTrainingMetricsDTO {
+  id: string;
+  user_id: string;
+  training_id: string;
+}
+
