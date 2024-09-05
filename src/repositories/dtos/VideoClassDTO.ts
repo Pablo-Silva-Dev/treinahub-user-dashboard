@@ -15,6 +15,7 @@ export interface IVideoClassDTO {
   dash_encoding_id: string;
   hls_encoding_url: string;
   dash_encoding_url: string;
+  reference_number: number
 }
 
 export interface ICreateVideoClassDTO {

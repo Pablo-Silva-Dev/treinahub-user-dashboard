@@ -37,6 +37,8 @@ export function WatchTraining() {
   const [trainingMetrics, setTrainingMetrics] =
     useState<ITrainingMetricsDTO | null>(null);
   const [training, setTraining] = useState<ITrainingDTO | null>(null);
+  const [showPreviousClassButton, setShowPreviousClassButton] = useState(true);
+  const [showNextClassButton, setShowNextClassButton] = useState(true);
 
   const trainingsRepository = useMemo(() => {
     return new TrainingsRepository();
@@ -58,6 +60,16 @@ export function WatchTraining() {
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
   const location = useLocation();
+
+  const sortVideoClasses = (videoClasses: IVideoClassDTO[]) => {
+    if (videoClasses) {
+      return videoClasses.sort((a, b) => {
+        if (a.reference_number < b.reference_number) return -1;
+        if (a.reference_number > b.reference_number) return 1;
+        return 0;
+      });
+    }
+  };
 
   const queryParams = new URLSearchParams(location.search);
   const trainingIdQueryParam = queryParams.get("trainingId");
@@ -85,11 +97,14 @@ export function WatchTraining() {
         await videoClassesRepository.listVideoClassesByTraining(
           trainingIdQueryParam!
         );
+
+      const sortedVideoClasses = sortVideoClasses(videoClasses);
+
       if (videoClasses.length > 0) {
-        setFirstVideoClass(videoClasses[0]);
+        setFirstVideoClass(sortedVideoClasses![0]);
       }
-      setVideoClasses(videoClasses);
-      return videoClasses;
+      setVideoClasses(sortedVideoClasses!);
+      return sortedVideoClasses;
     } catch (error) {
       console.log(error);
     } finally {
@@ -203,7 +218,7 @@ export function WatchTraining() {
         });
         await videoClassesRepository
           .listVideoClassesByTraining(trainingIdQueryParam!)
-          .then((res) => setVideoClasses(res));
+          .then((res) => setVideoClasses(sortVideoClasses(res) as never));
         await watchedClassesRepository
           .listWatchedClassesByUserAndTraining({
             user_id: user.id,
@@ -231,6 +246,34 @@ export function WatchTraining() {
     ]
   );
 
+  const getNextVideoClass = useCallback(() => {
+    const currentIndex = videoClasses.findIndex(
+      (vc) => vc.reference_number === selectedVideoClass?.reference_number
+    );
+    const handleNextClass = () => {
+      setSelectedVideoClass(videoClasses[currentIndex + 1]);
+      setShowPreviousClassButton(true);
+    };
+    currentIndex !== -1 && currentIndex < videoClasses.length - 1
+      ? handleNextClass()
+      : setShowNextClassButton(false);
+  }, [selectedVideoClass?.reference_number, videoClasses]);
+
+  const getPreviousVideoClass = useCallback(() => {
+    const currentIndex = videoClasses.findIndex(
+      (vc) => vc.reference_number === selectedVideoClass?.reference_number
+    );
+
+    const handlePreviousClass = () => {
+      setSelectedVideoClass(videoClasses[currentIndex - 1]);
+      setShowNextClassButton(true);
+    };
+
+    currentIndex > 0
+      ? handlePreviousClass()
+      : setShowPreviousClassButton(false);
+  }, [selectedVideoClass?.reference_number, videoClasses]);
+
   const handleMarkClassAsWatched = useCallback(async () => {
     try {
       await watchedClassesRepository.addWatchedClass({
@@ -241,7 +284,7 @@ export function WatchTraining() {
 
       await videoClassesRepository
         .listVideoClassesByTraining(trainingIdQueryParam!)
-        .then((res) => setVideoClasses(res));
+        .then((res) => setVideoClasses(sortVideoClasses(res) as never));
       await watchedClassesRepository
         .listWatchedClassesByUserAndTraining({
           user_id: user.id,
@@ -255,10 +298,12 @@ export function WatchTraining() {
           user_id: user.id,
         })
         .then((res) => setTrainingMetrics(res));
+      getNextVideoClass();
     } catch (error) {
       console.log(error);
     }
   }, [
+    getNextVideoClass,
     selectedVideoClass,
     trainingIdQueryParam,
     trainingMetrics,
@@ -271,6 +316,12 @@ export function WatchTraining() {
   const refetchVideoClass = async () => {
     await getVideoClasses();
   };
+
+  useEffect(() => {
+    if (!selectedVideoClass) {
+      setSelectedVideoClass(firstVideoClassRef.current);
+    }
+  }, [firstVideoClassRef, selectedVideoClass]);
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
@@ -296,9 +347,11 @@ export function WatchTraining() {
               <Player
                 onError={refetchVideoClass}
                 url={
-                  selectedVideoClass
+                  selectedVideoClass && selectedVideoClass.hls_encoding_url
                     ? selectedVideoClass.hls_encoding_url
-                    : firstVideoClass?.hls_encoding_url
+                    : firstVideoClass && firstVideoClass.hls_encoding_url
+                      ? firstVideoClass.hls_encoding_url
+                      : ""
                 }
                 controls
                 width="100%"
@@ -311,7 +364,9 @@ export function WatchTraining() {
               content={
                 selectedVideoClass && selectedVideoClass.name
                   ? selectedVideoClass.name
-                  : ""
+                  : firstVideoClass && firstVideoClass.name
+                    ? firstVideoClass.name
+                    : ""
               }
               className="m-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%] font-bold"
             />
@@ -320,16 +375,20 @@ export function WatchTraining() {
               <PreviousClassCard
                 classDuration="13:22"
                 classTitle="Como registrar novos usuários"
-                onSeeClass={() => {
-                  console.log("pending");
-                }}
+                showsPreviousClassButton={
+                  videoClasses &&
+                  videoClasses.length > 1 &&
+                  showPreviousClassButton
+                }
+                onSeeClass={getPreviousVideoClass}
               />
               <NextClassCard
                 classDuration="13:22"
                 classTitle="Como registrar novos usuários de maneira inteligente"
-                onSeeClass={() => {
-                  console.log("pending");
-                }}
+                showsNextClassButton={
+                  videoClasses && videoClasses.length > 1 && showNextClassButton
+                }
+                onSeeClass={getNextVideoClass}
               />
             </div>
             <div className="w-full flex flex-col p-4 mb-4">
@@ -341,7 +400,9 @@ export function WatchTraining() {
                 content={
                   selectedVideoClass && selectedVideoClass.description
                     ? selectedVideoClass.description
-                    : ""
+                    : firstVideoClass && firstVideoClass.description
+                      ? firstVideoClass.description
+                      : ""
                 }
                 className="text-gray-800 dark:text-gray-50 text-[12px] md:text-[13px] text-pretty"
               />

@@ -28,25 +28,27 @@ export function PlayerListCard({
   };
 
   return (
-    <div className="w-full flex flex-col bg-white dark:bg-slate-900 p-4 rounded-md shadow-md h-[400px] md:h-[480px] xl:h-[580px] overflow-y-auto">
+    <div className="w-full flex flex-col bg-white dark:bg-slate-600 p-4 rounded-md shadow-md h-[400px] md:h-[480px] xl:h-[580px] overflow-y-auto cursor-pointer">
       <h3 className="text-gray-800 dark:text-gray-50 text-[13px] md:text-[14px] font-bold mb-3 text-left">
         Conteúdo
       </h3>
       {classes.map((c) => (
-        <button
+        <div
           key={c.name}
           className={`w-full flex flex-row justify-between py-2 px-4 ${
             wasVideoClassesWatched(c.id)
               ? "bg-gray-200 dark:bg-slate-800"
               : "bg-gray-100 dark:bg-slate-700"
           } items-center rounded-md mb-3`}
-          onClick={() => onSelectClass(c.id)}
         >
-          <div className="flex items-center max-w-[70%]">
+          <div
+            className="flex items-center w-full  mr-3"
+            onClick={() => onSelectClass(c.id)}
+          >
             {wasVideoClassesWatched(c.id) ? (
-              <MdReplay className="h-6 w-6 md:h-8 md:w-8 text-gray-800 dark:text-gray-200 mr-1 mb-2" />
+              <MdReplay className="h-6 w-6 md:h-7 md:w-7 text-gray-800 dark:text-gray-200 mr-1 mb-2" />
             ) : (
-              <MdPlayCircleOutline className="h-6 w-6 md:h-8 md:w-8 text-gray-800 dark:text-gray-200 mr-1 mb-2" />
+              <MdPlayCircleOutline className="h-6 w-6 md:h-7 md:w-7 text-gray-800 dark:text-gray-200 mr-1 mb-2" />
             )}
             <div className="flex flex-col ml-2">
               <div className="flex flex-row items-center mb-1">
@@ -68,19 +70,19 @@ export function PlayerListCard({
             </div>
           </div>
           {wasVideoClassesWatched(c.id) && (
-            <div>
+            <button
+              className="flex flex-col items-end w-[160px]"
+              onClick={() => handleUnwatchClass(c.id)}
+            >
               <div className="flex flex-1 justify-end">
-                <TbEyeCheck className="h-6 w-6 md:h-8 md:w-8 text-green-400 mb-1" />
+                <TbEyeCheck className="h-6 w-6 md:h-7 md:w-7 text-green-400 mb-1" />
               </div>
-              <button
-                onClick={() => handleUnwatchClass(c.id)}
-                className="text-gray-600 dark:text-gray-200 text-[10px] md:text-[12px] text-right"
-              >
+              <span className="text-gray-600 dark:text-gray-200 text-[10px] md:text-[11px] text-right">
                 Marcar como não assistida
-              </button>
-            </div>
+              </span>
+            </button>
           )}
-        </button>
+        </div>
       ))}
     </div>
   );
