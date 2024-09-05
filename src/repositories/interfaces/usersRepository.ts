@@ -25,4 +25,5 @@ export interface IUsersRepository {
     user: IAuthenticateUserRequest
   ): Promise<IAuthenticateUserResponse>;
   registerUser(data: ICreateUserDTO): Promise<IUserDTO>;
+  getUserById(userId: string): Promise<IUserDTO>;
 }

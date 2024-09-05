@@ -27,12 +27,12 @@ export interface ICreateUserDTO {
 
 export interface IUpdateUserDTO {
   id: string;
-  phone?: string;
-  password?: string;
-  cep?: string;
-  street?: string;
-  district?: string;
-  city?: string;
-  uf?: string;
-  residence_number?: string;
+  phone?: string | null;
+  password?: string | null;
+  cep?: string | null;
+  street?: string | null;
+  district?: string | null;
+  city?: string | null;
+  uf?: string | null;
+  residence_number?: string | null;
 }

@@ -14,10 +14,14 @@ import {
 } from "@/styles/react-modal";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ChangeEvent, KeyboardEvent, MouseEvent, useState } from "react";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import Modal from "react-modal";
 import * as yup from "yup";
 
+interface IUpdateAvatarInput {
+  id: string;
+  img_file: string;
+}
 interface UpdateAvatarModalProps {
   isOpen: boolean;
   onRequestClose: (
@@ -38,10 +42,11 @@ export function UpdateAvatarModal({
   const { theme } = useThemeStore();
 
   const [wasFileUploaded, setWasFileUploaded] = useState(false);
-  const [file, setFile] = useState<IFile | null>(null);
+  const [filePreview, setFilePreview] = useState<IFile | null>(null);
+  const [imageFile, setImageFile] = useState<Blob | null>(null);
 
   const validationSchema = yup.object({
-    cover_file: yup
+    img_file: yup
       .mixed()
       .test(
         "fileType",
@@ -72,19 +77,29 @@ export function UpdateAvatarModal({
     const file = event.target.files?.[0];
     if (file) {
       const previewUrl = URL.createObjectURL(file);
-      setFile({
+      setFilePreview({
         name: file.name,
         type: file.type,
         size: file.size,
         uri: previewUrl,
       });
+      setImageFile(file);
       setWasFileUploaded(true);
     }
   };
 
   const handleRemoveFile = () => {
-    setFile(null);
+    setFilePreview(null);
+    setImageFile(null);
     setWasFileUploaded(false);
+  };
+
+  const handleUpdateAvatar: SubmitHandler<IUpdateAvatarInput> = (
+    data: IUpdateAvatarInput
+  ) => {
+    onConfirmAction({ ...data, img_file: imageFile });
+    setImageFile(null);
+    setFilePreview(null);
   };
 
   return (
@@ -99,15 +114,15 @@ export function UpdateAvatarModal({
         content="Atualizar foto de perfil"
         className="text-center text-black dark:text-white mb-4 font-bold text-[14px] md:text-lg"
       />
-      <form onSubmit={handleSubmit(onConfirmAction)}>
+      <form onSubmit={handleSubmit(handleUpdateAvatar as never)}>
         <div className="my-4">
-          {wasFileUploaded && file ? (
+          {wasFileUploaded && filePreview ? (
             <UploadedFile
               file={{
-                name: file.name,
-                size: Number((file.size / 1024 / 1024).toFixed(2)),
-                uri: file.uri,
-                type: file.type,
+                name: filePreview.name,
+                size: Number((filePreview.size / 1024 / 1024).toFixed(2)),
+                uri: filePreview.uri,
+                type: filePreview.type,
               }}
               onCancel={handleRemoveFile}
               imgWidth={320}
@@ -117,13 +132,13 @@ export function UpdateAvatarModal({
               label="Foto de perfil"
               labelDescription="Selecione um arquivo .jpeg ou .png de até 2MB"
               onUpload={handleFileUpload}
-              {...register("cover_file", { onChange: handleFileUpload })}
+              {...register("img_file", { onChange: handleFileUpload })}
             />
           )}
         </div>
         <div className="mb-3">
-          {errors && errors.cover_file?.message && (
-            <ErrorMessage errorMessage={errors.cover_file.message} />
+          {errors && errors.img_file?.message && (
+            <ErrorMessage errorMessage={errors.img_file.message} />
           )}
         </div>
         <Button title="Atualizar foto" type="submit" disabled={!isValid} />

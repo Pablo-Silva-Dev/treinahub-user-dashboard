@@ -1,9 +1,10 @@
-import { IUser } from "@/interfaces/dtos/User";
+import { IUserDTO } from "@/repositories/dtos/UserDTO";
+import { formatDate, unformatPhoneNumber } from "@/utils/formats";
 import { Avatar, Tooltip } from "@material-tailwind/react";
 import { MdEdit, MdOutlinePhotoCamera } from "react-icons/md";
 
 interface ProfileCardProps {
-  user: IUser;
+  user: IUserDTO;
   avatar_url: string;
   onUpdateProfile: () => void;
   onUpdateAvatar: () => void;
@@ -34,17 +35,14 @@ export function ProfileCard({
             {user.email}
           </span>
         </div>
-        <div className="w-full flex flex-col mb-4 md:mb-0">
+        <div className="w-full flex flex-col mb-4">
           <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
             Telefone
           </span>
           <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
-            {user.phone}
+            {unformatPhoneNumber(user.phone)}
           </span>
         </div>
-      </div>
-
-      <div className="w-full flex flex-col justify-evenly">
         <div className="w-full flex flex-col mb-4">
           <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
             CPF
@@ -58,21 +56,64 @@ export function ProfileCard({
             Data de nascimento
           </span>
           <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
-            {user.birthDate}
-          </span>
-        </div>
-        <div className="w-full flex flex-col">
-          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
-            Senha
-          </span>
-          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
-            *******
+            {formatDate(user.birth_date)}
           </span>
         </div>
       </div>
 
-      <div className="flex flex-col">
-        <div className="w-full flex flex-1 flex-col justify-around items-center mr-3">
+      <div className="w-full flex flex-col justify-evenly">
+        <div className="w-full flex flex-col mb-4">
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
+            Rua
+          </span>
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+            {user.street ? user.street : "Não informado"}
+          </span>
+        </div>
+        <div className="w-full flex flex-col mb-4">
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
+            Número
+          </span>
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+            {user.residence_number ? user.residence_number : "Não informado"}
+          </span>
+        </div>
+        <div className="w-full flex flex-col mb-4">
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
+            Bairro
+          </span>
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+            {user.district ? user.district : "Não informado"}
+          </span>
+        </div>
+        <div className="w-full flex flex-col mb-4">
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
+            Cidade
+          </span>
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+            {user.city ? user.city : "Não informado"}
+          </span>
+        </div>
+        <div className="w-full flex flex-col mb-4">
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
+            Estado
+          </span>
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+            {user.uf ? user.uf : "Não informado"}
+          </span>
+        </div>
+        <div className="w-full flex flex-col">
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
+            CEP
+          </span>
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+            {user.cep ? user.cep : "Não informado"}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-col mt-4">
+        <div className="w-full flex flex-1 flex-col items-center mr-3">
           <div className="flex flex-row">
             <Avatar src={avatar_url} size="xl" />
             <Tooltip content="Atualizar foto de perfil">
@@ -84,8 +125,11 @@ export function ProfileCard({
               </button>
             </Tooltip>
           </div>
+          <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary mr-3 mt-2">
+            Foto de perfil
+          </span>
           <button
-            className=" flex flex-row justify-center  items-center border-2 border-gray-800 p-2 rounded-md w-[240px] text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 mt-4"
+            className=" flex flex-row justify-center  items-center border-2 border-gray-800 dark:border-gray-100  p-2 rounded-md w-[240px] text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 mt-4"
             onClick={onUpdateProfile}
           >
             <MdEdit className="text-gray-800 dark:text-gray-50 h-4 w-4 mr-2 " />

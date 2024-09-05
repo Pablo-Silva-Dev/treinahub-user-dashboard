@@ -63,6 +63,16 @@ export class UsersRepository implements IUsersRepository {
       throw error;
     }
   }
+  async getUserById(userId: string): Promise<IUserDTO> {
+    try {
+      const response = await api.get<IApiSuccessResponse<IUserDTO>>(
+        `/users/get-by-id/${userId}`
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
   async getRecoveryPasswordCodeByEmail(
     data: IGetRecoveryPasswordCodeByEmailDTO
   ): Promise<string> {
