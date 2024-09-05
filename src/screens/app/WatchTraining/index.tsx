@@ -16,6 +16,7 @@ import { WatchedClassesRepository } from "@/repositories/watchedClassesRepositor
 import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
+import { secondsToFullTimeString } from "@/utils/formats";
 import { useQueries } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Player from "react-player";
@@ -31,6 +32,7 @@ export function WatchTraining() {
     useStateRef<IVideoClassDTO | null>(null);
   const [selectedVideoClass, setSelectedVideoClass] =
     useState<IVideoClassDTO | null>(null);
+
   const [watchedVideoClasses, setWatchedVideoClasses] = useState<
     IWatchedClassDTO[]
   >([]);
@@ -39,6 +41,11 @@ export function WatchTraining() {
   const [training, setTraining] = useState<ITrainingDTO | null>(null);
   const [showPreviousClassButton, setShowPreviousClassButton] = useState(true);
   const [showNextClassButton, setShowNextClassButton] = useState(true);
+  const [previousVideoClass, setPreviousVideoClass] =
+    useState<IVideoClassDTO | null>(null);
+  const [nextVideoClass, setNextVideoClass] = useState<IVideoClassDTO | null>(
+    null
+  );
 
   const trainingsRepository = useMemo(() => {
     return new TrainingsRepository();
@@ -323,6 +330,33 @@ export function WatchTraining() {
     }
   }, [firstVideoClassRef, selectedVideoClass]);
 
+  const updateNextPreviousClasses = useCallback(() => {
+    if (!selectedVideoClass) return;
+    const currentIndex = videoClasses.findIndex(
+      (vc) => vc.reference_number === selectedVideoClass.reference_number
+    );
+
+    if (currentIndex > 0) {
+      setPreviousVideoClass(videoClasses[currentIndex - 1]);
+      setShowPreviousClassButton(true);
+    } else {
+      setPreviousVideoClass(null);
+      setShowPreviousClassButton(false);
+    }
+
+    if (currentIndex < videoClasses.length - 1) {
+      setNextVideoClass(videoClasses[currentIndex + 1]);
+      setShowNextClassButton(true);
+    } else {
+      setNextVideoClass(null);
+      setShowNextClassButton(false);
+    }
+  }, [selectedVideoClass, videoClasses]);
+
+  useEffect(() => {
+    updateNextPreviousClasses();
+  }, [updateNextPreviousClasses, selectedVideoClass]);
+
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
       <div className="mb-2">
@@ -373,9 +407,14 @@ export function WatchTraining() {
             {/* TODO-Pablo: Navigate between classes through reference_number */}
             <div className="w-full flex flex-col lg:flex-row justify-between">
               <PreviousClassCard
-                classDuration="13:22"
-                classTitle="Como registrar novos usuários"
+                classDuration={
+                  previousVideoClass
+                    ? secondsToFullTimeString(previousVideoClass.duration)
+                    : ""
+                }
+                classTitle={previousVideoClass ? previousVideoClass.name : ""}
                 showsPreviousClassButton={
+                  selectedVideoClass !== null &&
                   videoClasses &&
                   videoClasses.length > 1 &&
                   showPreviousClassButton
@@ -383,10 +422,17 @@ export function WatchTraining() {
                 onSeeClass={getPreviousVideoClass}
               />
               <NextClassCard
-                classDuration="13:22"
-                classTitle="Como registrar novos usuários de maneira inteligente"
+                classDuration={
+                  nextVideoClass
+                    ? secondsToFullTimeString(nextVideoClass.duration)
+                    : ""
+                }
+                classTitle={nextVideoClass ? nextVideoClass.name : ""}
                 showsNextClassButton={
-                  videoClasses && videoClasses.length > 1 && showNextClassButton
+                  selectedVideoClass !== null &&
+                  videoClasses &&
+                  videoClasses.length > 1 &&
+                  showNextClassButton
                 }
                 onSeeClass={getNextVideoClass}
               />
