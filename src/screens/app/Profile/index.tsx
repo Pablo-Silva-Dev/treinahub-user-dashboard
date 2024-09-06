@@ -13,6 +13,7 @@ import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
 import { showAlertError, showAlertSuccess } from "@/utils/alerts";
+import { formatPhoneNumber } from "@/utils/formats";
 import { phoneInputValidationRegex } from "@/utils/regex";
 import { useQuery } from "@tanstack/react-query";
 import cep from "cep-promise";
@@ -162,7 +163,10 @@ export function Profile() {
     async (data: IUpdateUserDTO) => {
       try {
         setIsLoading(true);
-        await usersRepository.updateUser(data);
+        await usersRepository.updateUser({
+          ...data,
+          phone: formatPhoneNumber(phone),
+        });
         showAlertSuccess("Dados atualizados com sucesso!");
         handleToggleEditProfileModal();
         getUserInfo();
@@ -175,7 +179,13 @@ export function Profile() {
         setIsLoading(false);
       }
     },
-    [getUserInfo, handleToggleEditProfileModal, setIsLoading, usersRepository]
+    [
+      getUserInfo,
+      handleToggleEditProfileModal,
+      phone,
+      setIsLoading,
+      usersRepository,
+    ]
   );
 
   return (
