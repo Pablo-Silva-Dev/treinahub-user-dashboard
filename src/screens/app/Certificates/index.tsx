@@ -13,8 +13,7 @@ import { CertificateCard } from "./components/CertificateCard";
 
 export function Certificates() {
   const [certificates, setCertificates] = useState<ICertificateDTO[]>([]);
-  const [selectedCertificate, setSelectedCertificate] =
-    useState<ICertificateDTO | null>(null);
+  const [, setSelectedCertificate] = useState<ICertificateDTO | null>(null);
 
   const { user } = useAuthenticationStore();
 
@@ -28,7 +27,6 @@ export function Certificates() {
         user.id
       );
       setCertificates(certificates);
-      console.log(certificates);
     } catch (error) {
       console.log(error);
     }
@@ -38,11 +36,11 @@ export function Certificates() {
     getUserCertificates();
   }, [getUserCertificates]);
 
-  const handleDownloadCertificate = () => {
-    if (selectedCertificate) {
-      window.location.href = selectedCertificate.url;
+  const handleDownloadCertificate = (certificate: ICertificateDTO) => {
+    if (certificate) {
+      window.location.href = certificate.url;
       showAlertSuccess(
-        "O download do seu certificate foir realizado com sucesso!"
+        "O download do seu certificado foi realizado com sucesso!"
       );
     }
   };
@@ -84,7 +82,7 @@ export function Certificates() {
                 certificate.training.video_classes &&
                 certificate.training.video_classes.length
               }
-              onDownload={handleDownloadCertificate}
+              onDownload={() => handleDownloadCertificate(certificate)}
             />
           ))}
         </div>

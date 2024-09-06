@@ -35,10 +35,10 @@ export function PlayerListCard({
       {classes.map((c) => (
         <div
           key={c.name}
-          className={`w-full flex flex-row justify-between py-2 px-4 ${
+          className={`w-full flex flex-row justify-between  ${
             wasVideoClassesWatched(c.id)
-              ? "bg-gray-200 dark:bg-slate-800"
-              : "bg-gray-100 dark:bg-slate-700"
+              ? "bg-gray-200 dark:bg-slate-800 px-3 py-4"
+              : "bg-gray-100 dark:bg-slate-700 p-5"
           } items-center rounded-md mb-3`}
         >
           <div

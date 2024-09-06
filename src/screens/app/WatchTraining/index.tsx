@@ -5,6 +5,7 @@ import { Loading } from "@/components/miscellaneous/Loading";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Text } from "@/components/typography/Text";
+import { CertificatesRepository } from "@/repositories/certificatesRepository";
 import { ITrainingDTO } from "@/repositories/dtos/TrainingDTO";
 import { ITrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO";
 import { IVideoClassDTO } from "@/repositories/dtos/VideoClassDTO";
@@ -16,12 +17,14 @@ import { WatchedClassesRepository } from "@/repositories/watchedClassesRepositor
 import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
+import { showAlertSuccess } from "@/utils/alerts";
 import { secondsToFullTimeString } from "@/utils/formats";
 import { useQueries } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Player from "react-player";
 import { useLocation } from "react-router-dom";
 import useStateRef from "react-usestateref";
+import { TrainingCompleteModal } from "./components/GeneratedCertificateModal";
 import { NextClassCard } from "./components/NextClassCard";
 import { PlayerListCard } from "./components/PlayerListCard";
 import { PreviousClassCard } from "./components/PreviousClassCard";
@@ -46,6 +49,7 @@ export function WatchTraining() {
   const [nextVideoClass, setNextVideoClass] = useState<IVideoClassDTO | null>(
     null
   );
+  const [trainingCompleteModal, setTrainingCompleteModal] = useState(false);
 
   const trainingsRepository = useMemo(() => {
     return new TrainingsRepository();
@@ -61,6 +65,10 @@ export function WatchTraining() {
 
   const trainingMetricsRepository = useMemo(() => {
     return new TrainingMetricsRepository();
+  }, []);
+
+  const certificatesRepository = useMemo(() => {
+    return new CertificatesRepository();
   }, []);
 
   const { isLoading: loading, setIsLoading } = useLoading();
@@ -357,6 +365,44 @@ export function WatchTraining() {
     updateNextPreviousClasses();
   }, [updateNextPreviousClasses, selectedVideoClass]);
 
+  const handleToggleTrainingCompleteModal = useCallback(() => {
+    setTrainingCompleteModal(!trainingCompleteModal);
+  }, [trainingCompleteModal]);
+
+  const handleGenerateCertificate = useCallback(async () => {
+    try {
+      const watchedTrainingClassesLength = watchedVideoClasses.filter(
+        (vc) => vc.training_id === trainingIdQueryParam!
+      ).length;
+      const trainingsVideoClassesLength = videoClasses.length;
+      if (
+        watchedTrainingClassesLength > 0 &&
+        trainingsVideoClassesLength > 0 &&
+        watchedTrainingClassesLength === trainingsVideoClassesLength
+      ) {
+        await certificatesRepository.generateCertificate({
+          user_id: user.id,
+          training_id: trainingIdQueryParam!,
+        });
+        showAlertSuccess("Seu certificado foi gerado com sucesso!");
+        handleToggleTrainingCompleteModal();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [
+    certificatesRepository,
+    handleToggleTrainingCompleteModal,
+    trainingIdQueryParam,
+    user.id,
+    videoClasses.length,
+    watchedVideoClasses,
+  ]);
+
+  useEffect(() => {
+    handleGenerateCertificate();
+  }, [handleGenerateCertificate]);
+
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
       <div className="mb-2">
@@ -366,7 +412,9 @@ export function WatchTraining() {
         />
       </div>
       {isLoading || loading ? (
-        <Loading color={PRIMARY_COLOR} />
+        <div className="w-full mt-[10vh]">
+          <Loading color={PRIMARY_COLOR} />
+        </div>
       ) : hasError ? (
         <div className="w-full flex flex-row justify-center">
           <img
@@ -466,6 +514,11 @@ export function WatchTraining() {
           </div>
         </div>
       )}
+      <TrainingCompleteModal
+        onRequestClose={handleToggleTrainingCompleteModal}
+        isOpen={trainingCompleteModal}
+        training={training && training}
+      />
     </div>
   );
 }
