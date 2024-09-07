@@ -88,6 +88,7 @@ export function WatchTraining() {
 
   const queryParams = new URLSearchParams(location.search);
   const trainingIdQueryParam = queryParams.get("trainingId");
+  const videoClassIdQueryParam = queryParams.get("classId");
 
   const getTrainingDetails = useCallback(
     async (trainingId: string) => {
@@ -402,6 +403,12 @@ export function WatchTraining() {
   useEffect(() => {
     handleGenerateCertificate();
   }, [handleGenerateCertificate]);
+
+  useEffect(() => {
+    if (trainingIdQueryParam && videoClassIdQueryParam) {
+      getVideoClass(videoClassIdQueryParam);
+    }
+  }, [getVideoClass, trainingIdQueryParam, videoClassIdQueryParam]);
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">

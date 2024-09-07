@@ -21,6 +21,16 @@ export class WatchedClassesRepository implements IWatchedClassesRepository {
       throw error;
     }
   }
+  async listWatchedClassesByUser(userId: string): Promise<IWatchedClassDTO[]> {
+    try {
+      const response = await api.get<IApiSuccessResponse<IWatchedClassDTO[]>>(
+        `/watched-classes/list-by-user/${userId}`
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
   async addWatchedClass(
     data: ICreateWatchedClassesDTO
   ): Promise<IWatchedClassDTO> {

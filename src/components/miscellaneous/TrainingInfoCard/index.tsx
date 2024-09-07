@@ -8,7 +8,6 @@ interface TrainingInfoCardProps {
   training: string;
   description: string;
   cover_url: string;
-  totalTrainingDuration: string;
   lastClassName: string | null;
   lastClassDuration: string | null;
   totalCourseClasses: number;
@@ -23,7 +22,6 @@ export function TrainingInfoCard({
   cover_url,
   training,
   description,
-  totalTrainingDuration,
   lastClassName,
   lastClassDuration,
   totalCourseClasses,
@@ -84,14 +82,6 @@ export function TrainingInfoCard({
         <div className="w-full h-[1px] bg-gray-200 dark:bg-slate-600 mt-2 mb-2" />
         {totalWatchedClasses === 0 && !userStartedTraining ? (
           <div className="flex flex-col w-full">
-            <div className="flex flex-row mb-1 ml-1">
-              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1 mb-2">
-                Duração do treinamento:
-              </span>
-              <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1 mb-2">
-                {totalTrainingDuration}
-              </span>
-            </div>
             <div className="flex flex-row mb-3 ml-1">
               <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
                 {totalWatchedClasses} de
