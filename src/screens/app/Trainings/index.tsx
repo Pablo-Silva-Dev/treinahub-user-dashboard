@@ -108,9 +108,6 @@ export function Trainings() {
               {trainings.map((training) => (
                 <TrainingInfoCard
                   key={training.id}
-                  totalTrainingDuration={formatTimeString(
-                    training.formatted_duration!
-                  )}
                   cover_url={
                     training.cover_url
                       ? training.cover_url

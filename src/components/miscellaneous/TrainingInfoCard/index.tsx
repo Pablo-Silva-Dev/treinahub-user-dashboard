@@ -1,8 +1,5 @@
-import { collapseLongString } from "@/utils/formats";
 import ProgressBar from "@ramonak/react-progress-bar";
 import Feather from "feather-icons-react";
-import { useState } from "react";
-import { Collapse } from "react-collapse";
 
 interface TrainingInfoCardProps {
   training: string;
@@ -31,10 +28,6 @@ export function TrainingInfoCard({
   onStartTraining,
   userStartedTraining,
 }: TrainingInfoCardProps) {
-  const [isCollapsed, setIsCollapsed] = useState(true);
-
-  const descriptionCollapsedLength = description.length / 2;
-
   const totalCourseProgressPercentage =
     totalWatchedClasses > 0
       ? Number(Number(totalWatchedClasses / totalCourseClasses) * 100).toFixed(
@@ -47,39 +40,19 @@ export function TrainingInfoCard({
       <img
         src={cover_url}
         alt="info_card_placeholder"
-        className="w-full aspect-auto"
+        className="w-full max-h-[240px] aspect-auto"
       />
       <div className="w-full p-4 flex flex-col ">
         <span className="text-gray-800 dark:text-gray-50 text-[13px] md:text-[14px] font-bold font-secondary mb-1">
           {training}
         </span>
-        <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
-          {isCollapsed &&
-            collapseLongString(description, descriptionCollapsedLength)}
-        </span>
-        <Collapse isOpened={!isCollapsed}>
+        <div className="w-full h-[80px] overflow-y-auto overflow-x-hidden">
           <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
             {description}
           </span>
-        </Collapse>
-        <div className="w-full flex-row justify-start">
-          {isCollapsed ? (
-            <button
-              className="font-bold text-gray-800 dark:text-gray-50 mt-2 text-[11px] lg:text-sm"
-              onClick={() => setIsCollapsed(false)}
-            >
-              Mostrar mais
-            </button>
-          ) : (
-            <button
-              className=" font-bold text-gray-800 dark:text-gray-50 mt-2 text-[11px] lg:text-sm"
-              onClick={() => setIsCollapsed(true)}
-            >
-              Mostrar menos
-            </button>
-          )}
         </div>
-        <div className="w-full h-[1px] bg-gray-200 dark:bg-slate-600 mt-2 mb-2" />
+
+        <div className="w-full h-[1px] bg-gray-200 dark:bg-slate-600 mt-3 mb-2" />
         {totalWatchedClasses === 0 && !userStartedTraining ? (
           <div className="flex flex-col w-full">
             <div className="flex flex-row mb-3 ml-1">
