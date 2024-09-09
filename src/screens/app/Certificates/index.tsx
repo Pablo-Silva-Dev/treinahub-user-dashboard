@@ -9,6 +9,7 @@ import { showAlertSuccess } from "@/utils/alerts";
 import { formatDate } from "@/utils/formats";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Lottie from "react-lottie";
+import { useNavigate } from "react-router-dom";
 import { CertificateCard } from "./components/CertificateCard";
 
 export function Certificates() {
@@ -16,6 +17,7 @@ export function Certificates() {
   const [, setSelectedCertificate] = useState<ICertificateDTO | null>(null);
 
   const { user } = useAuthenticationStore();
+  const navigate = useNavigate();
 
   const certificatesRepository = useMemo(() => {
     return new CertificatesRepository();
@@ -52,6 +54,10 @@ export function Certificates() {
     rendererSettings: {
       preserveAspectRatio: "xMidYMid slice",
     },
+  };
+
+  const handleSeeTrainings = () => {
+    navigate("/dashboard/acessar-meus-treinamentos");
   };
 
   return (
@@ -100,7 +106,10 @@ export function Certificates() {
               estarão disponíveis a medida que os treinamentos forem concluídos.
             </span>
             <div className="w-full mt-5">
-              <Button title="Acessar meus treinamentos" />
+              <Button
+                title="Acessar meus treinamentos"
+                onClick={handleSeeTrainings}
+              />
             </div>
           </div>
         </div>

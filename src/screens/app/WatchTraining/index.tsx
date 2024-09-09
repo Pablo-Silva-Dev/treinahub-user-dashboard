@@ -1,6 +1,7 @@
 import { PRIMARY_COLOR } from "@/appConstants/index";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
+import video_thumbnail_placeholder from "@/assets/video_thumbnail_placeholder.svg";
 import { Loading } from "@/components/miscellaneous/Loading";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
@@ -432,22 +433,33 @@ export function WatchTraining() {
       ) : (
         <div className="w-full flex flex-col xl:flex-row">
           <div className="w-full  xl:w-[55%] flex flex-col">
-            <div className="flex flex-col  w-full aspect-video min-h-[200px] ">
-              <Player
-                onError={refetchVideoClass}
-                url={
-                  selectedVideoClass && selectedVideoClass.hls_encoding_url
-                    ? selectedVideoClass.hls_encoding_url
-                    : firstVideoClass && firstVideoClass.hls_encoding_url
-                      ? firstVideoClass.hls_encoding_url
-                      : ""
-                }
-                controls
-                width="100%"
-                height="100%"
-                volume={1}
-                onEnded={handleMarkClassAsWatched}
-              />
+            <div className="flex flex-col  w-full aspect-video min-h-[200px] mb-4">
+              {(selectedVideoClass && selectedVideoClass.hls_encoding_url) ||
+              (selectedVideoClass && selectedVideoClass.hls_encoding_url) ||
+              (firstVideoClass && firstVideoClass.hls_encoding_url) ||
+              (firstVideoClass && firstVideoClass.hls_encoding_url) ? (
+                <Player
+                  onError={refetchVideoClass}
+                  url={
+                    selectedVideoClass && selectedVideoClass.hls_encoding_url
+                      ? selectedVideoClass.hls_encoding_url
+                      : firstVideoClass && firstVideoClass.hls_encoding_url
+                        ? firstVideoClass.hls_encoding_url
+                        : ""
+                  }
+                  controls
+                  width="100%"
+                  height="100%"
+                  volume={1}
+                  onEnded={handleMarkClassAsWatched}
+                />
+              ) : (
+                <img
+                  src={video_thumbnail_placeholder}
+                  alt="ps_trainings"
+                  className="w-full aspect-video bg-transparent mb-8"
+                />
+              )}
             </div>
             <Subtitle
               content={

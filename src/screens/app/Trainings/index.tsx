@@ -1,7 +1,9 @@
 import { PRIMARY_COLOR } from "@/appConstants/index";
+import empty_box_animation from "@/assets/empty_box_animation.json";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
 import infocard_placeholder from "@/assets/info_card_placeholder.png";
+import { Button } from "@/components/buttons/Button";
 import { Loading } from "@/components/miscellaneous/Loading";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { TrainingInfoCard } from "@/components/miscellaneous/TrainingInfoCard";
@@ -16,6 +18,7 @@ import { useThemeStore } from "@/store/theme";
 import { formatTimeString } from "@/utils/formats";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import Lottie from "react-lottie";
 import { useNavigate } from "react-router-dom";
 
 export function Trainings() {
@@ -79,6 +82,19 @@ export function Trainings() {
     [getTrainings, trainingMetricsRepository]
   );
 
+  const animationOptions = {
+    animationData: empty_box_animation,
+    loop: true,
+    autoplay: true,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
+  const handleContactSupport = () => {
+    navigate("/dashboard/acessar-suporte");
+  };
+
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8">
       <div className="flex flex-col justify-between mb-6 mx-auto md:mx-[80px] w-[80%]">
@@ -102,6 +118,28 @@ export function Trainings() {
                 alt="ps-trainings"
                 width={240}
               />
+            </div>
+          ) : trainings.length === 0 ? (
+            <div className="w-full flex flex-col items-center">
+              <div className="w-full flex flex-col items-start relative max-w-[480px]">
+                <Lottie
+                  speed={0.25}
+                  height={200}
+                  width={200}
+                  options={animationOptions}
+                />
+                <span className="mt-3 text-gray-600 dark:text-gray-300 text-sm md:text-[15px] text-center">
+                  Ainda não há treinamentos disponíveis. Contate seu
+                  administrador para se informar sobre a disponibilidade dos
+                  treinamentos.
+                </span>
+                <div className="w-full mt-5">
+                  <Button
+                    title="Acessar suporte"
+                    onClick={handleContactSupport}
+                  />
+                </div>
+              </div>
             </div>
           ) : (
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

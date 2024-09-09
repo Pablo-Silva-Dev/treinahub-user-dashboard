@@ -17,10 +17,12 @@ import { useAuthenticationStore } from "@/store/auth";
 import { useThemeStore } from "@/store/theme";
 import { secondsToFullTimeString } from "@/utils/formats";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function Home() {
+  const [hasNoWatchedClasses, setHasNoWatchedClasses] = useState(false);
+
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
   const navigate = useNavigate();
@@ -43,7 +45,10 @@ export function Home() {
         await watchedClassesRepository.listWatchedClassesByUser(user.id);
       const lastWatchedClass = watchedClasses.slice(-1)[0];
 
-      if (!watchedClasses) return null;
+      if (!watchedClasses || watchedClasses.length === 0) {
+        setHasNoWatchedClasses(true);
+        return null;
+      }
 
       const lastWatchedClassInfo =
         await videoClassesRepository.getVideoClassById(
@@ -57,6 +62,8 @@ export function Home() {
           user_id: user.id,
           training_id: lastWatchedClassInfo.training_id,
         });
+
+      if (!trainingMetrics) return null;
 
       return { lastWatchedClassInfo, trainingMetrics };
     } catch (error) {
@@ -99,7 +106,15 @@ export function Home() {
       <div className=" w-full flex flex-col md:ml-4 ">
         <div className="flex flex-col justify-between mb-6 mx-auto md:mx-[80px] w-[80%]">
           <GreetUser userName="John Doe" />
-          {isLoading || !lastWatchedClassInfo || !trainingMetrics ? (
+          {hasNoWatchedClasses ? (
+            <div className="w-full">
+              <Subtitle
+                content="Acesse seus treinamentos"
+                className="mb-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%]"
+              />
+              <ImageCardButton />
+            </div>
+          ) : isLoading || !lastWatchedClassInfo || !trainingMetrics ? (
             <div className="w-full flex flex-col items-center mt-[10vh]">
               <Loading color={PRIMARY_COLOR} />
             </div>
