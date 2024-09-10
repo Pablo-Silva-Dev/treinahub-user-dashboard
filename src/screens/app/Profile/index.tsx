@@ -161,10 +161,35 @@ export function Profile() {
 
   const handleUpdateProfile = useCallback(
     async (data: IUpdateUserDTO) => {
+      if (!user) return;
+
+      const {
+        cep: cep_user,
+        city: city_user,
+        district: district_user,
+        street: street_user,
+        residence_number: residence_number_user,
+        uf: uf_user,
+      } = user;
+
+      const finalCep = cepAddress || cep_user || "";
+      const finalCity = city || city_user || "";
+      const finalStreet = street || street_user || "";
+      const finalDistrict = district || district_user || "";
+      const finalResidenceNumber =
+        residenceNumber || residence_number_user || "";
+      const finalUf = uf || uf_user || "";
+
       try {
         setIsLoading(true);
         await usersRepository.updateUser({
           ...data,
+          cep: finalCep,
+          city: finalCity,
+          district: finalDistrict,
+          residence_number: finalResidenceNumber,
+          street: finalStreet,
+          uf: finalUf,
           phone: formatPhoneNumber(phone),
         });
         showAlertSuccess("Dados atualizados com sucesso!");
@@ -180,10 +205,17 @@ export function Profile() {
       }
     },
     [
+      cepAddress,
+      city,
+      district,
       getUserInfo,
       handleToggleEditProfileModal,
       phone,
+      residenceNumber,
       setIsLoading,
+      street,
+      uf,
+      user,
       usersRepository,
     ]
   );
