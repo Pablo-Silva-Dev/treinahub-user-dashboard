@@ -1,7 +1,7 @@
 import { PRIMARY_COLOR } from "@/appConstants/index";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
-import infocard_placeholder from "@/assets/info_card_placeholder.png";
+import infocard_placeholder from "@/assets/infocard_placeholder.svg";
 import GreetUser from "@/components/miscellaneous/GreetUser";
 import { ImageCardButton } from "@/components/miscellaneous/ImageCardButton";
 import { Loading } from "@/components/miscellaneous/Loading";
