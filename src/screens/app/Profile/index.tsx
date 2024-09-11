@@ -1,7 +1,7 @@
-import { PRIMARY_COLOR } from "@/appConstants/index";
-import avatar_placeholder from "@/assets/avatar_placeholder.svg";
+import { AVATAR_PLACEHOLDER_URL, PRIMARY_COLOR } from "@/appConstants/index";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
+import { DeleteModal } from "@/components/miscellaneous/DeleteModal";
 import { Loading } from "@/components/miscellaneous/Loading";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
@@ -28,8 +28,10 @@ export function Profile() {
   const [isEditProfileModalOpen, setIsEditModalProfileOpen] = useState(false);
   const [isUpdateAvatarModalOpen, setIsUpdateAvatarProfileModalOpen] =
     useState(false);
+  const [isDeleteAccountModalOpen, setIsDeleteAccountModalOpen] =
+    useState(false);
 
-  const { user: authenticatedUser } = useAuthenticationStore();
+  const { user: authenticatedUser, signOut } = useAuthenticationStore();
   const { isLoading, setIsLoading } = useLoading();
   const { theme } = useThemeStore();
 
@@ -83,6 +85,10 @@ export function Profile() {
   const handleToggleEditProfileModal = useCallback(() => {
     setIsEditModalProfileOpen(!isEditProfileModalOpen);
   }, [isEditProfileModalOpen]);
+
+  const handleToggleDeleteAccountModal = useCallback(() => {
+    setIsDeleteAccountModalOpen(!isDeleteAccountModalOpen);
+  }, [isDeleteAccountModalOpen]);
 
   const usersRepository = useMemo(() => {
     return new UsersRepository();
@@ -220,6 +226,27 @@ export function Profile() {
     ]
   );
 
+  const handleDeleteAccount = useCallback(async () => {
+    try {
+      await avatarsRepository.deleteUserAvatars({
+        avatar_id: avatar!.id,
+        user_id: user!.id,
+      });
+      const TIMEOUT = 1000;
+      const timer = setTimeout(async () => {
+        await usersRepository.deleteUser(user!.id);
+        showAlertSuccess("Sua conta foi removida com sucesso!");
+      }, TIMEOUT);
+      signOut();
+      return () => clearTimeout(timer);
+    } catch (error) {
+      showAlertError(
+        "Houve um erro ao tentar remover sua conta. Por favor, tente novamente mais tarde."
+      );
+      console.log(error);
+    }
+  }, [avatar, avatarsRepository, signOut, user, usersRepository]);
+
   return (
     <div className="w-full flex flex-col p-8 md:pl-[80px]">
       <ScreenTitleIcon screenTitle="Meu perfil" iconName="user" />
@@ -241,9 +268,12 @@ export function Profile() {
         </div>
       ) : (
         <ProfileCard
-          avatar_url={avatar && avatar.url ? avatar.url : avatar_placeholder}
+          avatar_url={
+            avatar && avatar.url ? avatar.url : AVATAR_PLACEHOLDER_URL
+          }
           onUpdateProfile={handleToggleEditProfileModal}
           onUpdateAvatar={handleToggleUpdateAvatarModal}
+          onDeleteAccount={handleToggleDeleteAccountModal}
           user={user}
         />
       )}
@@ -278,6 +308,13 @@ export function Profile() {
         onClose={handleToggleUpdateAvatarModal}
         onRequestClose={handleToggleUpdateAvatarModal}
         onConfirmAction={handleUpdateAvatar}
+      />
+      <DeleteModal
+        resource="cadastro"
+        isOpen={isDeleteAccountModalOpen}
+        onClose={handleToggleDeleteAccountModal}
+        onRequestClose={handleToggleDeleteAccountModal}
+        onConfirmAction={handleDeleteAccount}
       />
     </div>
   );

@@ -1,13 +1,14 @@
 import { IUserDTO } from "@/repositories/dtos/UserDTO";
 import { formatDate, unformatPhoneNumber } from "@/utils/formats";
 import { Avatar, Tooltip } from "@material-tailwind/react";
-import { MdEdit, MdOutlinePhotoCamera } from "react-icons/md";
+import { MdDelete, MdEdit, MdOutlinePhotoCamera } from "react-icons/md";
 
 interface ProfileCardProps {
   user: IUserDTO;
   avatar_url: string;
   onUpdateProfile: () => void;
   onUpdateAvatar: () => void;
+  onDeleteAccount: () => void;
 }
 
 export function ProfileCard({
@@ -15,6 +16,7 @@ export function ProfileCard({
   avatar_url,
   onUpdateProfile,
   onUpdateAvatar,
+  onDeleteAccount,
 }: ProfileCardProps) {
   return (
     <div className="w-full lg:w-[90%] bg-white dark:bg-slate-700 flex flex-col lg:flex-row p-5 rounded-md">
@@ -133,7 +135,14 @@ export function ProfileCard({
             onClick={onUpdateProfile}
           >
             <MdEdit className="text-gray-800 dark:text-gray-50 h-4 w-4 mr-2 " />
-            Atualizar dados
+            Atualizar meus dados
+          </button>
+          <button
+            className=" flex flex-row justify-center  items-center border-2 border-red-300 p-2 rounded-md w-[240px] text-[12px] lg:text-sm text-red-300  mt-4"
+            onClick={onDeleteAccount}
+          >
+            <MdDelete className="text-red-300 h-4 w-4 mr-2 " />
+            Excluir minha conta
           </button>
         </div>
       </div>

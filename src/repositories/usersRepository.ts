@@ -99,4 +99,14 @@ export class UsersRepository implements IUsersRepository {
       throw error;
     }
   }
+  async deleteUser(userId: string): Promise<void> {
+    try {
+      const response = await api.delete<IApiSuccessResponse<void>>(
+        `/users/delete/${userId}`
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

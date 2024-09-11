@@ -59,7 +59,6 @@ export function UpdateAvatarModal({
         }
       )
       .test("fileSize", FILE_MAX_SIZE_MESSAGE + "2MB", (value: any) => {
-        if (!value || value.length === 0) return true; // Allow empty file
         return value[0].size <= MAX_AVATAR_FILE_SIZE;
       }),
   });
@@ -141,7 +140,11 @@ export function UpdateAvatarModal({
             <ErrorMessage errorMessage={errors.img_file.message} />
           )}
         </div>
-        <Button title="Atualizar foto" type="submit" disabled={!isValid} />
+        <Button
+          title="Atualizar foto"
+          type="submit"
+          disabled={!isValid || !wasFileUploaded}
+        />
         <button
           onClick={onClose}
           className="text-black dark:text-white bg-gray-200 dark:bg-slate-700 p-4 rounded-lg text-[13px] md:text-[14px] w-full my-2"

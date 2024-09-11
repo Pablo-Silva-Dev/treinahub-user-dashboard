@@ -19,8 +19,12 @@ const SUCCESS_COLOR = "#049810";
 const SUPPORT_STARTING_MESSAGE =
   "Você está acessando o suporte. Para iniciar o atendimento, informe sua dúvida.";
 
+const AVATAR_PLACEHOLDER_URL =
+  "https://i.ibb.co/GTxthyK/avatar-placeholder.png";
+
 export {
   ANSWER_MIN_MESSAGE,
+  AVATAR_PLACEHOLDER_URL,
   BIRTH_DATE_INVALID_MESSAGE,
   CPF_INVALID_MESSAGE,
   DESCRIPTION_MIN_MESSAGE,

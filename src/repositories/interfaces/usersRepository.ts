@@ -26,4 +26,5 @@ export interface IUsersRepository {
   ): Promise<IAuthenticateUserResponse>;
   registerUser(data: ICreateUserDTO): Promise<IUserDTO>;
   getUserById(userId: string): Promise<IUserDTO>;
+  deleteUser(userId: string): Promise<void>;
 }

@@ -1,5 +1,6 @@
-import { NAVIGATION_TIMER } from "@/appConstants/index";
+import { AVATAR_PLACEHOLDER_URL, NAVIGATION_TIMER } from "@/appConstants/index";
 import { HeaderNavigation } from "@/components/miscellaneous/HeaderNavigation";
+import { AvatarsRepository } from "@/repositories/avatarsRepository";
 import { UsersRepository } from "@/repositories/usersRepository";
 import { useLoading } from "@/store/loading";
 import { showAlertError, showAlertSuccess } from "@/utils/alerts";
@@ -29,10 +30,22 @@ export function SignUp() {
     return new UsersRepository();
   }, []);
 
+  const avatarsRepository = useMemo(() => {
+    return new AvatarsRepository();
+  }, []);
+
   const handleRegisterUser = async (data: any) => {
     try {
       setIsLoading(true);
-      await usersRepository.registerUser({ ...data, is_admin: true });
+      const user = await usersRepository.registerUser({
+        ...data,
+        is_admin: true,
+      });
+
+      await avatarsRepository.createAvatar({
+        url: AVATAR_PLACEHOLDER_URL,
+        user_id: user.id,
+      });
       showAlertSuccess("Cadastro realizado com sucesso!");
       setTimeout(() => {
         navigate("/");
