@@ -12,10 +12,11 @@ import { ITrainingDTO } from "@/repositories/dtos/TrainingDTO";
 import { ICreateTrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO";
 import { TrainingMetricsRepository } from "@/repositories/trainingMetricsRepository";
 import { TrainingsRepository } from "@/repositories/trainingsRepository";
+import { WatchedClassesRepository } from "@/repositories/watchedClassesRepository";
 import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
-import { formatTimeString } from "@/utils/formats";
+import { secondsToFullTimeString } from "@/utils/formats";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Lottie from "react-lottie";
@@ -44,6 +45,10 @@ export function Trainings() {
     return new TrainingMetricsRepository();
   }, []);
 
+  const watchedClassesRepository = useMemo(() => {
+    return new WatchedClassesRepository();
+  }, []);
+
   const getTrainings = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -61,9 +66,54 @@ export function Trainings() {
     }
   }, [setIsLoading, trainingsRepository]);
 
+  const getLastWatchedClassesByTraining = useCallback(
+    async (trainingId: string) => {
+      try {
+        setIsLoading(true);
+        const watchedClasses =
+          await watchedClassesRepository.listWatchedClassesByUserAndTraining({
+            user_id: user.id,
+            training_id: trainingId,
+          });
+
+        const lastWatchedClass = watchedClasses
+          .filter((wc) => wc.training_id === trainingId)
+          .slice(-1)[0];
+        return lastWatchedClass;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [setIsLoading, user.id, watchedClassesRepository]
+  );
+
   useEffect(() => {
-    getTrainings();
-  }, [getTrainings]);
+    const fetchTrainingsWithLastWatchedClass = async () => {
+      const trainings = await getTrainings();
+
+      if (trainings) {
+        const trainingsWithLastWatchedClass = await Promise.all(
+          trainings.map(async (training) => {
+            const lastWatchedClass = await getLastWatchedClassesByTraining(
+              training.id
+            );
+            return {
+              ...training,
+              last_watched_class_duration:
+                lastWatchedClass?.videoclass?.duration ?? null,
+              last_watched_class_name:
+                lastWatchedClass?.videoclass?.name ?? null,
+            };
+          })
+        );
+        setTrainings(trainingsWithLastWatchedClass);
+      }
+    };
+
+    fetchTrainingsWithLastWatchedClass();
+  }, [getLastWatchedClassesByTraining, getTrainings]);
 
   const { error, isLoading: loading } = useQuery({
     queryKey: ["training-metrics"],
@@ -154,19 +204,25 @@ export function Trainings() {
                   training={training.name}
                   description={training.description}
                   lastClassName={
-                    training.video_classes && training.video_classes.length > 0
-                      ? training.video_classes.slice(-1)[0].name
-                      : "Nenhuma aula foi assistida"
+                    training.last_watched_class_name
+                      ? training.last_watched_class_name
+                      : training.video_classes &&
+                          training.video_classes.length > 0
+                        ? training.video_classes[0].name
+                        : "Nenhuma aula foi assistida"
                   }
                   lastClassDuration={
-                    training.video_classes &&
-                    training.video_classes.length > 0 &&
-                    training.video_classes.slice(-1)[0].formatted_duration
-                      ? formatTimeString(
-                          training.video_classes.slice(-1)[0]
-                            .formatted_duration!
+                    training.last_watched_class_duration
+                      ? secondsToFullTimeString(
+                          training.last_watched_class_duration
                         )
-                      : "00:00"
+                      : training.video_classes &&
+                          training.video_classes.length > 0 &&
+                          training.video_classes[0].duration
+                        ? secondsToFullTimeString(
+                            training.video_classes[0].duration!
+                          )
+                        : "00:00"
                   }
                   totalCourseClasses={
                     training.video_classes && training.video_classes.length > 0

@@ -117,7 +117,7 @@ export function WatchTraining() {
 
       const sortedVideoClasses = sortVideoClasses(videoClasses);
 
-      if (videoClasses.length > 0) {
+      if (videoClasses && videoClasses.length > 0) {
         setFirstVideoClass(sortedVideoClasses![0]);
       }
       setVideoClasses(sortedVideoClasses!);

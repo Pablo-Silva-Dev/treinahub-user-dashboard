@@ -1,4 +1,5 @@
 import { IUserDTO } from "./UserDTO";
+import { IVideoClassDTO } from "./VideoClassDTO";
 
 export interface IWatchedClassDTO {
   user_id: string;
@@ -6,6 +7,7 @@ export interface IWatchedClassDTO {
   videoclass_id: string;
   watchedAt: Date;
   user?: IUserDTO;
+  videoclass?: IVideoClassDTO;
 }
 
 export interface ICreateWatchedClassesDTO {

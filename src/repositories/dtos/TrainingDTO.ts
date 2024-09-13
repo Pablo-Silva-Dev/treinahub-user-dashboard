@@ -14,4 +14,6 @@ export interface ITrainingDTO {
   certificates?: ICertificateDTO[];
   training_metrics?: ITrainingMetricsDTO[];
   formatted_duration?: string;
+  last_watched_class_name?: string | null;
+  last_watched_class_duration?: number | null;
 }

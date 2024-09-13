@@ -100,7 +100,7 @@ export function TrainingInfoCard({
               </span>
             </div>
             <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary mb-2">
-              Assitir aula
+              Assistir aula
             </span>
             <button
               className="w-full flex flex-col p-3 rounded-md  bg-gray-100 dark:bg-slate-600 mb-3"
