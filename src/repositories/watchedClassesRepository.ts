@@ -3,6 +3,7 @@ import {
   ICreateWatchedClassesDTO,
   IGetWatchedClassesByUserAndTrainingDTO,
   IRemoveWatchedClassDTO,
+  IUpdateVideoClassExecutionStatusDTO,
   IWatchedClassDTO,
 } from "./dtos/WatchedClassDTO";
 import { IWatchedClassesRepository } from "./interfaces/watchedClassesRepository";
@@ -48,6 +49,19 @@ export class WatchedClassesRepository implements IWatchedClassesRepository {
     try {
       const response = await api.post<IApiSuccessResponse<void>>(
         "/watched-classes/remove",
+        data
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async updateVideoClassExecutionStatus(
+    data: IUpdateVideoClassExecutionStatusDTO
+  ) {
+    try {
+      const response = await api.put<IApiSuccessResponse<IWatchedClassDTO>>(
+        "/watched-classes/add-as-incomplete-watched",
         data
       );
       return response.data.RES;

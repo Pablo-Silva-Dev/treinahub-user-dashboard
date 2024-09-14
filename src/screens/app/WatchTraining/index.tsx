@@ -291,14 +291,14 @@ export function WatchTraining() {
       : setShowPreviousClassButton(false);
   }, [selectedVideoClass?.reference_number, videoClasses]);
 
-  const handleMarkClassAsWatched = useCallback(async () => {
+  const handleMarkClassAsCompletelyWatched = useCallback(async () => {
     try {
-      await watchedClassesRepository.addWatchedClass({
-        training_id: trainingIdQueryParam!,
+      await watchedClassesRepository.updateVideoClassExecutionStatus({
         user_id: user.id,
         videoclass_id: selectedVideoClass!.id,
+        completely_watched: true,
+        execution_time: selectedVideoClass!.duration,
       });
-
       await videoClassesRepository
         .listVideoClassesByTraining(trainingIdQueryParam!)
         .then((res) => setVideoClasses(sortVideoClasses(res) as never));
@@ -317,7 +317,7 @@ export function WatchTraining() {
         .then((res) => setTrainingMetrics(res));
       getNextVideoClass();
     } catch (error) {
-      console.log(error);
+      console.log("Error at trying to updated video class at ending: ", error);
     }
   }, [
     getNextVideoClass,
@@ -329,6 +329,59 @@ export function WatchTraining() {
     videoClassesRepository,
     watchedClassesRepository,
   ]);
+
+  const addClassToWatchedAsIncomplete = useCallback(async () => {
+    try {
+      await watchedClassesRepository.addWatchedClass({
+        training_id: trainingIdQueryParam!,
+        user_id: user.id,
+        videoclass_id: selectedVideoClass!.id,
+        completely_watched: false,
+        execution_time: 0,
+      });
+
+      await trainingMetricsRepository
+        .updateTrainingMetrics({
+          id: trainingMetrics!.id,
+          training_id: trainingIdQueryParam!,
+          user_id: user.id,
+        })
+        .then((res) => setTrainingMetrics(res));
+    } catch (error) {
+      console.log("Error at trying to add class to watched list: ", error);
+    }
+  }, [
+    selectedVideoClass,
+    trainingIdQueryParam,
+    trainingMetrics,
+    trainingMetricsRepository,
+    user.id,
+    watchedClassesRepository,
+  ]);
+
+  const updateWatchedClassExecutionTime = useCallback(
+    async (playedSeconds: number) => {
+      const UPDATE_SECONDS_INTERVAL = 15;
+      const mustUpdateExecutionTime =
+        Math.floor(playedSeconds) % UPDATE_SECONDS_INTERVAL === 0;
+      try {
+        if (mustUpdateExecutionTime) {
+          await watchedClassesRepository.updateVideoClassExecutionStatus({
+            user_id: user.id,
+            videoclass_id: selectedVideoClass!.id,
+            completely_watched: false,
+            execution_time: playedSeconds,
+          });
+        }
+      } catch (error) {
+        console.log(
+          "Error at trying to update video class execution time",
+          error
+        );
+      }
+    },
+    [selectedVideoClass, user.id, watchedClassesRepository]
+  );
 
   const refetchVideoClass = async () => {
     await getVideoClasses();
@@ -451,7 +504,11 @@ export function WatchTraining() {
                   width="100%"
                   height="100%"
                   volume={1}
-                  onEnded={handleMarkClassAsWatched}
+                  onStart={addClassToWatchedAsIncomplete}
+                  onProgress={(state) =>
+                    updateWatchedClassExecutionTime(state.playedSeconds)
+                  }
+                  onEnded={handleMarkClassAsCompletelyWatched}
                 />
               ) : (
                 <img

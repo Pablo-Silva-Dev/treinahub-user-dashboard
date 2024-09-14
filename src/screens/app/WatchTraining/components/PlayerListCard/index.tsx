@@ -20,7 +20,9 @@ export function PlayerListCard({
   const MAX_CLASS_TITLE_LENGTH = 32;
 
   const wasVideoClassesWatched = (videoClassId: string) =>
-    watchedClasses.some((wc) => wc.videoclass_id === videoClassId);
+    watchedClasses.some(
+      (wc) => wc.videoclass_id === videoClassId && wc.completely_watched
+    );
 
   const handleUnwatchClass = (videoClassId: string) => {
     onSelectClass(videoClassId);
