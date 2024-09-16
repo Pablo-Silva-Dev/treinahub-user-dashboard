@@ -73,7 +73,6 @@ export function TrainingInfoCard({
             <div className="w-full">
               <button
                 className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 p-2 rounded-md"
-                //TODO-PABLO: Navigate to specific training video classes after creating new training metrics
                 onClick={onStartTraining}
               >
                 Iniciar treinamento
@@ -170,14 +169,12 @@ export function TrainingInfoCard({
             <div className="flex flex-row">
               <button
                 className=" bg-gray-100 dark:bg-slate-600 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 rounded-md w-full p-4 mr-4"
-                //TODO-Pablo open specific certificate modal on Training screen
                 onClick={onSeeCertificate}
               >
                 Ver certificado
               </button>
               <button
                 className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 rounded-md w-full p-4"
-                //TODO-Pablo open specific certificate modal on Training screen
                 onClick={onSeeTraining}
               >
                 Rever treinamento
