@@ -36,6 +36,8 @@ export function WatchTraining() {
     useStateRef<IVideoClassDTO | null>(null);
   const [selectedVideoClass, setSelectedVideoClass] =
     useState<IVideoClassDTO | null>(null);
+  const [selectedDeletableVideoClass, setSelectedDeletedVideoClass] =
+    useState<IVideoClassDTO | null>(null);
 
   const [watchedVideoClasses, setWatchedVideoClasses] = useState<
     IWatchedClassDTO[]
@@ -203,10 +205,29 @@ export function WatchTraining() {
         const videoClass =
           await videoClassesRepository.getVideoClassById(videoClassId);
         setSelectedVideoClass(videoClass);
+        setSelectedDeletedVideoClass(videoClass);
         return videoClass;
       } catch (error) {
         console.log(error);
       }
+    },
+    [videoClassesRepository]
+  );
+
+  const selectVideoClass = useCallback(
+    async (videoClassId: string) => {
+      const videoClass =
+        await videoClassesRepository.getVideoClassById(videoClassId);
+      setSelectedVideoClass(videoClass);
+    },
+    [videoClassesRepository]
+  );
+
+  const selectDeletableVideoClass = useCallback(
+    async (videoClassId: string) => {
+      const videoClass =
+        await videoClassesRepository.getVideoClassById(videoClassId);
+      setSelectedDeletedVideoClass(videoClass);
     },
     [videoClassesRepository]
   );
@@ -233,6 +254,13 @@ export function WatchTraining() {
           user_id: user.id,
           videoclass_id: classId,
         });
+        await trainingMetricsRepository
+          .updateTrainingMetrics({
+            id: trainingMetrics!.id,
+            training_id: trainingIdQueryParam!,
+            user_id: user.id,
+          })
+          .then((res) => setTrainingMetrics(res));
         await videoClassesRepository
           .listVideoClassesByTraining(trainingIdQueryParam!)
           .then((res) => setVideoClasses(sortVideoClasses(res) as never));
@@ -242,13 +270,6 @@ export function WatchTraining() {
             training_id: trainingIdQueryParam!,
           })
           .then((res) => setWatchedVideoClasses(res));
-        await trainingMetricsRepository
-          .updateTrainingMetrics({
-            id: trainingMetrics!.id,
-            training_id: trainingIdQueryParam!,
-            user_id: user.id,
-          })
-          .then((res) => setTrainingMetrics(res));
       } catch (error) {
         console.log(error);
       }
@@ -308,13 +329,6 @@ export function WatchTraining() {
           training_id: trainingIdQueryParam!,
         })
         .then((res) => setWatchedVideoClasses(res));
-      await trainingMetricsRepository
-        .updateTrainingMetrics({
-          id: trainingMetrics!.id,
-          training_id: trainingIdQueryParam!,
-          user_id: user.id,
-        })
-        .then((res) => setTrainingMetrics(res));
       getNextVideoClass();
     } catch (error) {
       console.log("Error at trying to updated video class at ending: ", error);
@@ -323,8 +337,6 @@ export function WatchTraining() {
     getNextVideoClass,
     selectedVideoClass,
     trainingIdQueryParam,
-    trainingMetrics,
-    trainingMetricsRepository,
     user.id,
     videoClassesRepository,
     watchedClassesRepository,
@@ -365,7 +377,7 @@ export function WatchTraining() {
       const mustUpdateExecutionTime =
         Math.floor(playedSeconds) % UPDATE_SECONDS_INTERVAL === 0;
       try {
-        if (mustUpdateExecutionTime) {
+        if (playedSeconds !== 0 && mustUpdateExecutionTime) {
           await watchedClassesRepository.updateVideoClassExecutionStatus({
             user_id: user.id,
             videoclass_id: selectedVideoClass!.id,
@@ -463,6 +475,47 @@ export function WatchTraining() {
       getVideoClass(videoClassIdQueryParam);
     }
   }, [getVideoClass, trainingIdQueryParam, videoClassIdQueryParam]);
+
+  const getNextOneClassToWatch = useCallback(async () => {
+    if (videoClasses.length !== watchedVideoClasses.length) {
+      try {
+        if (!selectedVideoClass) return;
+
+        const currentWatchedClass = watchedVideoClasses.find(
+          (wc) => wc.videoclass_id === selectedVideoClass.id
+        );
+
+        if (currentWatchedClass?.completely_watched) {
+          const currentWatchedClassIndex = videoClasses.findIndex(
+            (vc) => vc.id === selectedVideoClass.id
+          );
+
+          const previousVideoClassToWatch =
+            videoClasses[currentWatchedClassIndex - 1];
+
+          const nexVideoClassToWatch =
+            videoClasses[currentWatchedClassIndex + 1];
+
+          if (
+            currentWatchedClassIndex !== -1 &&
+            currentWatchedClassIndex < videoClasses.length - 1
+          ) {
+            setSelectedVideoClass(nexVideoClassToWatch);
+            setShowPreviousClassButton(true);
+          } else {
+            setSelectedVideoClass(previousVideoClassToWatch);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoClasses, watchedVideoClasses]);
+
+  useEffect(() => {
+    getNextOneClassToWatch();
+  }, [getNextOneClassToWatch]);
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
@@ -583,9 +636,12 @@ export function WatchTraining() {
               classes={videoClasses}
               watchedClasses={watchedVideoClasses}
               onUnwatchClass={() =>
-                handleUnwatchClassAndUpdateMetrics(selectedVideoClass!.id)
+                handleUnwatchClassAndUpdateMetrics(
+                  selectedDeletableVideoClass!.id
+                )
               }
-              onSelectClass={getVideoClass}
+              onSelectClass={selectVideoClass}
+              onSelectDeletableClass={selectDeletableVideoClass}
             />
           </div>
         </div>

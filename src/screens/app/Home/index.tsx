@@ -10,6 +10,7 @@ import { Subtitle } from "@/components/typography/Subtitle";
 import { Text } from "@/components/typography/Text";
 import { ITrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO";
 import { IVideoClassDTO } from "@/repositories/dtos/VideoClassDTO";
+import { IWatchedClassDTO } from "@/repositories/dtos/WatchedClassDTO";
 import { TrainingMetricsRepository } from "@/repositories/trainingMetricsRepository";
 import { VideoClassesRepository } from "@/repositories/videoClassesRepository";
 import { WatchedClassesRepository } from "@/repositories/watchedClassesRepository";
@@ -22,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 
 export function Home() {
   const [hasNoWatchedClasses, setHasNoWatchedClasses] = useState(false);
+  const [watchedClasses, setWatchedClasses] = useState<IWatchedClassDTO[]>([]);
 
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
@@ -43,6 +45,7 @@ export function Home() {
     try {
       const watchedClasses =
         await watchedClassesRepository.listWatchedClassesByUser(user.id);
+      setWatchedClasses(watchedClasses);
       const lastWatchedClass = watchedClasses.slice(-1)[0];
 
       if (!watchedClasses || watchedClasses.length === 0) {
@@ -141,6 +144,7 @@ export function Home() {
                 className="mb-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%]"
               />
               <TrainingInfoCard
+                watchedClasses={watchedClasses}
                 cover_url={
                   lastWatchedClassInfo.thumbnail_url
                     ? lastWatchedClassInfo.thumbnail_url

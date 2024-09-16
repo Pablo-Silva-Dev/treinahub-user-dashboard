@@ -9,6 +9,7 @@ interface PlayerListCardProps {
   watchedClasses: IWatchedClassDTO[];
   onUnwatchClass: (classId: string) => void;
   onSelectClass: (classId: string) => void;
+  onSelectDeletableClass?: (classId: string) => void;
 }
 
 export function PlayerListCard({
@@ -16,6 +17,7 @@ export function PlayerListCard({
   watchedClasses,
   onUnwatchClass,
   onSelectClass,
+  onSelectDeletableClass,
 }: PlayerListCardProps) {
   const MAX_CLASS_TITLE_LENGTH = 32;
 
@@ -25,8 +27,11 @@ export function PlayerListCard({
     );
 
   const handleUnwatchClass = (videoClassId: string) => {
-    onSelectClass(videoClassId);
+    onSelectDeletableClass!(videoClassId);
     onUnwatchClass(videoClassId);
+  };
+  const handleSelectDeletableClass = (videoClassId: string) => {
+    onSelectDeletableClass!(videoClassId);
   };
 
   return (
@@ -74,6 +79,7 @@ export function PlayerListCard({
           {wasVideoClassesWatched(c.id) && (
             <button
               className="flex flex-col items-end w-[160px]"
+              onMouseEnter={() => handleSelectDeletableClass(c.id)}
               onClick={() => handleUnwatchClass(c.id)}
             >
               <div className="flex flex-1 justify-end">

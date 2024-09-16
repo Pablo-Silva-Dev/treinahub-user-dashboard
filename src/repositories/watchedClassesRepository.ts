@@ -61,7 +61,7 @@ export class WatchedClassesRepository implements IWatchedClassesRepository {
   ) {
     try {
       const response = await api.put<IApiSuccessResponse<IWatchedClassDTO>>(
-        "/watched-classes/add-as-incomplete-watched",
+        "/watched-classes/update-execution-time",
         data
       );
       return response.data.RES;

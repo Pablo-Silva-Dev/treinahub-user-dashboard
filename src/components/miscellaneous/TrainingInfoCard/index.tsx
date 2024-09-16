@@ -1,3 +1,4 @@
+import { IWatchedClassDTO } from "@/repositories/dtos/WatchedClassDTO";
 import ProgressBar from "@ramonak/react-progress-bar";
 import Feather from "feather-icons-react";
 
@@ -13,6 +14,7 @@ interface TrainingInfoCardProps {
   onSeeCertificate?: () => void;
   onStartTraining?: () => void;
   userStartedTraining: boolean;
+  watchedClasses: IWatchedClassDTO[];
 }
 
 export function TrainingInfoCard({
@@ -27,6 +29,7 @@ export function TrainingInfoCard({
   onSeeCertificate,
   onStartTraining,
   userStartedTraining,
+  watchedClasses,
 }: TrainingInfoCardProps) {
   const totalCourseProgressPercentage =
     totalWatchedClasses > 0
@@ -34,6 +37,10 @@ export function TrainingInfoCard({
           0
         )
       : 0;
+
+  const userHasCompletelyWatchedAllClasses = watchedClasses.every(
+    (wc) => wc.completely_watched
+  );
 
   return (
     <div className="w-full max-w-[480px] flex flex-col shadow-sm bg-white dark:bg-slate-700 rounded-md mr-0 md:mr-8">
@@ -73,7 +80,8 @@ export function TrainingInfoCard({
               </button>
             </div>
           </div>
-        ) : totalWatchedClasses < totalCourseClasses ? (
+        ) : totalWatchedClasses < totalCourseClasses ||
+          !userHasCompletelyWatchedAllClasses ? (
           <div className="w-full flex flex-col">
             <div className="flex flex-row mb-3 ml-1 items-evenly">
               <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">

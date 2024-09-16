@@ -10,6 +10,7 @@ import { TrainingInfoCard } from "@/components/miscellaneous/TrainingInfoCard";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { ITrainingDTO } from "@/repositories/dtos/TrainingDTO";
 import { ICreateTrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO";
+import { IWatchedClassDTO } from "@/repositories/dtos/WatchedClassDTO";
 import { TrainingMetricsRepository } from "@/repositories/trainingMetricsRepository";
 import { TrainingsRepository } from "@/repositories/trainingsRepository";
 import { WatchedClassesRepository } from "@/repositories/watchedClassesRepository";
@@ -25,12 +26,15 @@ import { useNavigate } from "react-router-dom";
 export function Trainings() {
   const navigate = useNavigate();
   const [trainings, setTrainings] = useState<ITrainingDTO[]>([]);
+  const [watchedClasses, setWatchedClasses] = useState<IWatchedClassDTO[]>([]);
   const { isLoading, setIsLoading } = useLoading();
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
 
-  const handleSeeTraining = (trainingId: string) => {
-    navigate(`/dashboard/assistir-treinamento?trainingId=${trainingId}`);
+  const handleSeeTraining = (trainingId: string, videoClassId: string) => {
+    navigate(
+      `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${videoClassId}`
+    );
   };
 
   const handleSeeCertificate = () => {
@@ -76,6 +80,8 @@ export function Trainings() {
             training_id: trainingId,
           });
 
+        setWatchedClasses(watchedClasses);
+
         const lastWatchedClass = watchedClasses
           .filter((wc) => wc.training_id === trainingId)
           .slice(-1)[0];
@@ -105,6 +111,7 @@ export function Trainings() {
                 lastWatchedClass?.videoclass?.duration ?? null,
               last_watched_class_name:
                 lastWatchedClass?.videoclass?.name ?? null,
+              last_watched_class_id: lastWatchedClass?.videoclass?.id ?? null,
             };
           })
         );
@@ -196,6 +203,7 @@ export function Trainings() {
               {trainings.map((training) => (
                 <TrainingInfoCard
                   key={training.id}
+                  watchedClasses={watchedClasses}
                   cover_url={
                     training.cover_url
                       ? training.cover_url
@@ -240,7 +248,12 @@ export function Trainings() {
                       ? true
                       : false
                   }
-                  onSeeTraining={() => handleSeeTraining(training.id)}
+                  onSeeTraining={() =>
+                    handleSeeTraining(
+                      training.id,
+                      training.last_watched_class_id!
+                    )
+                  }
                   onSeeCertificate={handleSeeCertificate}
                   onStartTraining={() =>
                     handleCreateTrainingMetrics({
