@@ -2,7 +2,7 @@ import { PRIMARY_COLOR } from "@/appConstants/index";
 import empty_box_animation from "@/assets/empty_box_animation.json";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
-import infocard_placeholder from "@/assets/info_card_placeholder.png";
+import infocard_placeholder from "@/assets/infocard_placeholder.svg";
 import { Button } from "@/components/buttons/Button";
 import { Loading } from "@/components/miscellaneous/Loading";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
