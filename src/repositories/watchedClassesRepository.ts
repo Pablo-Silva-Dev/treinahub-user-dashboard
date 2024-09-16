@@ -1,6 +1,7 @@
 import { api, IApiSuccessResponse } from "@/services/api";
 import {
   ICreateWatchedClassesDTO,
+  IGetWatchedClassByUserAndClassDTO,
   IGetWatchedClassesByUserAndTrainingDTO,
   IRemoveWatchedClassDTO,
   IUpdateVideoClassExecutionStatusDTO,
@@ -62,6 +63,17 @@ export class WatchedClassesRepository implements IWatchedClassesRepository {
     try {
       const response = await api.put<IApiSuccessResponse<IWatchedClassDTO>>(
         "/watched-classes/update-execution-time",
+        data
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getWatchedClass(data: IGetWatchedClassByUserAndClassDTO) {
+    try {
+      const response = await api.post<IApiSuccessResponse<IWatchedClassDTO>>(
+        "/watched-classes/get-by-user-and-class",
         data
       );
       return response.data.RES;

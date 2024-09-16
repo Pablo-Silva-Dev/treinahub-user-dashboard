@@ -21,7 +21,7 @@ import { useThemeStore } from "@/store/theme";
 import { showAlertSuccess } from "@/utils/alerts";
 import { secondsToFullTimeString } from "@/utils/formats";
 import { useQueries } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Player from "react-player";
 import { useLocation } from "react-router-dom";
 import useStateRef from "react-usestateref";
@@ -53,6 +53,9 @@ export function WatchTraining() {
     null
   );
   const [trainingCompleteModal, setTrainingCompleteModal] = useState(false);
+  const [lastClassExecutionTime, setLastClassExecutionTime] = useState(0);
+
+  const playerRef = useRef<Player>(null);
 
   const trainingsRepository = useMemo(() => {
     return new TrainingsRepository();
@@ -344,13 +347,19 @@ export function WatchTraining() {
 
   const addClassToWatchedAsIncomplete = useCallback(async () => {
     try {
-      await watchedClassesRepository.addWatchedClass({
-        training_id: trainingIdQueryParam!,
-        user_id: user.id,
-        videoclass_id: selectedVideoClass!.id,
-        completely_watched: false,
-        execution_time: 0,
-      });
+      const watchedClassHaveBenAdded = watchedVideoClasses.some(
+        (wc) => wc.videoclass_id === selectedVideoClass!.id
+      );
+
+      if (!watchedClassHaveBenAdded) {
+        await watchedClassesRepository.addWatchedClass({
+          training_id: trainingIdQueryParam!,
+          user_id: user.id,
+          videoclass_id: selectedVideoClass!.id,
+          completely_watched: false,
+          execution_time: 0,
+        });
+      }
 
       await trainingMetricsRepository
         .updateTrainingMetrics({
@@ -369,6 +378,7 @@ export function WatchTraining() {
     trainingMetricsRepository,
     user.id,
     watchedClassesRepository,
+    watchedVideoClasses,
   ]);
 
   const updateWatchedClassExecutionTime = useCallback(
@@ -377,7 +387,11 @@ export function WatchTraining() {
       const mustUpdateExecutionTime =
         Math.floor(playedSeconds) % UPDATE_SECONDS_INTERVAL === 0;
       try {
-        if (playedSeconds !== 0 && mustUpdateExecutionTime) {
+        if (
+          playedSeconds !== 0 &&
+          playedSeconds >= UPDATE_SECONDS_INTERVAL &&
+          mustUpdateExecutionTime
+        ) {
           await watchedClassesRepository.updateVideoClassExecutionStatus({
             user_id: user.id,
             videoclass_id: selectedVideoClass!.id,
@@ -517,6 +531,48 @@ export function WatchTraining() {
     getNextOneClassToWatch();
   }, [getNextOneClassToWatch]);
 
+  const getLastIncompletelyWatchedClass = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      if (selectedVideoClass) {
+        const lastWatchedClass = await watchedClassesRepository.getWatchedClass(
+          {
+            user_id: user.id!,
+            videoclass_id: selectedVideoClass.id,
+          }
+        );
+        if (!lastWatchedClass) {
+          return;
+        }
+        setLastClassExecutionTime(lastWatchedClass.execution_time!);
+      }
+    } catch (error) {
+      console.log(error);
+      return;
+    } finally {
+      setIsLoading(false);
+    }
+  }, [selectedVideoClass, setIsLoading, user.id, watchedClassesRepository]);
+
+  useEffect(() => {
+    getLastIncompletelyWatchedClass();
+  }, [getLastIncompletelyWatchedClass]);
+
+  const onReady = useCallback(() => {
+    const timeToStart = lastClassExecutionTime;
+    const watchedClassHaveBenAdded = watchedVideoClasses.some(
+      (wc) => wc.videoclass_id === selectedVideoClass!.id
+    );
+    if (
+      playerRef.current &&
+      watchedClassHaveBenAdded &&
+      lastClassExecutionTime > 0 &&
+      lastClassExecutionTime !== selectedVideoClass?.duration
+    ) {
+      playerRef.current.seekTo(timeToStart, "seconds");
+    }
+  }, [lastClassExecutionTime, selectedVideoClass, watchedVideoClasses]);
+
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
       <div className="mb-2">
@@ -545,7 +601,7 @@ export function WatchTraining() {
               (firstVideoClass && firstVideoClass.hls_encoding_url) ||
               (firstVideoClass && firstVideoClass.hls_encoding_url) ? (
                 <Player
-                  onError={refetchVideoClass}
+                  ref={playerRef}
                   url={
                     selectedVideoClass && selectedVideoClass.hls_encoding_url
                       ? selectedVideoClass.hls_encoding_url
@@ -557,11 +613,13 @@ export function WatchTraining() {
                   width="100%"
                   height="100%"
                   volume={1}
+                  onReady={onReady}
                   onStart={addClassToWatchedAsIncomplete}
                   onProgress={(state) =>
                     updateWatchedClassExecutionTime(state.playedSeconds)
                   }
                   onEnded={handleMarkClassAsCompletelyWatched}
+                  onError={refetchVideoClass}
                 />
               ) : (
                 <img
@@ -581,7 +639,6 @@ export function WatchTraining() {
               }
               className="m-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%] font-bold"
             />
-            {/* TODO-Pablo: Navigate between classes through reference_number */}
             <div className="w-full flex flex-col lg:flex-row justify-between">
               <PreviousClassCard
                 classDuration={

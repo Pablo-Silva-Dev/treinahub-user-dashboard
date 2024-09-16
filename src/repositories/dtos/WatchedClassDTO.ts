@@ -9,6 +9,7 @@ export interface IWatchedClassDTO {
   user?: IUserDTO;
   videoclass?: IVideoClassDTO;
   completely_watched: boolean;
+  execution_time?: number;
 }
 
 export interface ICreateWatchedClassesDTO {
@@ -24,6 +25,10 @@ export interface IGetWatchedClassesByUserAndTrainingDTO {
   training_id: string;
 }
 
+export interface IGetWatchedClassByUserAndClassDTO {
+  user_id: string;
+  videoclass_id: string;
+}
 export interface IRemoveWatchedClassDTO {
   user_id: string;
   videoclass_id: string;
