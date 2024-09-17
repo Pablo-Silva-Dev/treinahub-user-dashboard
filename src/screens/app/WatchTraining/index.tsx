@@ -392,10 +392,14 @@ export function WatchTraining() {
         (vc) => vc.training_id === trainingIdQueryParam!
       ).length;
       const trainingsVideoClassesLength = videoClasses.length;
+      const allClassesWatched = watchedVideoClasses.every(
+        (wc) => wc.completely_watched
+      );
       if (
         watchedTrainingClassesLength > 0 &&
         trainingsVideoClassesLength > 0 &&
-        watchedTrainingClassesLength === trainingsVideoClassesLength
+        watchedTrainingClassesLength === trainingsVideoClassesLength &&
+        allClassesWatched
       ) {
         await certificatesRepository.generateCertificate({
           user_id: user.id,
