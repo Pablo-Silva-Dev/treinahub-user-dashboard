@@ -1,7 +1,6 @@
 import { PRIMARY_COLOR } from "@/appConstants/index";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
-import video_thumbnail_placeholder from "@/assets/video_thumbnail_placeholder.svg";
 import { Loading } from "@/components/miscellaneous/Loading";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
@@ -20,11 +19,9 @@ import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
 import { showAlertSuccess } from "@/utils/alerts";
 import { secondsToFullTimeString } from "@/utils/formats";
-import { useQueries } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Player from "react-player";
 import { useLocation } from "react-router-dom";
-import useStateRef from "react-usestateref";
 import { TrainingCompleteModal } from "./components/GeneratedCertificateModal";
 import { NextClassCard } from "./components/NextClassCard";
 import { PlayerListCard } from "./components/PlayerListCard";
@@ -32,8 +29,6 @@ import { PreviousClassCard } from "./components/PreviousClassCard";
 
 export function WatchTraining() {
   const [videoClasses, setVideoClasses] = useState<IVideoClassDTO[]>([]);
-  const [firstVideoClass, setFirstVideoClass, firstVideoClassRef] =
-    useStateRef<IVideoClassDTO | null>(null);
   const [selectedVideoClass, setSelectedVideoClass] =
     useState<IVideoClassDTO | null>(null);
   const [selectedDeletableVideoClass, setSelectedDeletedVideoClass] =
@@ -54,6 +49,7 @@ export function WatchTraining() {
   );
   const [trainingCompleteModal, setTrainingCompleteModal] = useState(false);
   const [lastClassExecutionTime, setLastClassExecutionTime] = useState(0);
+  const [hasError, setHasError] = useState(false);
 
   const playerRef = useRef<Player>(null);
 
@@ -77,7 +73,7 @@ export function WatchTraining() {
     return new CertificatesRepository();
   }, []);
 
-  const { isLoading: loading, setIsLoading } = useLoading();
+  const { isLoading, setIsLoading } = useLoading();
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
   const location = useLocation();
@@ -96,92 +92,57 @@ export function WatchTraining() {
   const trainingIdQueryParam = queryParams.get("trainingId");
   const videoClassIdQueryParam = queryParams.get("classId");
 
-  const getTrainingDetails = useCallback(
-    async (trainingId: string) => {
-      try {
-        setIsLoading(true);
-        const training = await trainingsRepository.getTrainingById(trainingId);
-        setTraining(training);
-        return training;
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    },
-    [setIsLoading, trainingsRepository]
-  );
+  const fetchAllData = useCallback(async () => {
+    setIsLoading(true);
 
-  const getVideoClasses = useCallback(async () => {
     try {
-      setIsLoading(true);
-      const videoClasses =
-        await videoClassesRepository.listVideoClassesByTraining(
-          trainingIdQueryParam!
-        );
+      const trainingId = trainingIdQueryParam!;
 
-      const sortedVideoClasses = sortVideoClasses(videoClasses);
+      const videoClassesPromise =
+        videoClassesRepository.listVideoClassesByTraining(trainingId);
+      const trainingPromise = trainingsRepository.getTrainingById(trainingId);
+      const watchedClassesPromise =
+        watchedClassesRepository.listWatchedClassesByUserAndTraining({
+          user_id: user.id,
+          training_id: trainingId,
+        });
+      const trainingMetricsPromise =
+        trainingMetricsRepository.getTrainingMetricsByUserAndTraining({
+          training_id: trainingId,
+          user_id: user.id,
+        });
 
-      if (videoClasses && videoClasses.length > 0) {
-        setFirstVideoClass(sortedVideoClasses![0]);
-      }
-      setVideoClasses(sortedVideoClasses!);
-      return sortedVideoClasses;
-    } catch (error) {
-      console.log(error);
+      const [videoClasses, training, watchedVideoClasses, trainingMetrics] =
+        await Promise.all([
+          videoClassesPromise,
+          trainingPromise,
+          watchedClassesPromise,
+          trainingMetricsPromise,
+        ]);
+
+      setVideoClasses(videoClasses!);
+      setTraining(training);
+      setWatchedVideoClasses(watchedVideoClasses);
+      setTrainingMetrics(trainingMetrics);
+    } catch (err) {
+      setHasError(true);
+      console.error(err);
     } finally {
       setIsLoading(false);
     }
   }, [
     setIsLoading,
-    videoClassesRepository,
     trainingIdQueryParam,
-    setFirstVideoClass,
+    trainingMetricsRepository,
+    trainingsRepository,
+    user.id,
+    videoClassesRepository,
+    watchedClassesRepository,
   ]);
-
-  const getWatchedVideoClasses = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const watchedVideoClasses =
-        await watchedClassesRepository.listWatchedClassesByUserAndTraining({
-          user_id: user.id,
-          training_id: trainingIdQueryParam!,
-        });
-      setWatchedVideoClasses(watchedVideoClasses);
-      return watchedVideoClasses;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [setIsLoading, trainingIdQueryParam, user.id, watchedClassesRepository]);
-
-  const getTrainingMetrics = useCallback(async () => {
-    try {
-      const trainingMetrics =
-        await trainingMetricsRepository.getTrainingMetricsByUserAndTraining({
-          training_id: trainingIdQueryParam!,
-          user_id: user.id,
-        });
-      setTrainingMetrics(trainingMetrics);
-      return trainingMetrics;
-    } catch (error) {
-      console.log(error);
-    }
-  }, [trainingIdQueryParam, trainingMetricsRepository, user.id]);
 
   useEffect(() => {
-    getTrainingDetails(trainingIdQueryParam!);
-    getVideoClasses();
-    getWatchedVideoClasses();
-    getTrainingMetrics();
-  }, [
-    getWatchedVideoClasses,
-    getTrainingMetrics,
-    getTrainingDetails,
-    trainingIdQueryParam,
-    getVideoClasses,
-  ]);
+    fetchAllData();
+  }, [fetchAllData]);
 
   const autoUpdateTrainingMetrics = useCallback(async () => {
     try {
@@ -234,21 +195,6 @@ export function WatchTraining() {
     },
     [videoClassesRepository]
   );
-
-  const queries = useQueries({
-    queries: [
-      {
-        queryKey: ["training-details"],
-        queryFn: () => getTrainingDetails(trainingIdQueryParam!),
-      },
-      { queryKey: ["video-classes"], queryFn: getVideoClasses },
-      { queryKey: ["watched-video-classes"], queryFn: getWatchedVideoClasses },
-      { queryKey: ["training-metrics"], queryFn: getTrainingMetrics },
-    ],
-  });
-
-  const isLoading = queries.some((query) => query.isLoading);
-  const hasError = queries.some((query) => query.error);
 
   const handleUnwatchClassAndUpdateMetrics = useCallback(
     async (classId: string) => {
@@ -408,16 +354,6 @@ export function WatchTraining() {
     },
     [selectedVideoClass, user.id, watchedClassesRepository]
   );
-
-  const refetchVideoClass = async () => {
-    await getVideoClasses();
-  };
-
-  useEffect(() => {
-    if (!selectedVideoClass) {
-      setSelectedVideoClass(firstVideoClassRef.current);
-    }
-  }, [firstVideoClassRef, selectedVideoClass]);
 
   const updateNextPreviousClasses = useCallback(() => {
     if (!selectedVideoClass) return;
@@ -581,7 +517,7 @@ export function WatchTraining() {
           iconName="play-circle"
         />
       </div>
-      {isLoading || loading ? (
+      {isLoading || !selectedVideoClass ? (
         <div className="w-full mt-[10vh]">
           <Loading color={PRIMARY_COLOR} />
         </div>
@@ -596,19 +532,10 @@ export function WatchTraining() {
         <div className="w-full flex flex-col xl:flex-row">
           <div className="w-full  xl:w-[55%] flex flex-col">
             <div className="flex flex-col  w-full aspect-video min-h-[200px] mb-4">
-              {(selectedVideoClass && selectedVideoClass.hls_encoding_url) ||
-              (selectedVideoClass && selectedVideoClass.hls_encoding_url) ||
-              (firstVideoClass && firstVideoClass.hls_encoding_url) ||
-              (firstVideoClass && firstVideoClass.hls_encoding_url) ? (
+              {
                 <Player
                   ref={playerRef}
-                  url={
-                    selectedVideoClass && selectedVideoClass.hls_encoding_url
-                      ? selectedVideoClass.hls_encoding_url
-                      : firstVideoClass && firstVideoClass.hls_encoding_url
-                        ? firstVideoClass.hls_encoding_url
-                        : ""
-                  }
+                  url={selectedVideoClass.hls_encoding_url}
                   controls
                   width="100%"
                   height="100%"
@@ -619,24 +546,11 @@ export function WatchTraining() {
                     updateWatchedClassExecutionTime(state.playedSeconds)
                   }
                   onEnded={handleMarkClassAsCompletelyWatched}
-                  onError={refetchVideoClass}
                 />
-              ) : (
-                <img
-                  src={video_thumbnail_placeholder}
-                  alt="ps_trainings"
-                  className="w-full aspect-video bg-transparent mb-8"
-                />
-              )}
+              }
             </div>
             <Subtitle
-              content={
-                selectedVideoClass && selectedVideoClass.name
-                  ? selectedVideoClass.name
-                  : firstVideoClass && firstVideoClass.name
-                    ? firstVideoClass.name
-                    : ""
-              }
+              content={selectedVideoClass.name}
               className="m-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%] font-bold"
             />
             <div className="w-full flex flex-col lg:flex-row justify-between">
@@ -677,13 +591,7 @@ export function WatchTraining() {
                 className="mb-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%] font-bold"
               />
               <Text
-                content={
-                  selectedVideoClass && selectedVideoClass.description
-                    ? selectedVideoClass.description
-                    : firstVideoClass && firstVideoClass.description
-                      ? firstVideoClass.description
-                      : ""
-                }
+                content={selectedVideoClass.description}
                 className="text-gray-800 dark:text-gray-50 text-[12px] md:text-[13px] text-pretty"
               />
             </div>

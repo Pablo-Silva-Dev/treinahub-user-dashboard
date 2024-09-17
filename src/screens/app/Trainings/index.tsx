@@ -31,12 +31,6 @@ export function Trainings() {
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
 
-  const handleSeeTraining = (trainingId: string, videoClassId: string) => {
-    navigate(
-      `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${videoClassId}`
-    );
-  };
-
   const handleSeeCertificate = () => {
     navigate("/dashboard/acessar-meus-certificados");
   };
@@ -115,7 +109,7 @@ export function Trainings() {
             };
           })
         );
-        setTrainings(trainingsWithLastWatchedClass);
+        setTrainings(trainingsWithLastWatchedClass as never);
       }
     };
 
@@ -150,6 +144,22 @@ export function Trainings() {
 
   const handleContactSupport = () => {
     navigate("/dashboard/acessar-suporte");
+  };
+
+  const handleSeeTraining = async (
+    trainingId: string,
+    videoClassId?: string
+  ) => {
+    const training = await trainingsRepository.getTrainingById(trainingId);
+    const firstTrainingVideoClass = training.video_classes?.slice(0, 1)[0];
+    if (videoClassId) {
+      navigate(
+        `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${videoClassId}`
+      );
+    }
+    navigate(
+      `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${firstTrainingVideoClass!.id}`
+    );
   };
 
   return (
@@ -251,7 +261,9 @@ export function Trainings() {
                   onSeeTraining={() =>
                     handleSeeTraining(
                       training.id,
-                      training.last_watched_class_id!
+                      training.last_watched_class_id
+                        ? training.last_watched_class_id
+                        : undefined
                     )
                   }
                   onSeeCertificate={handleSeeCertificate}
