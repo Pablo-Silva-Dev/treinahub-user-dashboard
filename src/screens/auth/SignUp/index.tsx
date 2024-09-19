@@ -36,10 +36,13 @@ export function SignUp() {
 
   const handleRegisterUser = async (data: any) => {
     try {
-      setIsLoading(true);
+      const { phone } = data;
+      const brazilianPhoneCode = "+55";
+      const completePhone = brazilianPhoneCode + phone;
       const user = await usersRepository.registerUser({
         ...data,
         is_admin: true,
+        phone: completePhone,
       });
 
       await avatarsRepository.createAvatar({
