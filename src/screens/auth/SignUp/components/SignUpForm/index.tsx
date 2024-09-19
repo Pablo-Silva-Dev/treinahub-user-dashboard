@@ -252,6 +252,7 @@ export default function SignUpForm({
             disabled={
               !isValid ||
               !passwordValidated.current ||
+              passwordValue !== passwordConfirmation ||
               !wasTermsAccepted ||
               isLoading
             }
