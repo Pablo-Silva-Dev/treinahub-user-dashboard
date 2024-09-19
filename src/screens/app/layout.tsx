@@ -3,6 +3,7 @@ import { CompanyFooterLink } from "@/components/miscellaneous/CompanyFooterLink"
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Title } from "@/components/typography/Title";
 import { menuItems } from "@/data/dashboardMenu";
+import { AvatarsRepository } from "@/repositories/avatarsRepository";
 import { useAuthenticationStore } from "@/store/auth";
 import { useThemeStore } from "@/store/theme";
 import {
@@ -19,7 +20,14 @@ import {
   ListItem,
 } from "@material-tailwind/react";
 import FeatherIcon from "feather-icons-react";
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Toaster } from "react-hot-toast";
 import {
   MdClose,
@@ -66,10 +74,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [breadCrumbAction, setBreadCrumbAction] = useState(action);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isMobileMenuModalOpen, setIsMobileMenuModalOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
 
   const { signOut } = useAuthenticationStore();
 
   const { theme, toggleTheme } = useThemeStore();
+  const { user } = useAuthenticationStore();
 
   const navigate = useNavigate();
 
@@ -140,6 +150,24 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [window.location.pathname]);
+
+  const avatarsRepository = useMemo(() => {
+    return new AvatarsRepository();
+  }, []);
+
+  const getUserAvatar = useCallback(async () => {
+    try {
+      const avatar = await avatarsRepository.getAvatarByUserId(user.id);
+      const avatarUrl = avatar.url;
+      avatarUrl && setAvatarUrl(avatarUrl);
+    } catch (error) {
+      console.log(error);
+    }
+  }, [avatarsRepository, user.id]);
+
+  useEffect(() => {
+    getUserAvatar();
+  }, [getUserAvatar]);
 
   return (
     <section className="flex flex-col h-screen overflow-hidden">
@@ -228,7 +256,11 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 )}
               </button>
               <Avatar
-                src="https://docs.material-tailwind.com/img/face-2.jpg"
+                src={
+                  avatarUrl
+                    ? avatarUrl
+                    : "https://docs.material-tailwind.com/img/face-2.jpg"
+                }
                 alt="avatar"
                 size="sm"
               />
