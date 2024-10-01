@@ -15,3 +15,8 @@ export interface IGenerateCertificateDTO {
   user_id: string;
   training_id: string;
 }
+
+export interface IGetCertificateByUserAndTrainingDTO {
+  user_id: string;
+  training_id: string;
+}

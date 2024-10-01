@@ -17,15 +17,15 @@ import { WatchedClassesRepository } from "@/repositories/watchedClassesRepositor
 import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
-import { showAlertSuccess } from "@/utils/alerts";
 import { secondsToFullTimeString } from "@/utils/formats";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Player from "react-player";
 import { useLocation } from "react-router-dom";
-import { TrainingCompleteModal } from "./components/GeneratedCertificateModal";
 import { NextClassCard } from "./components/NextClassCard";
 import { PlayerListCard } from "./components/PlayerListCard";
 import { PreviousClassCard } from "./components/PreviousClassCard";
+import { RealizeQuizModal } from "./components/RealizeQuizModal";
+import { RealizeQuizWarningCard } from "./components/RealizeQuizWariningCard";
 
 export function WatchTraining() {
   const [videoClasses, setVideoClasses] = useState<IVideoClassDTO[]>([]);
@@ -50,6 +50,8 @@ export function WatchTraining() {
   const [trainingCompleteModal, setTrainingCompleteModal] = useState(false);
   const [lastClassExecutionTime, setLastClassExecutionTime] = useState(0);
   const [hasError, setHasError] = useState(false);
+
+  const [enableQuiz, setEnableQuiz] = useState(false);
 
   const playerRef = useRef<Player>(null);
 
@@ -386,34 +388,38 @@ export function WatchTraining() {
     setTrainingCompleteModal(!trainingCompleteModal);
   }, [trainingCompleteModal]);
 
-  const handleGenerateCertificate = useCallback(async () => {
+  const shouldEnableQuiz = useCallback(async () => {
     try {
-      const watchedTrainingClassesLength = watchedVideoClasses.filter(
-        (vc) => vc.training_id === trainingIdQueryParam!
-      ).length;
-      const trainingsVideoClassesLength = videoClasses.length;
-      const allClassesWatched = watchedVideoClasses.every(
-        (wc) => wc.completely_watched
-      );
-      if (
-        watchedTrainingClassesLength > 0 &&
-        trainingsVideoClassesLength > 0 &&
-        watchedTrainingClassesLength === trainingsVideoClassesLength &&
-        allClassesWatched
-      ) {
-        await certificatesRepository.generateCertificate({
-          user_id: user.id,
-          training_id: trainingIdQueryParam!,
-        });
-        showAlertSuccess("Seu certificado foi gerado com sucesso!");
-        handleToggleTrainingCompleteModal();
+      if (training) {
+        const userHasCertificate =
+          await certificatesRepository.getCertificateByUserAndTraining({
+            user_id: user.id,
+            training_id: training.id,
+          });
+        const watchedTrainingClassesLength = watchedVideoClasses.filter(
+          (vc) => vc.training_id === trainingIdQueryParam!
+        ).length;
+        const trainingsVideoClassesLength = videoClasses.length;
+        const allClassesWatched = watchedVideoClasses.every(
+          (wc) => wc.completely_watched
+        );
+        if (
+          watchedTrainingClassesLength > 0 &&
+          trainingsVideoClassesLength > 0 &&
+          watchedTrainingClassesLength === trainingsVideoClassesLength &&
+          allClassesWatched &&
+          !userHasCertificate
+        ) {
+          setEnableQuiz(true);
+          setTrainingCompleteModal(true);
+        }
       }
     } catch (error) {
       console.log(error);
     }
   }, [
     certificatesRepository,
-    handleToggleTrainingCompleteModal,
+    training,
     trainingIdQueryParam,
     user.id,
     videoClasses.length,
@@ -421,8 +427,34 @@ export function WatchTraining() {
   ]);
 
   useEffect(() => {
-    handleGenerateCertificate();
-  }, [handleGenerateCertificate]);
+    shouldEnableQuiz();
+  }, [shouldEnableQuiz]);
+
+  // const handleGenerateCertificate = useCallback(async () => {
+  //   try {
+  //     const shouldEnable = await shouldEnableQuiz;
+  //     if (enableQuiz) {
+  //       await certificatesRepository.generateCertificate({
+  //         user_id: user.id,
+  //         training_id: trainingIdQueryParam!,
+  //       });
+  //       showAlertSuccess("Seu certificado foi gerado com sucesso!");
+  //       handleToggleTrainingCompleteModal();
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }, [
+  //   certificatesRepository,
+  //   handleToggleTrainingCompleteModal,
+  //   shouldEnableQuiz,
+  //   trainingIdQueryParam,
+  //   user.id,
+  // ]);
+
+  // useEffect(() => {
+  //   handleGenerateCertificate();
+  // }, [handleGenerateCertificate]);
 
   useEffect(() => {
     if (trainingIdQueryParam && videoClassIdQueryParam) {
@@ -612,13 +644,23 @@ export function WatchTraining() {
               onSelectClass={selectVideoClass}
               onSelectDeletableClass={selectDeletableVideoClass}
             />
+            {enableQuiz && (
+              <RealizeQuizWarningCard
+                onStartQuiz={handleToggleTrainingCompleteModal}
+              />
+            )}
           </div>
         </div>
       )}
-      <TrainingCompleteModal
+      <RealizeQuizModal
         onRequestClose={handleToggleTrainingCompleteModal}
+        onClose={handleToggleTrainingCompleteModal}
         isOpen={trainingCompleteModal}
-        training={training && training}
+        totalQuestions={3}
+        trainingName={training && training.name}
+        onStartQuiz={() => {
+          console.log("Quiz started");
+        }}
       />
     </div>
   );
