@@ -6,6 +6,8 @@ import { FAQPage } from "@/screens/app/FAQ";
 import { Home } from "@/screens/app/Home";
 import { DashboardLayout } from "@/screens/app/layout";
 import { Profile } from "@/screens/app/Profile";
+import { Quizzes } from "@/screens/app/Quizzes";
+import { RespondQuiz } from "@/screens/app/RespondQuizz";
 import { SupportPage } from "@/screens/app/Support";
 import { Trainings } from "@/screens/app/Trainings";
 import { WatchTraining } from "@/screens/app/WatchTraining";
@@ -37,6 +39,14 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard/acessar-meus-treinamentos",
     element: <Trainings />,
+  },
+  {
+    path: "/dashboard/acessar-meus-questionarios",
+    element: <Quizzes />,
+  },
+  {
+    path: "/dashboard/responder-questionario",
+    element: <RespondQuiz />,
   },
   {
     path: "/dashboard/assistir-treinamento",

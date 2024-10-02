@@ -10,6 +10,8 @@ import { ITrainingDTO } from "@/repositories/dtos/TrainingDTO";
 import { ITrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO";
 import { IVideoClassDTO } from "@/repositories/dtos/VideoClassDTO";
 import { IWatchedClassDTO } from "@/repositories/dtos/WatchedClassDTO";
+import { QuizAttemptsRepository } from "@/repositories/quizAttemptsRepository";
+import { QuizzesRepository } from "@/repositories/quizzesRepository";
 import { TrainingMetricsRepository } from "@/repositories/trainingMetricsRepository";
 import { TrainingsRepository } from "@/repositories/trainingsRepository";
 import { VideoClassesRepository } from "@/repositories/videoClassesRepository";
@@ -17,10 +19,11 @@ import { WatchedClassesRepository } from "@/repositories/watchedClassesRepositor
 import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
+import { showAlertError } from "@/utils/alerts";
 import { secondsToFullTimeString } from "@/utils/formats";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Player from "react-player";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { NextClassCard } from "./components/NextClassCard";
 import { PlayerListCard } from "./components/PlayerListCard";
 import { PreviousClassCard } from "./components/PreviousClassCard";
@@ -53,6 +56,8 @@ export function WatchTraining() {
 
   const [enableQuiz, setEnableQuiz] = useState(false);
 
+  const navigate = useNavigate();
+
   const playerRef = useRef<Player>(null);
 
   const trainingsRepository = useMemo(() => {
@@ -73,6 +78,14 @@ export function WatchTraining() {
 
   const certificatesRepository = useMemo(() => {
     return new CertificatesRepository();
+  }, []);
+
+  const quizAttemptsRepository = useMemo(() => {
+    return new QuizAttemptsRepository();
+  }, []);
+
+  const quizzesRepository = useMemo(() => {
+    return new QuizzesRepository();
   }, []);
 
   const { isLoading, setIsLoading } = useLoading();
@@ -545,6 +558,44 @@ export function WatchTraining() {
     }
   }, [lastClassExecutionTime, selectedVideoClass, watchedVideoClasses]);
 
+  const getQuizByTraining = useCallback(async () => {
+    try {
+      if (training) {
+        const quiz = await quizzesRepository.getQuizByTraining(training.id);
+        return quiz;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [quizzesRepository, training]);
+
+  const handleStartNewQuizAttempt = async () => {
+    try {
+      setIsLoading(true);
+      const quiz = await getQuizByTraining();
+      if (quiz) {
+        const data = {
+          user_id: user.id,
+          quiz_id: quiz.id,
+        };
+        await quizAttemptsRepository.createQuizAttempt(data);
+        if (training) {
+          navigate(
+            `/dashboard/responder-questionario?trainingId=${training.id}`
+          );
+        }
+      }
+    } catch (error) {
+      showAlertError(
+        "Houve um erro ao tentar iniciar questionário. Por favor, tente novamente mais tarde."
+      );
+      handleToggleTrainingCompleteModal();
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
       <div className="mb-2">
@@ -658,9 +709,7 @@ export function WatchTraining() {
         isOpen={trainingCompleteModal}
         totalQuestions={3}
         trainingName={training && training.name}
-        onStartQuiz={() => {
-          console.log("Quiz started");
-        }}
+        onStartQuiz={handleStartNewQuizAttempt}
       />
     </div>
   );

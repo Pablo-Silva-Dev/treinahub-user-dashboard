@@ -20,6 +20,16 @@ const menuItems = [
     icon: "user",
   },
   {
+    title: "Questionários",
+    actions: [
+      {
+        title: "Acessar meus questionários",
+        link: "acessar-meus-questionarios",
+      },
+    ],
+    icon: "edit",
+  },
+  {
     title: "Certificados",
     actions: [
       {

@@ -7,6 +7,7 @@ import { ButtonProps } from "@material-tailwind/react/components/Button";
 import { CardProps } from "@material-tailwind/react/components/Card";
 import { CardBodyProps } from "@material-tailwind/react/components/CardBody";
 import { CardFooterProps } from "@material-tailwind/react/components/CardFooter";
+import { CarouselProps } from "@material-tailwind/react/components/Carousel";
 import { IconButtonProps } from "@material-tailwind/react/components/IconButton";
 import { ListItemProps } from "@material-tailwind/react/components/ListItem";
 import { SpinnerProps } from "@material-tailwind/react/components/Spinner";
@@ -27,4 +28,5 @@ declare module "@material-tailwind/react" {
   export const ListItem: React.FC<ListItemProps>;
   export const Spinner: React.FC<SpinnerProps>;
   export const Checkbox: React.FC<Checkbox>;
+  export const Carousel: React.FC<CarouselProps>;
 }
