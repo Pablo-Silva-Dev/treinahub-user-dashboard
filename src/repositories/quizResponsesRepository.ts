@@ -24,7 +24,7 @@ export class QuizResponsesRepository implements IQuizResponsesRepository {
   ): Promise<IQuizResponseDTO[]> {
     try {
       const response = await api.get<IApiSuccessResponse<IQuizResponseDTO[]>>(
-        `/quizzes-responses/get-by-quiz-attempt/${attemptId}`
+        `/quizzes-responses/list-by-quiz-attempt/${attemptId}`
       );
       return response.data.RES;
     } catch (error) {

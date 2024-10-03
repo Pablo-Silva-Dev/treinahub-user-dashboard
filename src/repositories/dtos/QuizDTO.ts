@@ -7,6 +7,7 @@ export interface IQuizDTO {
   training_id: string;
   question?: IQuizQuestionDTO[];
   quiz_attempts?: IQuizAttemptDTO[];
+  training?: ITrainingDTO;
 }
 
 export interface ICreateQuizDTO {

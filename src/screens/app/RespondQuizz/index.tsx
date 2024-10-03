@@ -21,7 +21,7 @@ import { showAlertError, showAlertSuccess } from "@/utils/alerts";
 import { Carousel } from "@material-tailwind/react";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { NegativeQuizResultModal } from "./components/NegativeQuizResultModal";
 import { PositiveQuizResultModal } from "./components/PositiveQuizResultModal";
 import { QuizResponseCard } from "./components/QuizResponseCard";
@@ -34,6 +34,8 @@ export function RespondQuiz() {
   const [quizResult, setQuizResult] = useState<IQuizResultDTO | null>(null);
   const [positiveQuizResultModal, setPositiveQuizResultModal] = useState(false);
   const [negativeQuizResultModal, setNegativeQuizResultModal] = useState(false);
+
+  const navigate = useNavigate();
 
   const MIN_QUIZ_APPROVAL_PERCENTAGE = 50;
 
@@ -177,6 +179,37 @@ export function RespondQuiz() {
     ]
   );
 
+  const quizAttemptId =
+    quiz && quiz.quiz_attempts ? quiz.quiz_attempts.slice(-1)[0].id : "";
+
+  const handleRetryQuiz = useCallback(async () => {
+    try {
+      if (quizResult && quiz && quiz.quiz_attempts) {
+        await quizResultsRepository.deleteQuizResult(quizResult.id);
+        await quizResponsesRepository.deleteManyQuizzesResponsesByQuizAttempt(
+          quizAttemptId
+        );
+      }
+      setSelectedOptions({});
+      handleToggleNegativeQuizResultModal();
+    } catch (error) {
+      console.log(error);
+      showAlertError(
+        "Houve um erro ao tentar refazer questionário. Por favor, tente novamente mais tarde."
+      );
+    }
+  }, [
+    handleToggleNegativeQuizResultModal,
+    quiz,
+    quizAttemptId,
+    quizResponsesRepository,
+    quizResult,
+    quizResultsRepository,
+  ]);
+
+  const handleCheckQuizResponse = () =>
+    navigate(`/dashboard/revisar-questionario?quizAttemptId=${quizAttemptId}`);
+
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8 md:pl-[80px]">
       <div className="mr-3 mb-4">
@@ -208,7 +241,7 @@ export function RespondQuiz() {
                 onClick={() => {
                   const data: ICreateQuizResponseDTO = {
                     question_id: quiz.questions[activeIndex].id,
-                    quiz_attempt_id: quiz.quiz_attempts!.slice(-1)[0].id,
+                    quiz_attempt_id: quizAttemptId,
                     selected_option_id:
                       selectedOptions[quiz.questions[activeIndex].id],
                   };
@@ -227,7 +260,7 @@ export function RespondQuiz() {
                   onClick={() => {
                     const data: ICreateQuizResponseDTO = {
                       question_id: quiz.questions[activeIndex].id,
-                      quiz_attempt_id: quiz.quiz_attempts!.slice(-1)[0].id,
+                      quiz_attempt_id: quizAttemptId,
                       selected_option_id:
                         selectedOptions[quiz.questions[activeIndex].id],
                     };
@@ -244,14 +277,14 @@ export function RespondQuiz() {
                   onClick={async () => {
                     const dataCreteQuizResponse: ICreateQuizResponseDTO = {
                       question_id: quiz.questions[activeIndex].id,
-                      quiz_attempt_id: quiz.quiz_attempts!.slice(-1)[0].id,
+                      quiz_attempt_id: quizAttemptId,
                       selected_option_id:
                         selectedOptions[quiz.questions[activeIndex].id],
                     };
                     const dataCreateQuizResult: ICreateQuizResultDTO = {
                       user_id: user.id,
                       quiz_id: quiz.id,
-                      quiz_attempt_id: quiz.quiz_attempts!.slice(-1)[0].id,
+                      quiz_attempt_id: quizAttemptId,
                     };
                     await handleRespondQuestion(dataCreteQuizResponse);
                     await handleFinishQuiz(dataCreateQuizResult);
@@ -287,7 +320,7 @@ export function RespondQuiz() {
       )}
       <PositiveQuizResultModal
         isOpen={positiveQuizResultModal}
-        onCheckQuizResponses={() => console.log("Check quiz responses")}
+        onCheckQuizResponses={handleCheckQuizResponse}
         onRequestClose={handleTogglePositiveQuizResultModal}
         totalCorrectQuestions={
           quizResult ? quizResult.total_correct_questions : 0
@@ -297,9 +330,9 @@ export function RespondQuiz() {
       />
       <NegativeQuizResultModal
         isOpen={negativeQuizResultModal}
-        onCheckQuizResponses={() => console.log("Check quiz responses")}
+        onCheckQuizResponses={handleCheckQuizResponse}
         onRequestClose={handleToggleNegativeQuizResultModal}
-        onRetryQuiz={() => console.log("Retry quiz")}
+        onRetryQuiz={handleRetryQuiz}
         totalCorrectQuestions={
           quizResult ? quizResult.total_correct_questions : 0
         }

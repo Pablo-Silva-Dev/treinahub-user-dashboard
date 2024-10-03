@@ -1,3 +1,4 @@
+import { IQuizDTO } from "./QuizDTO";
 import { IQuizResponseDTO } from "./QuizResponseDTO";
 
 export interface IQuizAttemptDTO {
@@ -7,6 +8,7 @@ export interface IQuizAttemptDTO {
   startedAt: Date;
   finishedAt?: Date;
   quiz_responses?: IQuizResponseDTO[];
+  quiz?: IQuizDTO;
 }
 
 export interface ICreateQuizAttemptDTO {

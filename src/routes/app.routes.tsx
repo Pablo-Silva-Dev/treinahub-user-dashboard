@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import { NotFound } from "@/screens/404";
 import { Certificates } from "@/screens/app/Certificates";
+import { CheckQuizResponse } from "@/screens/app/CheckQuizResponses";
 import { FAQPage } from "@/screens/app/FAQ";
 import { Home } from "@/screens/app/Home";
 import { DashboardLayout } from "@/screens/app/layout";
@@ -47,6 +48,10 @@ const appRoutesBase: route[] = [
   {
     path: "/dashboard/responder-questionario",
     element: <RespondQuiz />,
+  },
+  {
+    path: "/dashboard/revisar-questionario",
+    element: <CheckQuizResponse />,
   },
   {
     path: "/dashboard/assistir-treinamento",
