@@ -443,31 +443,6 @@ export function WatchTraining() {
     shouldEnableQuiz();
   }, [shouldEnableQuiz]);
 
-  // const handleGenerateCertificate = useCallback(async () => {
-  //   try {
-  //     const shouldEnable = await shouldEnableQuiz;
-  //     if (enableQuiz) {
-  //       await certificatesRepository.generateCertificate({
-  //         user_id: user.id,
-  //         training_id: trainingIdQueryParam!,
-  //       });
-  //       showAlertSuccess("Seu certificado foi gerado com sucesso!");
-  //       handleToggleTrainingCompleteModal();
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }, [
-  //   certificatesRepository,
-  //   handleToggleTrainingCompleteModal,
-  //   shouldEnableQuiz,
-  //   trainingIdQueryParam,
-  //   user.id,
-  // ]);
-
-  // useEffect(() => {
-  //   handleGenerateCertificate();
-  // }, [handleGenerateCertificate]);
 
   useEffect(() => {
     if (trainingIdQueryParam && videoClassIdQueryParam) {

@@ -19,4 +19,5 @@ export interface ICompleteQuizQuestionDTO {
   questions: IQuizQuestionDTO[];
   quiz: IQuizDTO;
   training: ITrainingDTO;
+  quiz_attempts?: IQuizAttemptDTO[];
 }
