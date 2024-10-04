@@ -43,4 +43,14 @@ export class QuizResultsRepository implements IQuizResultsRepository {
       throw error;
     }
   }
+  async listQuizzesResultsByUser(userId: string): Promise<IQuizResultDTO[]> {
+    try {
+      const response = await api.get<IApiSuccessResponse<IQuizResultDTO[]>>(
+        `/quizzes-results/list-by-user/${userId}`
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

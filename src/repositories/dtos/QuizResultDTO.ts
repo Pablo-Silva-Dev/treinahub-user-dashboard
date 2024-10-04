@@ -1,3 +1,5 @@
+import { IQuizDTO } from "./QuizDTO";
+
 export interface IQuizResultDTO {
   id: string;
   quiz_id: string;
@@ -6,6 +8,7 @@ export interface IQuizResultDTO {
   total_quiz_questions: number;
   total_correct_questions: number;
   total_correct_questions_percentage: number;
+  quiz?: IQuizDTO;
 }
 
 export interface ICreateQuizResultDTO {

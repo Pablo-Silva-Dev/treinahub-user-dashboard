@@ -1,51 +1,110 @@
+import { PRIMARY_COLOR } from "@/appConstants/index";
 import empty_box_animation from "@/assets/empty_box_animation.json";
-import { Button } from "@/components/buttons/Button";
+import error_warning from "@/assets/error_warning.svg";
+import error_warning_dark from "@/assets/error_warning_dark.svg";
+import { Loading } from "@/components/miscellaneous/Loading";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
-import { CertificatesRepository } from "@/repositories/certificatesRepository";
-import { ICertificateDTO } from "@/repositories/dtos/CertificateDTO";
+import { IQuizResultDTO } from "@/repositories/dtos/QuizResultDTO";
+import { QuizResultsRepository } from "@/repositories/quizResultsRepository";
 import { useAuthenticationStore } from "@/store/auth";
-import { showAlertSuccess } from "@/utils/alerts";
-import { formatDate } from "@/utils/formats";
+import { useLoading } from "@/store/loading";
+import { useThemeStore } from "@/store/theme";
+
+import { Button } from "@/components/buttons/Button";
+import { QuizResponsesRepository } from "@/repositories/quizResponsesRepository";
+import { showAlertError } from "@/utils/alerts";
+import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Lottie from "react-lottie";
 import { useNavigate } from "react-router-dom";
-import { CertificateCard } from "./components/CertificateCard";
+import { QuizBriefResultCard } from "./components/QuizBriefResultCard";
 
 export function Quizzes() {
-  const [certificates, setCertificates] = useState<ICertificateDTO[]>([]);
-  const [, setSelectedCertificate] = useState<ICertificateDTO | null>(null);
+  const [quizzesResults, setQuizzesResults] = useState<IQuizResultDTO[]>([]);
+  const [selectedQuizResult, setSelectedQuizResult] =
+    useState<IQuizResultDTO | null>(null);
 
-  const { user } = useAuthenticationStore();
   const navigate = useNavigate();
 
-  const certificatesRepository = useMemo(() => {
-    return new CertificatesRepository();
+  const { user } = useAuthenticationStore();
+  const { isLoading, setIsLoading } = useLoading();
+  const { theme } = useThemeStore();
+
+  const quizResultsRepository = useMemo(() => {
+    return new QuizResultsRepository();
   }, []);
 
-  const getUserCertificates = useCallback(async () => {
+  const quizResponsesRepository = useMemo(() => {
+    return new QuizResponsesRepository();
+  }, []);
+
+  const getUserQuizResults = useCallback(async () => {
     try {
-      const certificates = await certificatesRepository.listCertificatesByUser(
-        user.id
-      );
-      setCertificates(certificates);
+      setIsLoading(true);
+      const quizzesResults =
+        await quizResultsRepository.listQuizzesResultsByUser(user.id);
+      setQuizzesResults(quizzesResults);
+      return quizzesResults;
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [certificatesRepository, user.id]);
+  }, [quizResultsRepository, setIsLoading, user.id]);
 
   useEffect(() => {
-    getUserCertificates();
-  }, [getUserCertificates]);
+    getUserQuizResults();
+  }, [getUserQuizResults]);
 
-  const handleDownloadCertificate = (certificate: ICertificateDTO) => {
-    if (certificate) {
-      window.location.href = certificate.url;
-      showAlertSuccess(
-        "O download do seu questionário foi realizado com sucesso!"
+  const { error } = useQuery({
+    queryKey: ["quizzes-results"],
+    queryFn: getUserQuizResults,
+  });
+
+  const handleSelectQuiz = useCallback((quizResult: IQuizResultDTO) => {
+    setSelectedQuizResult(quizResult);
+  }, []);
+
+  const handleSeeTrainings = () => {
+    navigate("/dashboard/acessar-meus-treinamentos");
+  };
+  const handleCheckQuizResponse = () => {
+    if (selectedQuizResult) {
+      navigate(
+        `/dashboard/revisar-questionario?quizAttemptId=${selectedQuizResult.quiz_attempt_id}`
       );
     }
+    return;
   };
+
+  const handleRetryQuiz = useCallback(async () => {
+    try {
+      if (
+        selectedQuizResult &&
+        selectedQuizResult.quiz &&
+        selectedQuizResult.quiz.training_id
+      ) {
+        await quizResultsRepository.deleteQuizResult(selectedQuizResult.id);
+        await quizResponsesRepository.deleteManyQuizzesResponsesByQuizAttempt(
+          selectedQuizResult.quiz_attempt_id
+        );
+        navigate(
+          `/dashboard/responder-questionario?trainingId=${selectedQuizResult.quiz.training_id}`
+        );
+      }
+    } catch (error) {
+      console.log(error);
+      showAlertError(
+        "Houve um erro ao tentar refazer questionário. Por favor, tente novamente mais tarde."
+      );
+    }
+  }, [
+    navigate,
+    quizResponsesRepository,
+    quizResultsRepository,
+    selectedQuizResult,
+  ]);
 
   const animationOptions = {
     animationData: empty_box_animation,
@@ -56,43 +115,27 @@ export function Quizzes() {
     },
   };
 
-  const handleSeeTrainings = () => {
-    navigate("/dashboard/acessar-meus-treinamentos");
-  };
-
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8 md:pl-[80px]">
       <div className="mr-3 mb-4">
         <ScreenTitleIcon screenTitle="Questionários" iconName="edit" />
         <Subtitle
-          content="Consulte aqui seus questionários disponíveis"
+          content="Consulte aqui seus questionários disponíveis. Refaça questionários se necessário."
           className="mt-6 mb-4 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty"
         />
       </div>
-
-      {certificates.length > 0 ? (
-        <div className="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-[20px] sm:gap-[20px] md:gap-[40px]">
-          {certificates.map((certificate) => (
-            <CertificateCard
-              onSelectCertificate={() => setSelectedCertificate(certificate)}
-              key={certificate.id}
-              coverUrl={certificate.url}
-              courseName={
-                certificate.training
-                  ? certificate.training.name
-                  : "Treinamento indisponível"
-              }
-              emissionDate={formatDate(certificate.created_at.toString())}
-              totalCourseClasses={
-                certificate.training &&
-                certificate.training.video_classes &&
-                certificate.training.video_classes.length
-              }
-              onDownload={() => handleDownloadCertificate(certificate)}
-            />
-          ))}
+      {isLoading ? (
+        <div className="w-full mt-[10vh]">
+          <Loading color={PRIMARY_COLOR} />
         </div>
-      ) : (
+      ) : error ? (
+        <div className="w-full flex flex-row justify-center">
+          <img
+            src={theme === "light" ? error_warning : error_warning_dark}
+            alt="ps_trainings"
+          />
+        </div>
+      ) : quizzesResults.length === 0 ? (
         <div className="w-full flex flex-col items-center">
           <div className="w-full flex flex-col items-start relative max-w-[480px]">
             <Lottie
@@ -101,10 +144,14 @@ export function Quizzes() {
               width={200}
               options={animationOptions}
             />
-            <span className="mt-3 text-gray-600 dark:text-gray-300 text-sm md:text-[15px] text-center">
-              Você ainda não concluiu nenhum treinamento. Seus questionários
-              estarão disponíveis a medida que os treinamentos forem concluídos.
-            </span>
+            <Subtitle
+              content="Seus questionário estarão disponíveis a medida que você concluir seus treinamentos."
+              className="mt-6 mb-4 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty"
+            />
+            <Subtitle
+              content="Você não possui nenhum questionário disponível no momento."
+              className="mb-4 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty"
+            />
             <div className="w-full mt-5">
               <Button
                 title="Acessar meus treinamentos"
@@ -113,6 +160,20 @@ export function Quizzes() {
             </div>
           </div>
         </div>
+      ) : (
+        quizzesResults.map((quiz) => (
+          <QuizBriefResultCard
+            key={quiz.id}
+            totalCorrectQuestions={quiz.total_correct_questions}
+            totalQuestions={quiz.total_quiz_questions}
+            trainingName={
+              quiz.quiz && quiz.quiz.training ? quiz.quiz.training.name : ""
+            }
+            onRetryQuiz={handleRetryQuiz}
+            onSeeQuizResult={handleCheckQuizResponse}
+            onSelectQuiz={() => handleSelectQuiz(quiz)}
+          />
+        ))
       )}
     </div>
   );
