@@ -22,8 +22,8 @@ import { Carousel } from "@material-tailwind/react";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { NegativeQuizResultModal } from "./components/NegativeQuizResultModal";
-import { PositiveQuizResultModal } from "./components/PositiveQuizResultModal";
+import { NegativeQuizResultContent } from "./components/NegativeQuizResultContent";
+import { PositiveQuizResultContent } from "./components/PositiveQuizResultContent";
 import { QuizResponseCard } from "./components/QuizResponseCard";
 
 export function RespondQuiz() {
@@ -32,8 +32,10 @@ export function RespondQuiz() {
     [questionId: string]: string;
   }>({});
   const [quizResult, setQuizResult] = useState<IQuizResultDTO | null>(null);
-  const [positiveQuizResultModal, setPositiveQuizResultModal] = useState(false);
-  const [negativeQuizResultModal, setNegativeQuizResultModal] = useState(false);
+  const [renderPositiveQuizResultContent, setRenderPositiveQuizResultContent] =
+    useState(false);
+  const [renderNegativeQuizResultContent, setRenderNegativeQuizResultContent] =
+    useState(false);
 
   const navigate = useNavigate();
 
@@ -96,14 +98,6 @@ export function RespondQuiz() {
     }));
   };
 
-  const handleTogglePositiveQuizResultModal = useCallback(() => {
-    setPositiveQuizResultModal(!positiveQuizResultModal);
-  }, [positiveQuizResultModal]);
-
-  const handleToggleNegativeQuizResultModal = useCallback(() => {
-    setNegativeQuizResultModal(!negativeQuizResultModal);
-  }, [negativeQuizResultModal]);
-
   const quizzesLength = quiz ? quiz.questions.length : 0;
   const selectedOptionsLength = Object.keys(selectedOptions).length;
 
@@ -155,9 +149,9 @@ export function RespondQuiz() {
             MIN_QUIZ_APPROVAL_PERCENTAGE
           ) {
             await generateCertificate();
-            handleTogglePositiveQuizResultModal();
+            setRenderPositiveQuizResultContent(true);
           } else {
-            handleToggleNegativeQuizResultModal();
+            setRenderNegativeQuizResultContent(true);
           }
         }
         setSelectedOptions({});
@@ -170,13 +164,7 @@ export function RespondQuiz() {
         setIsLoading(false);
       }
     },
-    [
-      generateCertificate,
-      handleToggleNegativeQuizResultModal,
-      handleTogglePositiveQuizResultModal,
-      quizResultsRepository,
-      setIsLoading,
-    ]
+    [generateCertificate, quizResultsRepository, setIsLoading]
   );
 
   const quizAttemptId =
@@ -191,7 +179,7 @@ export function RespondQuiz() {
         );
       }
       setSelectedOptions({});
-      handleToggleNegativeQuizResultModal();
+      setRenderNegativeQuizResultContent(false);
     } catch (error) {
       console.log(error);
       showAlertError(
@@ -199,7 +187,6 @@ export function RespondQuiz() {
       );
     }
   }, [
-    handleToggleNegativeQuizResultModal,
     quiz,
     quizAttemptId,
     quizResponsesRepository,
@@ -231,6 +218,25 @@ export function RespondQuiz() {
             alt="ps_trainings"
           />
         </div>
+      ) : renderPositiveQuizResultContent ? (
+        <PositiveQuizResultContent
+          onCheckQuizResponses={handleCheckQuizResponse}
+          totalQuestions={quizzesLength}
+          trainingName={quiz?.training ? quiz.training.name : ""}
+          totalCorrectQuestions={
+            quizResult ? quizResult.total_correct_questions : 0
+          }
+        />
+      ) : renderNegativeQuizResultContent ? (
+        <NegativeQuizResultContent
+          onCheckQuizResponses={handleCheckQuizResponse}
+          onRetryQuiz={handleRetryQuiz}
+          totalCorrectQuestions={
+            quizResult ? quizResult.total_correct_questions : 0
+          }
+          totalQuestions={quizzesLength}
+          trainingName={quiz?.training ? quiz.training.name : ""}
+        />
       ) : (
         quiz && (
           <Carousel
@@ -318,27 +324,6 @@ export function RespondQuiz() {
           </Carousel>
         )
       )}
-      <PositiveQuizResultModal
-        isOpen={positiveQuizResultModal}
-        onCheckQuizResponses={handleCheckQuizResponse}
-        onRequestClose={handleTogglePositiveQuizResultModal}
-        totalCorrectQuestions={
-          quizResult ? quizResult.total_correct_questions : 0
-        }
-        totalQuestions={quizzesLength}
-        trainingName={quiz?.training ? quiz.training.name : ""}
-      />
-      <NegativeQuizResultModal
-        isOpen={negativeQuizResultModal}
-        onCheckQuizResponses={handleCheckQuizResponse}
-        onRequestClose={handleToggleNegativeQuizResultModal}
-        onRetryQuiz={handleRetryQuiz}
-        totalCorrectQuestions={
-          quizResult ? quizResult.total_correct_questions : 0
-        }
-        totalQuestions={quizzesLength}
-        trainingName={quiz?.training ? quiz.training.name : ""}
-      />
     </div>
   );
 }

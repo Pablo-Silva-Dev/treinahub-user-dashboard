@@ -3,36 +3,22 @@ import { Button } from "@/components/buttons/Button";
 import { LinkButton } from "@/components/buttons/LinkButton";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Title } from "@/components/typography/Title";
-import { useThemeStore } from "@/store/theme";
-import {
-  reactModalCustomStyles,
-  reactModalCustomStylesDark,
-} from "@/styles/react-modal";
-import { KeyboardEvent, MouseEvent } from "react";
 import Lottie from "react-lottie";
-import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 
-interface PositiveQuizResultModalProps {
-  isOpen: boolean;
-  onRequestClose: (
-    event: MouseEvent<Element, MouseEvent> | KeyboardEvent<Element>
-  ) => void;
+interface PositiveQuizResultContentProps {
   trainingName: string | null;
   totalQuestions: number;
   totalCorrectQuestions: number;
   onCheckQuizResponses: () => void;
 }
 
-export function PositiveQuizResultModal({
-  isOpen,
-  onRequestClose,
+export function PositiveQuizResultContent({
   onCheckQuizResponses,
   trainingName,
   totalQuestions,
   totalCorrectQuestions,
-}: PositiveQuizResultModalProps) {
-  const { theme } = useThemeStore();
+}: PositiveQuizResultContentProps) {
   const navigate = useNavigate();
 
   const animationOptions = {
@@ -48,13 +34,7 @@ export function PositiveQuizResultModal({
     navigate("/dashboard/acessar-meus-certificados");
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onRequestClose as never}
-      style={
-        theme === "light" ? reactModalCustomStyles : reactModalCustomStylesDark
-      }
-    >
+    <div className="w-full flex flex-col">
       <Title
         content="Treinamento concluído com sucesso"
         className="text-center text-black dark:text-white mb-5 font-bold text-[14px] md:text-lg"
@@ -63,7 +43,7 @@ export function PositiveQuizResultModal({
         content={`Parabéns por concluir o treinamento de ${trainingName}!`}
         className="text-black dark:text-white mb-4  text-[12px] md:text-[14px] max-w-[480px]"
       />
-      {totalCorrectQuestions && totalQuestions && (
+      {totalQuestions && (
         <Subtitle
           content={`Você acertou ${totalCorrectQuestions} de ${totalQuestions} questões.`}
           className="text-black dark:text-white mb-4  text-[12px] md:text-[14px] max-w-[480px]"
@@ -93,6 +73,6 @@ export function PositiveQuizResultModal({
           </div>
         </div>
       </div>
-    </Modal>
+    </div>
   );
 }
