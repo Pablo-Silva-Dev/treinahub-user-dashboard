@@ -11,6 +11,7 @@ import {
   ICreateQuizResultDTO,
   IQuizResultDTO,
 } from "@/repositories/dtos/QuizResultDTO";
+import { QuizAttemptsRepository } from "@/repositories/quizAttemptsRepository";
 import { QuizResponsesRepository } from "@/repositories/quizResponsesRepository";
 import { QuizResultsRepository } from "@/repositories/quizResultsRepository";
 import { QuizzesRepository } from "@/repositories/quizzesRepository";
@@ -36,6 +37,7 @@ export function RespondQuiz() {
     useState(false);
   const [renderNegativeQuizResultContent, setRenderNegativeQuizResultContent] =
     useState(false);
+  const [newQuizAttemptId, setNewQuizAttemptId] = useState("");
 
   const navigate = useNavigate();
 
@@ -55,6 +57,10 @@ export function RespondQuiz() {
 
   const certificatesRepository = useMemo(() => {
     return new CertificatesRepository();
+  }, []);
+
+  const quizAttemptsRepository = useMemo(() => {
+    return new QuizAttemptsRepository();
   }, []);
 
   const location = useLocation();
@@ -168,7 +174,31 @@ export function RespondQuiz() {
   );
 
   const quizAttemptId =
-    quiz && quiz.quiz_attempts ? quiz.quiz_attempts.slice(-1)[0].id : "";
+    quiz && quiz.quiz_attempts && quiz.quiz_attempts.length > 0
+      ? quiz.quiz_attempts.slice(-1)[0].id
+      : "";
+
+  const createQuizAttempt = useCallback(async () => {
+    try {
+      if (!quizAttemptId && quiz) {
+        setIsLoading(true);
+        const quizAttempt = await quizAttemptsRepository.createQuizAttempt({
+          quiz_id: quiz.id,
+          user_id: user.id,
+        });
+
+        setNewQuizAttemptId(quizAttempt.id);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [quiz, quizAttemptId, quizAttemptsRepository, setIsLoading, user.id]);
+
+  useEffect(() => {
+    createQuizAttempt();
+  }, [createQuizAttempt]);
 
   const handleRetryQuiz = useCallback(async () => {
     try {
@@ -247,7 +277,9 @@ export function RespondQuiz() {
                 onClick={() => {
                   const data: ICreateQuizResponseDTO = {
                     question_id: quiz.questions[activeIndex].id,
-                    quiz_attempt_id: quizAttemptId,
+                    quiz_attempt_id: quizAttemptId
+                      ? quizAttemptId
+                      : newQuizAttemptId,
                     selected_option_id:
                       selectedOptions[quiz.questions[activeIndex].id],
                   };
@@ -266,7 +298,9 @@ export function RespondQuiz() {
                   onClick={() => {
                     const data: ICreateQuizResponseDTO = {
                       question_id: quiz.questions[activeIndex].id,
-                      quiz_attempt_id: quizAttemptId,
+                      quiz_attempt_id: quizAttemptId
+                        ? quizAttemptId
+                        : newQuizAttemptId,
                       selected_option_id:
                         selectedOptions[quiz.questions[activeIndex].id],
                     };
@@ -283,14 +317,18 @@ export function RespondQuiz() {
                   onClick={async () => {
                     const dataCreteQuizResponse: ICreateQuizResponseDTO = {
                       question_id: quiz.questions[activeIndex].id,
-                      quiz_attempt_id: quizAttemptId,
+                      quiz_attempt_id: quizAttemptId
+                        ? quizAttemptId
+                        : newQuizAttemptId,
                       selected_option_id:
                         selectedOptions[quiz.questions[activeIndex].id],
                     };
                     const dataCreateQuizResult: ICreateQuizResultDTO = {
                       user_id: user.id,
                       quiz_id: quiz.id,
-                      quiz_attempt_id: quizAttemptId,
+                      quiz_attempt_id: quizAttemptId
+                        ? quizAttemptId
+                        : newQuizAttemptId,
                     };
                     await handleRespondQuestion(dataCreteQuizResponse);
                     await handleFinishQuiz(dataCreateQuizResult);

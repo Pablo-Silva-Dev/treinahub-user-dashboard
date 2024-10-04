@@ -603,6 +603,11 @@ export function WatchTraining() {
           user_id: user.id,
           quiz_id: quiz.id,
         };
+
+        if (!quizResultId && quizAttemptId) {
+          await quizAttemptsRepository.deleteQuizAttempt(quizAttemptId);
+        }
+
         const newQuizAttempt =
           await quizAttemptsRepository.createQuizAttempt(data);
         setQuizAttemptId(newQuizAttempt.id);
@@ -651,7 +656,7 @@ export function WatchTraining() {
             quiz_attempt_id: quizAttemptId,
             user_id: user.id,
           });
-        if(quizResult){
+        if (quizResult) {
           setQuizResultId(quizResult.id);
         }
       }
@@ -672,6 +677,10 @@ export function WatchTraining() {
   const handleRetryQuiz = useCallback(async () => {
     try {
       setIsLoading(true);
+      if (!quizResultId && quizAttemptId && training) {
+        await quizAttemptsRepository.deleteQuizAttempt(quizAttemptId);
+        navigate(`/dashboard/responder-questionario?trainingId=${training.id}`);
+      }
       if (quizAttemptId && quizResultId) {
         await quizResultsRepository.deleteQuizResult(quizResultId);
         await quizResponsesRepository.deleteManyQuizzesResponsesByQuizAttempt(
@@ -694,6 +703,7 @@ export function WatchTraining() {
   }, [
     navigate,
     quizAttemptId,
+    quizAttemptsRepository,
     quizResponsesRepository,
     quizResultId,
     quizResultsRepository,

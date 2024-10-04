@@ -36,4 +36,14 @@ export class QuizAttemptsRepository implements IQuizAttemptsRepository {
       throw error;
     }
   }
+  async deleteQuizAttempt(quizAttemptId: string): Promise<void> {
+    try {
+      const response = await api.delete<IApiSuccessResponse<void>>(
+        `/quizzes-attempts/delete/${quizAttemptId}`
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

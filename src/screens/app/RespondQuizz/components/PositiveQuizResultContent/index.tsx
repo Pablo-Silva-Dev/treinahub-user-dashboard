@@ -37,24 +37,26 @@ export function PositiveQuizResultContent({
     <div className="w-full flex flex-col">
       <Title
         content="Treinamento concluído com sucesso"
-        className="text-center text-black dark:text-white mb-5 font-bold text-[14px] md:text-lg"
+        className="text-black dark:text-white mb-5 font-bold text-[14px] md:text-lg"
       />
       <Subtitle
         content={`Parabéns por concluir o treinamento de ${trainingName}!`}
-        className="text-black dark:text-white mb-4  text-[12px] md:text-[14px] max-w-[480px]"
+        className="text-black dark:text-white mb-4  text-[12px] md:text-[14px] "
       />
       {totalQuestions && (
         <Subtitle
           content={`Você acertou ${totalCorrectQuestions} de ${totalQuestions} questões.`}
-          className="text-black dark:text-white mb-4  text-[12px] md:text-[14px] max-w-[480px]"
+          className="text-black dark:text-white mb-4  text-[12px] md:text-[14px] "
         />
       )}
-      <LinkButton
-        title="Clique aqui para conferir suas respostas"
-        onClick={onCheckQuizResponses}
-      />
-      <div className="w-full flex flex-col items-center">
-        <div className="w-full flex flex-col items-start relative max-w-[480px]">
+      <div>
+        <LinkButton
+          title="Clique aqui para conferir suas respostas"
+          onClick={onCheckQuizResponses}
+        />
+      </div>
+      <div className="w-full flex flex-col">
+        <div className="w-full flex flex-col items-start relative ">
           <Lottie
             speed={0.5}
             height={240}
