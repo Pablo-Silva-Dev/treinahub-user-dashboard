@@ -176,13 +176,15 @@ export function WatchTraining() {
 
   const autoUpdateTrainingMetrics = useCallback(async () => {
     try {
-      const updatedTrainingMetrics =
-        await trainingMetricsRepository.updateTrainingMetrics({
-          id: trainingMetrics!.id,
-          training_id: trainingIdQueryParam!,
-          user_id: user.id,
-        });
-      setTrainingMetrics(updatedTrainingMetrics);
+      if (trainingMetrics) {
+        const updatedTrainingMetrics =
+          await trainingMetricsRepository.updateTrainingMetrics({
+            id: trainingMetrics.id,
+            training_id: trainingIdQueryParam!,
+            user_id: user.id,
+          });
+        setTrainingMetrics(updatedTrainingMetrics);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -649,7 +651,9 @@ export function WatchTraining() {
             quiz_attempt_id: quizAttemptId,
             user_id: user.id,
           });
-        setQuizResultId(quizResult.id);
+        if(quizResult){
+          setQuizResultId(quizResult.id);
+        }
       }
     } catch (error) {
       console.log(error);
