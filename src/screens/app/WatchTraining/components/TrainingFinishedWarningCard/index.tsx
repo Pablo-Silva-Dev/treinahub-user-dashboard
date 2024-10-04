@@ -1,13 +1,17 @@
 import { Button } from "@/components/buttons/Button";
 import { MdStar } from "react-icons/md";
 
-interface RealizeQuizWarningCardProps {
+interface TrainingFinishedWarningCardProps {
   onStartQuiz: () => void;
+  content: string;
+  buttonTitle: string;
 }
 
-export function RealizeQuizWarningCard({
+export function TrainingFinishedWarningCard({
   onStartQuiz,
-}: RealizeQuizWarningCardProps) {
+  content,
+  buttonTitle,
+}: TrainingFinishedWarningCardProps) {
   return (
     <div className="w-full flex flex-col bg-white dark:bg-slate-600  shadow-sm rounded-md p-4 mt-2">
       <div className="w-full flex ">
@@ -17,10 +21,9 @@ export function RealizeQuizWarningCard({
         </span>
       </div>
       <span className="mb-2 text-gray-600 dark:text-gray-200 text-[12px] md:text-[14px] text-pretty w-full">
-        Você assistiu todas as aulas deste treinamento. Realize o questionário
-        para emitir seu certificado.
+        {content}
       </span>
-      <Button title="Realizar questionário" onClick={onStartQuiz} />
+      <Button title={buttonTitle} onClick={onStartQuiz} />
     </div>
   );
 }

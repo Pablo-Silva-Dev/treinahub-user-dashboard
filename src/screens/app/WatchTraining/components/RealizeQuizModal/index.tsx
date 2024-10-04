@@ -18,6 +18,7 @@ interface RealizeQuizModalProps {
   totalQuestions: number;
   onClose: () => void;
   onStartQuiz: () => void;
+  isLoading: boolean;
 }
 
 export function RealizeQuizModal({
@@ -27,6 +28,7 @@ export function RealizeQuizModal({
   onStartQuiz,
   trainingName,
   totalQuestions,
+  isLoading,
 }: RealizeQuizModalProps) {
   const { theme } = useThemeStore();
 
@@ -60,6 +62,7 @@ export function RealizeQuizModal({
         </div>
         <button
           onClick={onClose}
+          disabled={isLoading}
           className="text-black dark:text-white bg-gray-200 dark:bg-slate-700 p-4 rounded-lg text-[13px] md:text-[14px] w-full my-2"
         >
           Fechar

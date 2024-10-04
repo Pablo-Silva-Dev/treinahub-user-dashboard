@@ -19,7 +19,7 @@ export class QuizAttemptsRepository implements IQuizAttemptsRepository {
   async listQuizAttemptsByUser(userId: string): Promise<IQuizAttemptDTO[]> {
     try {
       const response = await api.get<IApiSuccessResponse<IQuizAttemptDTO[]>>(
-        `/quizzes-attempts/${userId}`
+        `/quizzes-attempts/list-by-user/${userId}`
       );
       return response.data.RES;
     } catch (error) {

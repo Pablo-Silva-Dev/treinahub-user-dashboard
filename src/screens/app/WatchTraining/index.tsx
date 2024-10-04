@@ -6,11 +6,14 @@ import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Text } from "@/components/typography/Text";
 import { CertificatesRepository } from "@/repositories/certificatesRepository";
+import { ICompleteQuizQuestionDTO } from "@/repositories/dtos/QuizDTO";
 import { ITrainingDTO } from "@/repositories/dtos/TrainingDTO";
 import { ITrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO";
 import { IVideoClassDTO } from "@/repositories/dtos/VideoClassDTO";
 import { IWatchedClassDTO } from "@/repositories/dtos/WatchedClassDTO";
 import { QuizAttemptsRepository } from "@/repositories/quizAttemptsRepository";
+import { QuizResponsesRepository } from "@/repositories/quizResponsesRepository";
+import { QuizResultsRepository } from "@/repositories/quizResultsRepository";
 import { QuizzesRepository } from "@/repositories/quizzesRepository";
 import { TrainingMetricsRepository } from "@/repositories/trainingMetricsRepository";
 import { TrainingsRepository } from "@/repositories/trainingsRepository";
@@ -28,7 +31,7 @@ import { NextClassCard } from "./components/NextClassCard";
 import { PlayerListCard } from "./components/PlayerListCard";
 import { PreviousClassCard } from "./components/PreviousClassCard";
 import { RealizeQuizModal } from "./components/RealizeQuizModal";
-import { RealizeQuizWarningCard } from "./components/RealizeQuizWariningCard";
+import { TrainingFinishedWarningCard } from "./components/TrainingFinishedWarningCard";
 
 export function WatchTraining() {
   const [videoClasses, setVideoClasses] = useState<IVideoClassDTO[]>([]);
@@ -55,6 +58,10 @@ export function WatchTraining() {
   const [hasError, setHasError] = useState(false);
 
   const [enableQuiz, setEnableQuiz] = useState(false);
+  const [quiz, setQuiz] = useState<ICompleteQuizQuestionDTO | null>(null);
+  const [quizAttempts, setQuizAttempts] = useState(0);
+  const [quizAttemptId, setQuizAttemptId] = useState("");
+  const [quizResultId, setQuizResultId] = useState("");
 
   const navigate = useNavigate();
 
@@ -86,6 +93,14 @@ export function WatchTraining() {
 
   const quizzesRepository = useMemo(() => {
     return new QuizzesRepository();
+  }, []);
+
+  const quizResultsRepository = useMemo(() => {
+    return new QuizResultsRepository();
+  }, []);
+
+  const quizResponsesRepository = useMemo(() => {
+    return new QuizResponsesRepository();
   }, []);
 
   const { isLoading, setIsLoading } = useLoading();
@@ -401,8 +416,28 @@ export function WatchTraining() {
     setTrainingCompleteModal(!trainingCompleteModal);
   }, [trainingCompleteModal]);
 
+  const checkUserQuizAttempts = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const quizAttempts = await quizAttemptsRepository.listQuizAttemptsByUser(
+        user.id
+      );
+      setQuizAttempts(quizAttempts.length);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [quizAttemptsRepository, setIsLoading, user.id]);
+
+  useEffect(() => {
+    checkUserQuizAttempts();
+  }, [checkUserQuizAttempts]);
+
   const shouldEnableQuiz = useCallback(async () => {
     try {
+      setIsLoading(true);
+
       if (training) {
         const userHasCertificate =
           await certificatesRepository.getCertificateByUserAndTraining({
@@ -424,14 +459,20 @@ export function WatchTraining() {
           !userHasCertificate
         ) {
           setEnableQuiz(true);
-          setTrainingCompleteModal(true);
+          if (quizAttempts === 0) {
+            setTrainingCompleteModal(true);
+          }
         }
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   }, [
     certificatesRepository,
+    quizAttempts,
+    setIsLoading,
     training,
     trainingIdQueryParam,
     user.id,
@@ -442,7 +483,6 @@ export function WatchTraining() {
   useEffect(() => {
     shouldEnableQuiz();
   }, [shouldEnableQuiz]);
-
 
   useEffect(() => {
     if (trainingIdQueryParam && videoClassIdQueryParam) {
@@ -535,14 +575,22 @@ export function WatchTraining() {
 
   const getQuizByTraining = useCallback(async () => {
     try {
+      setIsLoading(true);
       if (training) {
         const quiz = await quizzesRepository.getQuizByTraining(training.id);
+        setQuiz(quiz);
         return quiz;
       }
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [quizzesRepository, training]);
+  }, [quizzesRepository, setIsLoading, training]);
+
+  useEffect(() => {
+    getQuizByTraining();
+  }, [getQuizByTraining]);
 
   const handleStartNewQuizAttempt = async () => {
     try {
@@ -553,7 +601,9 @@ export function WatchTraining() {
           user_id: user.id,
           quiz_id: quiz.id,
         };
-        await quizAttemptsRepository.createQuizAttempt(data);
+        const newQuizAttempt =
+          await quizAttemptsRepository.createQuizAttempt(data);
+        setQuizAttemptId(newQuizAttempt.id);
         if (training) {
           navigate(
             `/dashboard/responder-questionario?trainingId=${training.id}`
@@ -570,6 +620,87 @@ export function WatchTraining() {
       setIsLoading(false);
     }
   };
+
+  const getQuizAttempts = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const quizAttempts = await quizAttemptsRepository.listQuizAttemptsByUser(
+        user.id
+      );
+      const quizAttempt = quizAttempts.slice(-1)[0];
+      setQuizAttemptId(quizAttempt.id);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [quizAttemptsRepository, setIsLoading, user.id]);
+
+  useEffect(() => {
+    getQuizAttempts();
+  }, [getQuizAttempts]);
+
+  const getQuizResult = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      if (quizAttemptId) {
+        const quizResult =
+          await quizResultsRepository.getQuizResultByUserAndQuizAttempt({
+            quiz_attempt_id: quizAttemptId,
+            user_id: user.id,
+          });
+        setQuizResultId(quizResult.id);
+      }
+    } catch (error) {
+      console.log(error);
+      showAlertError(
+        "Houve um erro ao consultar resultado. Por favor, tente novamente mais tarde."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [quizAttemptId, quizResultsRepository, setIsLoading, user.id]);
+
+  useEffect(() => {
+    getQuizResult();
+  }, [getQuizResult]);
+
+  const handleRetryQuiz = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      if (quizAttemptId && quizResultId) {
+        await quizResultsRepository.deleteQuizResult(quizResultId);
+        await quizResponsesRepository.deleteManyQuizzesResponsesByQuizAttempt(
+          quizAttemptId
+        );
+        if (training) {
+          navigate(
+            `/dashboard/responder-questionario?trainingId=${training.id}`
+          );
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      showAlertError(
+        "Houve um erro ao tentar refazer questionário. Por favor, tente novamente mais tarde."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [
+    navigate,
+    quizAttemptId,
+    quizResponsesRepository,
+    quizResultId,
+    quizResultsRepository,
+    setIsLoading,
+    training,
+  ]);
+
+  const totalQuizQuestions = quiz ? quiz.questions.length : 0;
+
+  const handleSeeCertificates = () =>
+    navigate("/dashboard/acessar-meus-certificados");
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
@@ -670,9 +801,25 @@ export function WatchTraining() {
               onSelectClass={selectVideoClass}
               onSelectDeletableClass={selectDeletableVideoClass}
             />
-            {enableQuiz && (
-              <RealizeQuizWarningCard
+            {enableQuiz && quizAttempts === 0 ? (
+              <TrainingFinishedWarningCard
                 onStartQuiz={handleToggleTrainingCompleteModal}
+                content="Você assistiu todas as aulas deste treinamento. Realize o questionário
+        para emitir seu certificado."
+                buttonTitle="Realizar questionário"
+              />
+            ) : enableQuiz && quizAttempts !== 0 ? (
+              <TrainingFinishedWarningCard
+                onStartQuiz={handleToggleTrainingCompleteModal}
+                content="Você assistiu todas as aulas deste treinamento, mas não atingiu a pontuação mínima para a emissão do certificado. Refaça o questionário
+        para emitir seu certificado."
+                buttonTitle="Refazer questionário"
+              />
+            ) : (
+              <TrainingFinishedWarningCard
+                onStartQuiz={handleSeeCertificates}
+                content="Você assistiu todas as aulas deste treinamento."
+                buttonTitle="Acessar meus certificados"
               />
             )}
           </div>
@@ -682,9 +829,12 @@ export function WatchTraining() {
         onRequestClose={handleToggleTrainingCompleteModal}
         onClose={handleToggleTrainingCompleteModal}
         isOpen={trainingCompleteModal}
-        totalQuestions={3}
+        totalQuestions={totalQuizQuestions}
         trainingName={training && training.name}
-        onStartQuiz={handleStartNewQuizAttempt}
+        onStartQuiz={
+          quizAttempts === 0 ? handleStartNewQuizAttempt : handleRetryQuiz
+        }
+        isLoading={isLoading}
       />
     </div>
   );
