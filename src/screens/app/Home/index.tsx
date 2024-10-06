@@ -8,6 +8,7 @@ import { Loading } from "@/components/miscellaneous/Loading";
 import { TrainingInfoCard } from "@/components/miscellaneous/TrainingInfoCard";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Text } from "@/components/typography/Text";
+import { CertificatesRepository } from "@/repositories/certificatesRepository";
 import { ITrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO";
 import { IVideoClassDTO } from "@/repositories/dtos/VideoClassDTO";
 import { IWatchedClassDTO } from "@/repositories/dtos/WatchedClassDTO";
@@ -15,6 +16,7 @@ import { TrainingMetricsRepository } from "@/repositories/trainingMetricsReposit
 import { VideoClassesRepository } from "@/repositories/videoClassesRepository";
 import { WatchedClassesRepository } from "@/repositories/watchedClassesRepository";
 import { useAuthenticationStore } from "@/store/auth";
+import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
 import { secondsToFullTimeString } from "@/utils/formats";
 import { useQuery } from "@tanstack/react-query";
@@ -23,9 +25,12 @@ import { useNavigate } from "react-router-dom";
 
 export function Home() {
   const [hasNoWatchedClasses, setHasNoWatchedClasses] = useState(false);
+  const [userHasCertificateForTraining, setUserHasCertificateForTraining] =
+    useState(false);
   const [watchedClasses, setWatchedClasses] = useState<IWatchedClassDTO[]>([]);
 
   const { user } = useAuthenticationStore();
+  const { isLoading, setIsLoading } = useLoading();
   const { theme } = useThemeStore();
   const navigate = useNavigate();
 
@@ -40,6 +45,32 @@ export function Home() {
   const trainingMetricsRepository = useMemo(() => {
     return new TrainingMetricsRepository();
   }, []);
+
+  const certificatesRepository = useMemo(() => {
+    return new CertificatesRepository();
+  }, []);
+
+  const checkIfUserHasCertificate = useCallback(
+    async (trainingId: string) => {
+      try {
+        setIsLoading(true);
+        const hasCertificate =
+          await certificatesRepository.getCertificateByUserAndTraining({
+            user_id: user.id,
+            training_id: trainingId,
+          });
+        if (hasCertificate) {
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [certificatesRepository, setIsLoading, user.id]
+  );
 
   const getCompleteInfo = useCallback(async () => {
     try {
@@ -66,6 +97,13 @@ export function Home() {
           training_id: lastWatchedClassInfo.training_id,
         });
 
+      const userHasCertificate = await checkIfUserHasCertificate(
+        trainingMetrics.training.id
+      );
+      if (userHasCertificate) {
+        setUserHasCertificateForTraining(true);
+      }
+
       if (!trainingMetrics) return null;
 
       return { lastWatchedClassInfo, trainingMetrics };
@@ -73,6 +111,7 @@ export function Home() {
       console.log(error);
     }
   }, [
+    checkIfUserHasCertificate,
     trainingMetricsRepository,
     user.id,
     videoClassesRepository,
@@ -86,7 +125,7 @@ export function Home() {
   const {
     data,
     error: hasError,
-    isLoading,
+    isLoading: loading,
   } = useQuery({
     queryKey: ["complete-info"],
     queryFn: getCompleteInfo,
@@ -117,7 +156,10 @@ export function Home() {
               />
               <ImageCardButton />
             </div>
-          ) : isLoading || !lastWatchedClassInfo || !trainingMetrics ? (
+          ) : isLoading ||
+            loading ||
+            !lastWatchedClassInfo ||
+            !trainingMetrics ? (
             <div className="w-full flex flex-col items-center mt-[10vh]">
               <Loading color={PRIMARY_COLOR} />
             </div>
@@ -144,6 +186,7 @@ export function Home() {
                 className="mb-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%]"
               />
               <TrainingInfoCard
+                showSeeCertificateButton={userHasCertificateForTraining}
                 watchedClasses={watchedClasses}
                 cover_url={
                   lastWatchedClassInfo.thumbnail_url

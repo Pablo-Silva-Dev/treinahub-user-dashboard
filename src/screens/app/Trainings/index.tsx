@@ -8,6 +8,7 @@ import { Loading } from "@/components/miscellaneous/Loading";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { TrainingInfoCard } from "@/components/miscellaneous/TrainingInfoCard";
 import { Subtitle } from "@/components/typography/Subtitle";
+import { CertificatesRepository } from "@/repositories/certificatesRepository";
 import { ITrainingDTO } from "@/repositories/dtos/TrainingDTO";
 import { ICreateTrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO";
 import { IWatchedClassDTO } from "@/repositories/dtos/WatchedClassDTO";
@@ -24,9 +25,14 @@ import Lottie from "react-lottie";
 import { useNavigate } from "react-router-dom";
 
 export function Trainings() {
-  const navigate = useNavigate();
   const [trainings, setTrainings] = useState<ITrainingDTO[]>([]);
   const [watchedClasses, setWatchedClasses] = useState<IWatchedClassDTO[]>([]);
+  const [certificatesStatus, setCertificatesStatus] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const navigate = useNavigate();
+
   const { isLoading, setIsLoading } = useLoading();
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
@@ -45,6 +51,10 @@ export function Trainings() {
 
   const watchedClassesRepository = useMemo(() => {
     return new WatchedClassesRepository();
+  }, []);
+
+  const certificatesRepository = useMemo(() => {
+    return new CertificatesRepository();
   }, []);
 
   const getTrainings = useCallback(async () => {
@@ -89,6 +99,28 @@ export function Trainings() {
     [setIsLoading, user.id, watchedClassesRepository]
   );
 
+  const checkIfUserHasCertificate = useCallback(
+    async (trainingId: string) => {
+      try {
+        setIsLoading(true);
+        const hasCertificate =
+          await certificatesRepository.getCertificateByUserAndTraining({
+            user_id: user.id,
+            training_id: trainingId,
+          });
+        if (hasCertificate) {
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [certificatesRepository, setIsLoading, user.id]
+  );
+
   useEffect(() => {
     const fetchTrainingsWithLastWatchedClass = async () => {
       const trainings = await getTrainings();
@@ -98,6 +130,14 @@ export function Trainings() {
           trainings.map(async (training) => {
             const lastWatchedClass = await getLastWatchedClassesByTraining(
               training.id
+            );
+            const hasCertificate = await checkIfUserHasCertificate(training.id);
+            setCertificatesStatus(
+              (prevStatus) =>
+                ({
+                  ...prevStatus,
+                  [training.id]: hasCertificate,
+                }) as never
             );
             return {
               ...training,
@@ -114,7 +154,11 @@ export function Trainings() {
     };
 
     fetchTrainingsWithLastWatchedClass();
-  }, [getLastWatchedClassesByTraining, getTrainings]);
+  }, [
+    checkIfUserHasCertificate,
+    getLastWatchedClassesByTraining,
+    getTrainings,
+  ]);
 
   const { error, isLoading: loading } = useQuery({
     queryKey: ["training-metrics"],
@@ -210,71 +254,89 @@ export function Trainings() {
             </div>
           ) : (
             <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {trainings.map((training) => (
-                <TrainingInfoCard
-                  key={training.id}
-                  watchedClasses={watchedClasses}
-                  cover_url={
-                    training.cover_url
-                      ? training.cover_url
-                      : infocard_placeholder
-                  }
-                  training={training.name}
-                  description={training.description}
-                  lastClassName={
-                    training.last_watched_class_name
-                      ? training.last_watched_class_name
-                      : training.video_classes &&
-                          training.video_classes.length > 0
-                        ? training.video_classes[0].name
-                        : "Nenhuma aula foi assistida"
-                  }
-                  lastClassDuration={
-                    training.last_watched_class_duration
-                      ? secondsToFullTimeString(
-                          training.last_watched_class_duration
-                        )
-                      : training.video_classes &&
-                          training.video_classes.length > 0 &&
-                          training.video_classes[0].duration
-                        ? secondsToFullTimeString(
-                            training.video_classes[0].duration!
-                          )
-                        : "00:00"
-                  }
-                  totalCourseClasses={
-                    training.video_classes && training.video_classes.length > 0
-                      ? training.video_classes.length
-                      : 0
-                  }
-                  totalWatchedClasses={
-                    training.training_metrics?.find(
-                      (t) => t.user_id === user.id
-                    )?.total_watched_classes ?? 0
-                  }
-                  userStartedTraining={
-                    training.training_metrics &&
-                    training.training_metrics.find((t) => t.user_id === user.id)
-                      ? true
-                      : false
-                  }
-                  onSeeTraining={() =>
-                    handleSeeTraining(
-                      training.id,
-                      training.last_watched_class_id
-                        ? training.last_watched_class_id
-                        : undefined
-                    )
-                  }
-                  onSeeCertificate={handleSeeCertificate}
-                  onStartTraining={() =>
-                    handleCreateTrainingMetrics({
-                      training_id: training.id,
-                      user_id: user.id,
-                    })
-                  }
-                />
-              ))}
+              {trainings.map((training) =>
+                certificatesStatus[training.id] ? (
+                  <TrainingInfoCard
+                    key={training.id}
+                    showSeeCertificateButton
+                    watchedClasses={watchedClasses}
+                    cover_url={training.cover_url || infocard_placeholder}
+                    training={training.name}
+                    description={training.description}
+                    lastClassName={
+                      training.last_watched_class_name ||
+                      "Nenhuma aula foi assistida"
+                    }
+                    lastClassDuration={secondsToFullTimeString(
+                      training.last_watched_class_duration || 0
+                    )}
+                    totalCourseClasses={training.video_classes?.length || 0}
+                    totalWatchedClasses={
+                      training.training_metrics?.find(
+                        (t) => t.user_id === user.id
+                      )?.total_watched_classes || 0
+                    }
+                    userStartedTraining={
+                      !!training.training_metrics?.find(
+                        (t) => t.user_id === user.id
+                      )
+                    }
+                    onSeeTraining={() =>
+                      handleSeeTraining(
+                        training.id,
+                        training.last_watched_class_id
+                      )
+                    }
+                    onSeeCertificate={handleSeeCertificate}
+                    onStartTraining={() =>
+                      handleCreateTrainingMetrics({
+                        training_id: training.id,
+                        user_id: user.id,
+                      })
+                    }
+                  />
+                ) : (
+                  <TrainingInfoCard
+                    key={training.id}
+                    showSeeCertificateButton={false}
+                    watchedClasses={watchedClasses}
+                    cover_url={training.cover_url || infocard_placeholder}
+                    training={training.name}
+                    description={training.description}
+                    lastClassName={
+                      training.last_watched_class_name ||
+                      "Nenhuma aula foi assistida"
+                    }
+                    lastClassDuration={secondsToFullTimeString(
+                      training.last_watched_class_duration || 0
+                    )}
+                    totalCourseClasses={training.video_classes?.length || 0}
+                    totalWatchedClasses={
+                      training.training_metrics?.find(
+                        (t) => t.user_id === user.id
+                      )?.total_watched_classes || 0
+                    }
+                    userStartedTraining={
+                      !!training.training_metrics?.find(
+                        (t) => t.user_id === user.id
+                      )
+                    }
+                    onSeeTraining={() =>
+                      handleSeeTraining(
+                        training.id,
+                        training.last_watched_class_id
+                      )
+                    }
+                    onSeeCertificate={handleSeeCertificate}
+                    onStartTraining={() =>
+                      handleCreateTrainingMetrics({
+                        training_id: training.id,
+                        user_id: user.id,
+                      })
+                    }
+                  />
+                )
+              )}
             </div>
           )}
         </div>

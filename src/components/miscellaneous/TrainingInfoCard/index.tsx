@@ -15,6 +15,7 @@ interface TrainingInfoCardProps {
   onStartTraining?: () => void;
   userStartedTraining: boolean;
   watchedClasses: IWatchedClassDTO[];
+  showSeeCertificateButton: boolean;
 }
 
 export function TrainingInfoCard({
@@ -30,6 +31,7 @@ export function TrainingInfoCard({
   onStartTraining,
   userStartedTraining,
   watchedClasses,
+  showSeeCertificateButton,
 }: TrainingInfoCardProps) {
   const totalCourseProgressPercentage =
     totalWatchedClasses > 0
@@ -167,12 +169,14 @@ export function TrainingInfoCard({
               </span>
             </div>
             <div className="flex flex-row">
-              <button
-                className=" bg-gray-100 dark:bg-slate-600 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 rounded-md w-full p-4 mr-4"
-                onClick={onSeeCertificate}
-              >
-                Ver certificado
-              </button>
+              {showSeeCertificateButton && (
+                <button
+                  className=" bg-gray-100 dark:bg-slate-600 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 rounded-md w-full p-4 mr-4"
+                  onClick={onSeeCertificate}
+                >
+                  Ver certificado
+                </button>
+              )}
               <button
                 className="border-[1px] border-gray-400 dark:border-gray-50 text-[12px] lg:text-sm text-gray-800 dark:text-gray-50 rounded-md w-full p-4"
                 onClick={onSeeTraining}
