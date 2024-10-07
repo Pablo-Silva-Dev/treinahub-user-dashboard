@@ -116,20 +116,20 @@ export function TrainingInfoCard({
               //TODO-PABLO: Navigate to specific training video class ready to be played
               onClick={onSeeTraining}
             >
-              <div className="flex flex-row items-center mb-1">
+              <div className="flex flex-row items-center justify-start mb-1">
                 <Feather
                   icon="play-circle"
                   className="mr-2 dark:text-white text-gray-800"
                 />
-                <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+                <span className="text-gray-800 dark:text-gray-50 text-[11px]  lg:text-[12px] font-primary text-pretty  text-left">
                   {lastClassName}
                 </span>
               </div>
               <div className="flex flex-row mt-1">
-                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary mr-1">
+                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[11px] font-primary mr-1">
                   Duração:
                 </span>
-                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[12px] font-primary text-pretty">
+                <span className="text-gray-800 dark:text-gray-50 text-[10px] lg:text-[11px] font-primary text-pretty">
                   {lastClassDuration}
                 </span>
               </div>
