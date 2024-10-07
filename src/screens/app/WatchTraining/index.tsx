@@ -715,7 +715,7 @@ export function WatchTraining() {
   const classWasWatched = useMemo(() => {
     if (selectedVideoClass) {
       return watchedVideoClasses.some(
-        (wc) => wc.videoclass?.id === selectedVideoClass.id
+        (wc) => wc.videoclass?.id === selectedVideoClass.id && wc.completely_watched
       );
     }
     return false;
