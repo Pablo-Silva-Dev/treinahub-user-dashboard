@@ -200,10 +200,12 @@ export function Trainings() {
       navigate(
         `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${videoClassId}`
       );
+    }else{
+      navigate(
+        `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${firstTrainingVideoClass!.id}`
+      );
     }
-    navigate(
-      `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${firstTrainingVideoClass!.id}`
-    );
+ 
   };
 
   const totalCourseWatchedClasses = watchedClasses.filter(wc => wc.completely_watched).length

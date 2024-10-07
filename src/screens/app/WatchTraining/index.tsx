@@ -487,35 +487,31 @@ export function WatchTraining() {
     shouldEnableQuiz();
   }, [shouldEnableQuiz]);
 
-  useEffect(() => {
-    if (trainingIdQueryParam && videoClassIdQueryParam) {
-      getVideoClass(videoClassIdQueryParam);
-    }
-  }, [getVideoClass, trainingIdQueryParam, videoClassIdQueryParam]);
-
   const getNextOneClassToWatch = useCallback(async () => {
     if (videoClasses.length !== watchedVideoClasses.length) {
       try {
-        if (!selectedVideoClass) return;
+        if (!videoClassIdQueryParam) {
+          if (!selectedVideoClass) return;
 
-        const currentWatchedClass = watchedVideoClasses.find(
-          (wc) => wc.videoclass_id === selectedVideoClass.id
-        );
-
-        if (currentWatchedClass?.completely_watched) {
-          const currentWatchedClassIndex = videoClasses.findIndex(
-            (vc) => vc.id === selectedVideoClass.id
+          const currentWatchedClass = watchedVideoClasses.find(
+            (wc) => wc.videoclass_id === selectedVideoClass.id
           );
 
-          const nexVideoClassToWatch =
-            videoClasses[currentWatchedClassIndex + 1];
+          if (currentWatchedClass?.completely_watched) {
+            const currentWatchedClassIndex = videoClasses.findIndex(
+              (vc) => vc.id === selectedVideoClass.id
+            );
 
-          if (
-            currentWatchedClassIndex !== -1 &&
-            currentWatchedClassIndex < videoClasses.length - 1
-          ) {
-            setSelectedVideoClass(nexVideoClassToWatch);
-            setShowPreviousClassButton(true);
+            const nexVideoClassToWatch =
+              videoClasses[currentWatchedClassIndex + 1];
+
+            if (
+              currentWatchedClassIndex !== -1 &&
+              currentWatchedClassIndex < videoClasses.length - 1
+            ) {
+              setSelectedVideoClass(nexVideoClassToWatch);
+              setShowPreviousClassButton(true);
+            }
           }
         }
       } catch (error) {
@@ -715,7 +711,8 @@ export function WatchTraining() {
   const classWasWatched = useMemo(() => {
     if (selectedVideoClass) {
       return watchedVideoClasses.some(
-        (wc) => wc.videoclass?.id === selectedVideoClass.id && wc.completely_watched
+        (wc) =>
+          wc.videoclass?.id === selectedVideoClass.id && wc.completely_watched
       );
     }
     return false;
@@ -735,6 +732,12 @@ export function WatchTraining() {
       setIsMarkingAsWatched(false);
     }
   }, [addClassToWatchedAsIncomplete, handleMarkClassAsCompletelyWatched]);
+
+  useEffect(() => {
+    if (trainingIdQueryParam && videoClassIdQueryParam) {
+      getVideoClass(videoClassIdQueryParam);
+    }
+  }, [getVideoClass, trainingIdQueryParam, videoClassIdQueryParam]);
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
