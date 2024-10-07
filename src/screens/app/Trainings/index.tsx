@@ -206,6 +206,8 @@ export function Trainings() {
     );
   };
 
+  const totalCourseWatchedClasses = watchedClasses.filter(wc => wc.completely_watched).length
+
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8">
       <div className="flex flex-col justify-between mb-6 mx-auto md:mx-[80px] w-[80%]">
@@ -272,9 +274,7 @@ export function Trainings() {
                     )}
                     totalCourseClasses={training.video_classes?.length || 0}
                     totalWatchedClasses={
-                      training.training_metrics?.find(
-                        (t) => t.user_id === user.id
-                      )?.total_watched_classes || 0
+                      totalCourseWatchedClasses|| 0
                     }
                     userStartedTraining={
                       !!training.training_metrics?.find(
@@ -312,9 +312,7 @@ export function Trainings() {
                     )}
                     totalCourseClasses={training.video_classes?.length || 0}
                     totalWatchedClasses={
-                      training.training_metrics?.find(
-                        (t) => t.user_id === user.id
-                      )?.total_watched_classes || 0
+                      totalCourseWatchedClasses || 0
                     }
                     userStartedTraining={
                       !!training.training_metrics?.find(
