@@ -31,13 +31,12 @@ import { NextClassCard } from "./components/NextClassCard";
 import { PlayerListCard } from "./components/PlayerListCard";
 import { PreviousClassCard } from "./components/PreviousClassCard";
 import { RealizeQuizModal } from "./components/RealizeQuizModal";
+import { ToggleClassWatchedButton } from "./components/ToggleClassWatchedButton";
 import { TrainingFinishedWarningCard } from "./components/TrainingFinishedWarningCard";
 
 export function WatchTraining() {
   const [videoClasses, setVideoClasses] = useState<IVideoClassDTO[]>([]);
   const [selectedVideoClass, setSelectedVideoClass] =
-    useState<IVideoClassDTO | null>(null);
-  const [selectedDeletableVideoClass, setSelectedDeletedVideoClass] =
     useState<IVideoClassDTO | null>(null);
 
   const [watchedVideoClasses, setWatchedVideoClasses] = useState<
@@ -62,6 +61,7 @@ export function WatchTraining() {
   const [quizAttempts, setQuizAttempts] = useState(0);
   const [quizAttemptId, setQuizAttemptId] = useState("");
   const [quizResultId, setQuizResultId] = useState("");
+  const [isMarkingAsWatched, setIsMarkingAsWatched] = useState(false);
 
   const navigate = useNavigate();
 
@@ -201,7 +201,6 @@ export function WatchTraining() {
         const videoClass =
           await videoClassesRepository.getVideoClassById(videoClassId);
         setSelectedVideoClass(videoClass);
-        setSelectedDeletedVideoClass(videoClass);
         return videoClass;
       } catch (error) {
         console.log(error);
@@ -219,17 +218,9 @@ export function WatchTraining() {
     [videoClassesRepository]
   );
 
-  const selectDeletableVideoClass = useCallback(
-    async (videoClassId: string) => {
-      const videoClass =
-        await videoClassesRepository.getVideoClassById(videoClassId);
-      setSelectedDeletedVideoClass(videoClass);
-    },
-    [videoClassesRepository]
-  );
-
   const handleUnwatchClassAndUpdateMetrics = useCallback(
     async (classId: string) => {
+      setIsMarkingAsWatched(true);
       try {
         await watchedClassesRepository.removeWatchedClass({
           user_id: user.id,
@@ -253,6 +244,8 @@ export function WatchTraining() {
           .then((res) => setWatchedVideoClasses(res));
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsMarkingAsWatched(false);
       }
     },
     [
@@ -293,35 +286,43 @@ export function WatchTraining() {
       : setShowPreviousClassButton(false);
   }, [selectedVideoClass?.reference_number, videoClasses]);
 
-  const handleMarkClassAsCompletelyWatched = useCallback(async () => {
-    try {
-      await watchedClassesRepository.updateVideoClassExecutionStatus({
-        user_id: user.id,
-        videoclass_id: selectedVideoClass!.id,
-        completely_watched: true,
-        execution_time: selectedVideoClass!.duration,
-      });
-      await videoClassesRepository
-        .listVideoClassesByTraining(trainingIdQueryParam!)
-        .then((res) => setVideoClasses(sortVideoClasses(res) as never));
-      await watchedClassesRepository
-        .listWatchedClassesByUserAndTraining({
+  const handleMarkClassAsCompletelyWatched = useCallback(
+    async (shouldCallNextClass: boolean) => {
+      try {
+        await watchedClassesRepository.updateVideoClassExecutionStatus({
           user_id: user.id,
-          training_id: trainingIdQueryParam!,
-        })
-        .then((res) => setWatchedVideoClasses(res));
-      getNextVideoClass();
-    } catch (error) {
-      console.log("Error at trying to updated video class at ending: ", error);
-    }
-  }, [
-    getNextVideoClass,
-    selectedVideoClass,
-    trainingIdQueryParam,
-    user.id,
-    videoClassesRepository,
-    watchedClassesRepository,
-  ]);
+          videoclass_id: selectedVideoClass!.id,
+          completely_watched: true,
+          execution_time: selectedVideoClass!.duration,
+        });
+        await videoClassesRepository
+          .listVideoClassesByTraining(trainingIdQueryParam!)
+          .then((res) => setVideoClasses(sortVideoClasses(res) as never));
+        await watchedClassesRepository
+          .listWatchedClassesByUserAndTraining({
+            user_id: user.id,
+            training_id: trainingIdQueryParam!,
+          })
+          .then((res) => setWatchedVideoClasses(res));
+        if (shouldCallNextClass) {
+          getNextVideoClass();
+        }
+      } catch (error) {
+        console.log(
+          "Error at trying to updated video class at ending: ",
+          error
+        );
+      }
+    },
+    [
+      getNextVideoClass,
+      selectedVideoClass,
+      trainingIdQueryParam,
+      user.id,
+      videoClassesRepository,
+      watchedClassesRepository,
+    ]
+  );
 
   const addClassToWatchedAsIncomplete = useCallback(async () => {
     try {
@@ -506,9 +507,6 @@ export function WatchTraining() {
             (vc) => vc.id === selectedVideoClass.id
           );
 
-          const previousVideoClassToWatch =
-            videoClasses[currentWatchedClassIndex - 1];
-
           const nexVideoClassToWatch =
             videoClasses[currentWatchedClassIndex + 1];
 
@@ -518,8 +516,6 @@ export function WatchTraining() {
           ) {
             setSelectedVideoClass(nexVideoClassToWatch);
             setShowPreviousClassButton(true);
-          } else {
-            setSelectedVideoClass(previousVideoClassToWatch);
           }
         }
       } catch (error) {
@@ -527,7 +523,7 @@ export function WatchTraining() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoClasses, watchedVideoClasses]);
+  }, [videoClasses]);
 
   useEffect(() => {
     getNextOneClassToWatch();
@@ -716,6 +712,30 @@ export function WatchTraining() {
   const handleSeeCertificates = () =>
     navigate("/dashboard/acessar-meus-certificados");
 
+  const classWasWatched = useMemo(() => {
+    if (selectedVideoClass) {
+      return watchedVideoClasses.some(
+        (wc) => wc.videoclass?.id === selectedVideoClass.id
+      );
+    }
+    return false;
+  }, [selectedVideoClass, watchedVideoClasses]);
+
+  const handleManuallyMarkClassAsWatched = useCallback(async () => {
+    setIsMarkingAsWatched(true);
+    try {
+      await addClassToWatchedAsIncomplete();
+      await handleMarkClassAsCompletelyWatched(false);
+    } catch (error) {
+      console.log(error);
+      showAlertError(
+        "Houve um erro ao tentar marcar aula como assistida. Por favor, tente novamente mais tarde."
+      );
+    } finally {
+      setIsMarkingAsWatched(false);
+    }
+  }, [addClassToWatchedAsIncomplete, handleMarkClassAsCompletelyWatched]);
+
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
       <div className="mb-2">
@@ -752,15 +772,25 @@ export function WatchTraining() {
                   onProgress={(state) =>
                     updateWatchedClassExecutionTime(state.playedSeconds)
                   }
-                  onEnded={handleMarkClassAsCompletelyWatched}
+                  onEnded={() => handleMarkClassAsCompletelyWatched(true)}
                 />
               }
             </div>
-            <Subtitle
-              content={selectedVideoClass.name}
-              className="m-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%] font-bold"
-            />
-            <div className="w-full flex flex-col lg:flex-row justify-between">
+            <div className="flex flex-row w-full items-center mb-6">
+              <Subtitle
+                content={selectedVideoClass.name}
+                className="m-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%] font-bold"
+              />
+              <ToggleClassWatchedButton
+                classWasWatched={classWasWatched}
+                onUnwatchClass={() =>
+                  handleUnwatchClassAndUpdateMetrics(selectedVideoClass.id)
+                }
+                onWatchClass={handleManuallyMarkClassAsWatched}
+                disabled={isMarkingAsWatched}
+              />
+            </div>
+            <div className="w-full flex flex-row justify-between">
               <PreviousClassCard
                 classDuration={
                   previousVideoClass
@@ -805,15 +835,10 @@ export function WatchTraining() {
           </div>
           <div className="w-full xl:w-[35%] xl:max-w-[480px] xl:ml-6">
             <PlayerListCard
+              selectedVideoClassId={selectedVideoClass.id}
               classes={videoClasses}
               watchedClasses={watchedVideoClasses}
-              onUnwatchClass={() =>
-                handleUnwatchClassAndUpdateMetrics(
-                  selectedDeletableVideoClass!.id
-                )
-              }
               onSelectClass={selectVideoClass}
-              onSelectDeletableClass={selectDeletableVideoClass}
             />
             {enableQuiz && quizAttempts === 0 ? (
               <TrainingFinishedWarningCard
