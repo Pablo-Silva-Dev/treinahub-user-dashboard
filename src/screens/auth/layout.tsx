@@ -1,9 +1,10 @@
 import dashboard_background from "@/assets/dashboard_background.webp";
 import logo_text from "@/assets/logo_text.svg";
+import logo_text_dark from "@/assets/logo_text_dark.svg";
 import { CompanyFooterLink } from "@/components/miscellaneous/CompanyFooterLink";
+import { useThemeStore } from "@/store/theme";
 import { ReactNode } from "react";
 import { Toaster } from "react-hot-toast";
-
 interface AuthenticationLayoutProps {
   children: ReactNode;
 }
@@ -11,6 +12,8 @@ interface AuthenticationLayoutProps {
 export const AuthenticationLayout: React.FC<AuthenticationLayoutProps> = ({
   children,
 }: AuthenticationLayoutProps) => {
+  const { theme } = useThemeStore();
+
   return (
     <div className="flex flex-col-reverse lg:flex-row w-full min-h-screen">
       <Toaster />
@@ -18,7 +21,12 @@ export const AuthenticationLayout: React.FC<AuthenticationLayoutProps> = ({
         <div className="flex flex-col justify-between h-full">
           {children}
           <div className="flex flex-col w-full items-center">
-            <img src={logo_text} alt="logo_text" width={200} height={120} />
+            <img
+              src={theme === "dark" ? logo_text_dark : logo_text}
+              alt="logo_text"
+              width={200}
+              height={120}
+            />
             <div className="flex flex-col lg:flex-row w-full mt-6 mb-2 justify-center">
               <CompanyFooterLink
                 companyText="Desenvolvido por PS Code. Acesse nosso site "
@@ -28,7 +36,7 @@ export const AuthenticationLayout: React.FC<AuthenticationLayoutProps> = ({
           </div>
         </div>
       </section>
-      <section className="flex flex-col w-full lg:w-1/2 ">
+      <section className="flex flex-col w-full lg:w-1/2 h-screen ">
         <div className="bg-gradient-to-r from-secondary-light to-secondary-dark p-2 md:p-4 pl-8">
           <div className="w-[80%]">
             <span className="text-white text-lg md:text-3xl max-w-xs md:max-w-lg font-thin">

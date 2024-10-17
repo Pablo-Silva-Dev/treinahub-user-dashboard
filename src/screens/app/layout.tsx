@@ -1,4 +1,5 @@
 import logo_text from "@/assets/logo_text.svg";
+import logo_text_dark from "@/assets/logo_text_dark.svg";
 import { CompanyFooterLink } from "@/components/miscellaneous/CompanyFooterLink";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Title } from "@/components/typography/Title";
@@ -176,7 +177,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="flex flex-row w-full min-h-screen">
         <nav className="hidden xl:flex flex-col w-[280px] min-h-screen overflow-auto p-6 bg-white dark:bg-slate-900 items-start">
           <Link to="/dashboard">
-            <img src={logo_text} alt="logo-text" width={200} className="mb-4" />
+            <img
+              src={theme === "dark" ? logo_text_dark : logo_text}
+              alt="logo-text"
+              width={200}
+              className="mb-4"
+            />
           </Link>
           {menuItems.map((item, idx) => (
             <Accordion
@@ -332,7 +338,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
           <Link to="/dashboard">
             <img
-              src={logo_text}
+              src={theme === "dark" ? logo_text_dark : logo_text}
               alt="logo-text"
               width={200}
               className="mb-4 mt-8"
