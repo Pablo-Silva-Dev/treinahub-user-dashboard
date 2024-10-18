@@ -2,7 +2,6 @@ import { PRIMARY_COLOR } from "@/appConstants/index";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
 import { Loading } from "@/components/miscellaneous/Loading";
-import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Text } from "@/components/typography/Text";
 import { CertificatesRepository } from "@/repositories/certificatesRepository";
@@ -741,12 +740,6 @@ export function WatchTraining() {
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
-      <div className="mb-2">
-        <ScreenTitleIcon
-          screenTitle={training ? training.name : "treinamento"}
-          iconName="play-circle"
-        />
-      </div>
       {isLoading || !selectedVideoClass ? (
         <div className="w-full mt-[10vh]">
           <Loading color={PRIMARY_COLOR} />
@@ -761,6 +754,11 @@ export function WatchTraining() {
       ) : (
         <div className="w-full flex flex-col xl:flex-row">
           <div className="w-full  xl:w-[55%] flex flex-col">
+            <div className="mb-2 w-full">
+              <h1 className="text-black dark:text-white font-bold font-secondary text-[14px] md:text-[16px]">
+                {training ? training.name : "treinamento"}
+              </h1>
+            </div>
             <div className="flex flex-col  w-full aspect-video min-h-[200px] mb-4">
               {
                 <Player
