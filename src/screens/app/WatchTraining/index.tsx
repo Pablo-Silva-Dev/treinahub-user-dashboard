@@ -149,7 +149,9 @@ export function WatchTraining() {
           trainingMetricsPromise,
         ]);
 
-      setVideoClasses(videoClasses!);
+      const sortedClasses = sortVideoClasses(videoClasses);
+
+      setVideoClasses(sortedClasses!);
       setTraining(training);
       setWatchedVideoClasses(watchedVideoClasses);
       setTrainingMetrics(trainingMetrics);
@@ -855,13 +857,8 @@ export function WatchTraining() {
         para emitir seu certificado."
                 buttonTitle="Refazer questionário"
               />
-            ) : (
-              <TrainingFinishedWarningCard
-                onStartQuiz={handleSeeCertificates}
-                content="Você assistiu todas as aulas deste treinamento."
-                buttonTitle="Acessar meus certificados"
-              />
-            )}
+            ) : null
+            }
           </div>
         </div>
       )}
