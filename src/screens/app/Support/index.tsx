@@ -69,7 +69,7 @@ export function SupportPage() {
         <div className="w-full flex flex-col items-center mt-[10vh]">
           <img
             src={theme === "light" ? error_warning : error_warning_dark}
-            alt="ps-trainings"
+            alt="treinahub"
             width={240}
           />
         </div>
