@@ -61,6 +61,16 @@ export function ProfileCard({
             {formatDate(user.birth_date)}
           </span>
         </div>
+        {user.company && (
+          <div className="w-full flex flex-col mb-4">
+            <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary font-bold">
+              Empresa vinculada
+            </span>
+            <span className="text-gray-800 dark:text-gray-50 text-[11px] lg:text-sm font-primary text-pretty">
+              {user.company.fantasy_name}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="w-full flex flex-col justify-evenly">

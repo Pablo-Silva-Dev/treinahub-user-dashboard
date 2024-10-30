@@ -1,3 +1,5 @@
+import { ICompanyDTO } from "./CompanyDTO";
+
 export interface IUserDTO {
   id: string;
   name: string;
@@ -13,6 +15,7 @@ export interface IUserDTO {
   uf?: string;
   residence_number?: string;
   is_admin: boolean;
+  company?: ICompanyDTO;
 }
 
 export interface ICreateUserDTO {
