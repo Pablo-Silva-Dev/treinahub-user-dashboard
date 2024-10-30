@@ -1,10 +1,12 @@
 import { AVATAR_PLACEHOLDER_URL, NAVIGATION_TIMER } from "@/appConstants/index";
 import { HeaderNavigation } from "@/components/miscellaneous/HeaderNavigation";
 import { AvatarsRepository } from "@/repositories/avatarsRepository";
+import { CompaniesRepository } from "@/repositories/cmpaniesRepository";
+import { ICompanyDTO } from "@/repositories/dtos/CompanyDTO";
 import { UsersRepository } from "@/repositories/usersRepository";
 import { useLoading } from "@/store/loading";
 import { showAlertError, showAlertSuccess } from "@/utils/alerts";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PrivacyPolicyModal } from "./components/PrivacyPolicyModal";
 import SignUpForm from "./components/SignUpForm";
@@ -15,6 +17,7 @@ export function SignUp() {
   const [privacyPolicyModal, setPrivacyPolicyModal] = useState(false);
   const navigate = useNavigate();
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [companiesList, setCompaniesList] = useState<ICompanyDTO[]>([]);
 
   const { isLoading, setIsLoading } = useLoading();
 
@@ -33,6 +36,26 @@ export function SignUp() {
   const avatarsRepository = useMemo(() => {
     return new AvatarsRepository();
   }, []);
+
+  const companiesRepository = useMemo(() => {
+    return new CompaniesRepository();
+  }, []);
+
+  const getCompanies = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const companies = await companiesRepository.listCompanies();
+      setCompaniesList(companies);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [companiesRepository, setIsLoading]);
+
+  useEffect(() => {
+    getCompanies();
+  }, [getCompanies]);
 
   const handleRegisterUser = async (data: any) => {
     try {
@@ -72,14 +95,17 @@ export function SignUp() {
       <div className="flex flex-row mb-2 w-full sm:w-[400px] ml-8 sm:mx-auto">
         <HeaderNavigation screenTitle="Cadastro" />
       </div>
-      <SignUpForm
-        onSubmit={handleRegisterUser}
-        onOpenUseTermsModal={handleToggleUseTermsModal}
-        onOpenPrivacyPolicyModal={handleTogglePrivacyPolicyModal}
-        isLoading={isLoading}
-        passwordConfirmation={passwordConfirmation}
-        setPasswordConfirmation={setPasswordConfirmation}
-      />
+      {!isLoading && (
+        <SignUpForm
+          onSubmit={handleRegisterUser}
+          onOpenUseTermsModal={handleToggleUseTermsModal}
+          onOpenPrivacyPolicyModal={handleTogglePrivacyPolicyModal}
+          isLoading={isLoading}
+          passwordConfirmation={passwordConfirmation}
+          setPasswordConfirmation={setPasswordConfirmation}
+          companiesList={companiesList}
+        />
+      )}
       <UseTermsModal
         onClose={handleToggleUseTermsModal}
         isOpen={useTermsModal}
