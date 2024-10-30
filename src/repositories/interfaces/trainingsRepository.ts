@@ -17,6 +17,6 @@ export interface ITrainingDTO {
 }
 
 export interface ITrainingsRepository {
-  listTrainings(): Promise<ITrainingDTO[]>;
+  listTrainings(companyId: string): Promise<ITrainingDTO[]>;
   getTrainingById(id: string): Promise<ITrainingDTO>;
 }

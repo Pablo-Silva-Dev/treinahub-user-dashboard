@@ -60,7 +60,7 @@ export function Trainings() {
   const getTrainings = useCallback(async () => {
     try {
       setIsLoading(true);
-      const trainings = await trainingsRepository.listTrainings();
+      const trainings = await trainingsRepository.listTrainings(user.companyId);
       const filteredTrainings = trainings.filter(
         (training) =>
           training.video_classes && training.video_classes?.length > 0
@@ -72,7 +72,7 @@ export function Trainings() {
     } finally {
       setIsLoading(false);
     }
-  }, [setIsLoading, trainingsRepository]);
+  }, [setIsLoading, trainingsRepository, user.companyId]);
 
   const getLastWatchedClassesByTraining = useCallback(
     async (trainingId: string) => {

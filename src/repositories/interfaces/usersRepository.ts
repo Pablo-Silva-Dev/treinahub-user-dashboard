@@ -9,6 +9,7 @@ export interface IAuthenticateUserResponse {
   id: string;
   name: string;
   email: string;
+  companyId: string;
   token: string;
 }
 
