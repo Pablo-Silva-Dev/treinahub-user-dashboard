@@ -27,8 +27,8 @@ export function FaqCollapsibleCard({ questions }: FaqCollapsibleCardProps) {
   return (
     <div className="w-full md:w-[90%] flex flex-col bg-white p-4 dark:bg-slate-900 rounded-md shadow-md">
       {questions.map((question, i) => (
-        <>
-          <div key={question.question} className="mb-4">
+        <div key={question.question + i}>
+          <div className="mb-4">
             <div className="w-full flex flex-row justify-between items-center mb-2">
               <button onClick={() => toggleQuestion(i)}>
                 <h3 className="text-gray-800 dark:text-gray-50 text-[13px] md:text-[14px] font-bold mr-3 text-left">
@@ -68,7 +68,7 @@ export function FaqCollapsibleCard({ questions }: FaqCollapsibleCardProps) {
           {i !== questions.length - 1 && (
             <div className="w-full h-[1px] bg-gray-200 dark:bg-slate-600 mb-4" />
           )}
-        </>
+        </div>
       ))}
     </div>
   );
