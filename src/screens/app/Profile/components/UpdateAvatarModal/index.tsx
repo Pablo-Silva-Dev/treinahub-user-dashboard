@@ -59,7 +59,9 @@ export function UpdateAvatarModal({
         }
       )
       .test("fileSize", FILE_MAX_SIZE_MESSAGE + "2MB", (value: any) => {
-        return value[0].size <= MAX_AVATAR_FILE_SIZE;
+        if (value) {
+          return value[0].size <= MAX_AVATAR_FILE_SIZE;
+        }
       }),
   });
 
