@@ -6,6 +6,7 @@ import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { ContactsSupportRepository } from "@/repositories/contactsSupportRepository";
 import { IContactSupportDTO } from "@/repositories/dtos/ContactSupportDTO";
+import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
 import { formatPhoneNumberWithoutCountryCode } from "@/utils/formats";
@@ -20,6 +21,7 @@ export function SupportPage() {
 
   const { isLoading, setIsLoading } = useLoading();
   const { theme } = useThemeStore();
+  const { user } = useAuthenticationStore();
 
   const contactsSupportsRepository = useMemo(() => {
     return new ContactsSupportRepository();
@@ -28,7 +30,9 @@ export function SupportPage() {
   const getContactSupports = useCallback(async () => {
     try {
       setIsLoading(true);
-      const contactSupports = await contactsSupportsRepository.listContacts();
+      const contactSupports = await contactsSupportsRepository.listContacts(
+        user.companyId
+      );
       setContactSupports(contactSupports);
       return contactSupports;
     } catch (error) {
@@ -36,7 +40,7 @@ export function SupportPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [contactsSupportsRepository, setIsLoading]);
+  }, [contactsSupportsRepository, setIsLoading, user.companyId]);
 
   useEffect(() => {
     getContactSupports();
