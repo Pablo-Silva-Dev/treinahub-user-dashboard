@@ -1,5 +1,5 @@
 import { IFaqQuestionDTO } from "../dtos/FaqQuestionDTO.ts";
 
 export interface IFaqQuestionsRepository {
-  listFaqQuestions(): Promise<IFaqQuestionDTO[]>;
+  listFaqQuestions(companyId: string): Promise<IFaqQuestionDTO[]>;
 }

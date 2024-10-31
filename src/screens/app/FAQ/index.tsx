@@ -6,6 +6,7 @@ import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { IFaqQuestionDTO } from "@/repositories/dtos/FaqQuestionDTO";
 import { FaqQuestionsRepository } from "@/repositories/faqQuestionsRepository";
+import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
 import { useQuery } from "@tanstack/react-query";
@@ -17,6 +18,7 @@ export function FAQPage() {
 
   const { isLoading, setIsLoading } = useLoading();
   const { theme } = useThemeStore();
+  const { user } = useAuthenticationStore();
 
   const faqQuestionsRepository = useMemo(() => {
     return new FaqQuestionsRepository();
@@ -25,7 +27,9 @@ export function FAQPage() {
   const getFaqQuestions = useCallback(async () => {
     try {
       setIsLoading(true);
-      const faqQuestions = await faqQuestionsRepository.listFaqQuestions();
+      const faqQuestions = await faqQuestionsRepository.listFaqQuestions(
+        user.companyId
+      );
       setFaqQuestions(faqQuestions);
       return faqQuestions;
     } catch (error) {
@@ -33,7 +37,7 @@ export function FAQPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [faqQuestionsRepository, setIsLoading]);
+  }, [faqQuestionsRepository, setIsLoading, user.companyId]);
 
   useEffect(() => {
     getFaqQuestions();
