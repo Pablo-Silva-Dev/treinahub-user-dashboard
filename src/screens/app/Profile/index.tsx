@@ -148,6 +148,8 @@ export function Profile() {
       } catch (error) {
         showAlertError("Houve um erro ao atualizar avatar.");
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     },
     [

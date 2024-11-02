@@ -1,7 +1,7 @@
 import { AVATAR_PLACEHOLDER_URL, NAVIGATION_TIMER } from "@/appConstants/index";
 import { HeaderNavigation } from "@/components/miscellaneous/HeaderNavigation";
 import { AvatarsRepository } from "@/repositories/avatarsRepository";
-import { CompaniesRepository } from "@/repositories/cmpaniesRepository";
+import { CompaniesRepository } from "@/repositories/companiesRepository";
 import { ICompanyDTO } from "@/repositories/dtos/CompanyDTO";
 import { UsersRepository } from "@/repositories/usersRepository";
 import { useLoading } from "@/store/loading";

@@ -26,6 +26,7 @@ export interface ICreateUserDTO {
   birth_date: string;
   password: string;
   is_admin?: boolean;
+  company_id: string;
 }
 
 export interface IUpdateUserDTO {
