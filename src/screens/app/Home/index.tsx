@@ -189,8 +189,8 @@ export default function Home() {
                 showSeeCertificateButton={userHasCertificateForTraining}
                 watchedClasses={watchedClasses}
                 cover_url={
-                  lastWatchedClassInfo.thumbnail_url
-                    ? lastWatchedClassInfo.thumbnail_url
+                  lastWatchedClassInfo.training?.cover_url
+                    ? lastWatchedClassInfo.training?.cover_url
                     : infocard_placeholder
                 }
                 training={trainingMetrics.training.name}
