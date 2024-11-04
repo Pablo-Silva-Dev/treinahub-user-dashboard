@@ -9,7 +9,7 @@ interface AuthenticationLayoutProps {
   children: ReactNode;
 }
 
-export const AuthenticationLayout: React.FC<AuthenticationLayoutProps> = ({
+const AuthenticationLayout: React.FC<AuthenticationLayoutProps> = ({
   children,
 }: AuthenticationLayoutProps) => {
   const { theme } = useThemeStore();
@@ -57,3 +57,5 @@ export const AuthenticationLayout: React.FC<AuthenticationLayoutProps> = ({
     </div>
   );
 };
+
+export default AuthenticationLayout

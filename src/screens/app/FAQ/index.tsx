@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaqCollapsibleCard } from "./components/FaqCollapsibleCard";
 
-export function FAQPage() {
+export default function FAQPage() {
   const [faqQuestions, setFaqQuestions] = useState<IFaqQuestionDTO[]>([]);
 
   const { isLoading, setIsLoading } = useLoading();

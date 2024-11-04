@@ -12,7 +12,7 @@ import Lottie from "react-lottie";
 import { useNavigate } from "react-router-dom";
 import { CertificateCard } from "./components/CertificateCard";
 
-export function Certificates() {
+export default function Certificates() {
   const [certificates, setCertificates] = useState<ICertificateDTO[]>([]);
   const [, setSelectedCertificate] = useState<ICertificateDTO | null>(null);
 

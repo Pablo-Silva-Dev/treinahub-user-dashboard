@@ -6,7 +6,7 @@ import { showAlertError } from "@/utils/alerts";
 import { useCallback, useMemo } from "react";
 import { SignInForm, SignInFormInputs } from "./components/SignInForm";
 
-export function InitialScreen() {
+export default function InitialScreen() {
   const { signIn } = useAuthenticationStore();
   const { isLoading, setIsLoading } = useLoading();
 

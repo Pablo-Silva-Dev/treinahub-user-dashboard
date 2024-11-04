@@ -23,7 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function Home() {
+export default function Home() {
   const [hasNoWatchedClasses, setHasNoWatchedClasses] = useState(false);
   const [userHasCertificateForTraining, setUserHasCertificateForTraining] =
     useState(false);

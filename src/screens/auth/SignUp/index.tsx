@@ -12,7 +12,7 @@ import { PrivacyPolicyModal } from "./components/PrivacyPolicyModal";
 import SignUpForm from "./components/SignUpForm";
 import { UseTermsModal } from "./components/UseTermsModal";
 
-export function SignUp() {
+export default function SignUp() {
   const [useTermsModal, setUseTermsModal] = useState(false);
   const [privacyPolicyModal, setPrivacyPolicyModal] = useState(false);
   const navigate = useNavigate();

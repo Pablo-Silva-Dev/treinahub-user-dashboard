@@ -22,7 +22,7 @@ import { EditProfileModal } from "./components/EditProfileModal";
 import { ProfileCard } from "./components/ProfileCard";
 import { UpdateAvatarModal } from "./components/UpdateAvatarModal";
 
-export function Profile() {
+export default function Profile() {
   const [user, setUser] = useState<IUserDTO | null>(null);
   const [avatar, setAvatar] = useState<IAvatarDTO | null>(null);
   const [isEditProfileModalOpen, setIsEditModalProfileOpen] = useState(false);

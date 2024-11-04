@@ -24,7 +24,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Lottie from "react-lottie";
 import { useNavigate } from "react-router-dom";
 
-export function Trainings() {
+export default function Trainings() {
   const [trainings, setTrainings] = useState<ITrainingDTO[]>([]);
   const [watchedClasses, setWatchedClasses] = useState<IWatchedClassDTO[]>([]);
   const [certificatesStatus, setCertificatesStatus] = useState<{

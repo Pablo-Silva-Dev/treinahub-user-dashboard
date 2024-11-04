@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ContactSupportCard } from "./SupportContactCard";
 
-export function SupportPage() {
+export default function SupportPage() {
   const [contactSupports, setContactSupports] = useState<IContactSupportDTO[]>(
     []
   );

@@ -27,7 +27,7 @@ import { NegativeQuizResultContent } from "./components/NegativeQuizResultConten
 import { PositiveQuizResultContent } from "./components/PositiveQuizResultContent";
 import { QuizResponseCard } from "./components/QuizResponseCard";
 
-export function RespondQuiz() {
+export default function RespondQuiz() {
   const [quiz, setQuiz] = useState<ICompleteQuizQuestionDTO | null>(null);
   const [selectedOptions, setSelectedOptions] = useState<{
     [questionId: string]: string;

@@ -20,7 +20,7 @@ import Lottie from "react-lottie";
 import { useNavigate } from "react-router-dom";
 import { QuizBriefResultCard } from "./components/QuizBriefResultCard";
 
-export function Quizzes() {
+export default function Quizzes() {
   const [quizzesResults, setQuizzesResults] = useState<IQuizResultDTO[]>([]);
   const [selectedQuizResult, setSelectedQuizResult] =
     useState<IQuizResultDTO | null>(null);

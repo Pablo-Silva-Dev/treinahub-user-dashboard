@@ -33,7 +33,7 @@ import { RealizeQuizModal } from "./components/RealizeQuizModal";
 import { ToggleClassWatchedButton } from "./components/ToggleClassWatchedButton";
 import { TrainingFinishedWarningCard } from "./components/TrainingFinishedWarningCard";
 
-export function WatchTraining() {
+export default function WatchTraining() {
   const [videoClasses, setVideoClasses] = useState<IVideoClassDTO[]>([]);
   const [selectedVideoClass, setSelectedVideoClass] =
     useState<IVideoClassDTO | null>(null);

@@ -19,7 +19,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { QuizResultCard } from "./components/QuizResultCard";
 
-export function CheckQuizResponse() {
+export default function CheckQuizResponse() {
   const [quizResponses, setQuizResponses] = useState<IQuizResponseDTO[]>([]);
   const [quizResult, setQuizResult] = useState<IQuizResultDTO | null>(null);
 
