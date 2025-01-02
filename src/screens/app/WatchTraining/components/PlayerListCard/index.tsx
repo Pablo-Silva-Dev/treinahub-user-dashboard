@@ -6,7 +6,7 @@ import { MdPlayCircleOutline, MdReplay } from "react-icons/md";
 interface PlayerListCardProps {
   classes: IVideoClassDTO[];
   watchedClasses: IWatchedClassDTO[];
-  onSelectClass: (classId: string) => void;
+  onSelectClass: (videoClass: IVideoClassDTO) => void;
   selectedVideoClassId: string | null;
 }
 
@@ -14,7 +14,7 @@ export function PlayerListCard({
   classes,
   watchedClasses,
   onSelectClass,
-  selectedVideoClassId
+  selectedVideoClassId,
 }: PlayerListCardProps) {
   const MAX_CLASS_TITLE_LENGTH = 32;
 
@@ -36,12 +36,12 @@ export function PlayerListCard({
               ? "bg-gray-200 dark:bg-slate-800 px-3 py-4"
               : "bg-gray-100 dark:bg-slate-700 p-5"
           } 
-          ${selectedVideoClassId === c.id && 'border-2 border-primary-light'}
+          ${selectedVideoClassId === c.id && "border-2 border-primary-light"}
           items-center rounded-md mb-3`}
         >
           <div
             className="flex items-center w-full  mr-3"
-            onClick={() => onSelectClass(c.id)}
+            onClick={() => onSelectClass(c)}
           >
             {wasVideoClassesWatched(c.id) ? (
               <MdReplay className="h-6 w-6 md:h-7 md:w-7 text-gray-800 dark:text-gray-200 mr-1 mb-2" />

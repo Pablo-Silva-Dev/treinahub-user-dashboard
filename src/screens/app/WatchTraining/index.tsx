@@ -23,10 +23,10 @@ import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
 import { showAlertError } from "@/utils/alerts";
 import { secondsToFullTimeString } from "@/utils/formats";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Player from "react-player";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { NextClassCard } from "./components/NextClassCard";
+import { PandaVideoPlayer } from "./components/PandaVideoPlayer";
 import { PlayerListCard } from "./components/PlayerListCard";
 import { PreviousClassCard } from "./components/PreviousClassCard";
 import { RealizeQuizModal } from "./components/RealizeQuizModal";
@@ -52,7 +52,7 @@ export default function WatchTraining() {
     null
   );
   const [trainingCompleteModal, setTrainingCompleteModal] = useState(false);
-  const [lastClassExecutionTime, setLastClassExecutionTime] = useState(0);
+  const [, setLastClassExecutionTime] = useState(0);
   const [hasError, setHasError] = useState(false);
 
   const [enableQuiz, setEnableQuiz] = useState(false);
@@ -63,8 +63,6 @@ export default function WatchTraining() {
   const [isMarkingAsWatched, setIsMarkingAsWatched] = useState(false);
 
   const navigate = useNavigate();
-
-  const playerRef = useRef<Player>(null);
 
   const trainingsRepository = useMemo(() => {
     return new TrainingsRepository();
@@ -210,14 +208,9 @@ export default function WatchTraining() {
     [videoClassesRepository]
   );
 
-  const selectVideoClass = useCallback(
-    async (videoClassId: string) => {
-      const videoClass =
-        await videoClassesRepository.getVideoClassById(videoClassId);
-      setSelectedVideoClass(videoClass);
-    },
-    [videoClassesRepository]
-  );
+  const selectVideoClass = useCallback(async (videoClass: IVideoClassDTO) => {
+    setSelectedVideoClass(videoClass);
+  }, []);
 
   const handleUnwatchClassAndUpdateMetrics = useCallback(
     async (classId: string) => {
@@ -360,34 +353,6 @@ export default function WatchTraining() {
     watchedClassesRepository,
     watchedVideoClasses,
   ]);
-
-  const updateWatchedClassExecutionTime = useCallback(
-    async (playedSeconds: number) => {
-      const UPDATE_SECONDS_INTERVAL = 15;
-      const mustUpdateExecutionTime =
-        Math.floor(playedSeconds) % UPDATE_SECONDS_INTERVAL === 0;
-      try {
-        if (
-          playedSeconds !== 0 &&
-          playedSeconds >= UPDATE_SECONDS_INTERVAL &&
-          mustUpdateExecutionTime
-        ) {
-          await watchedClassesRepository.updateVideoClassExecutionStatus({
-            user_id: user.id,
-            videoclass_id: selectedVideoClass!.id,
-            completely_watched: false,
-            execution_time: playedSeconds,
-          });
-        }
-      } catch (error) {
-        console.log(
-          "Error at trying to update video class execution time",
-          error
-        );
-      }
-    },
-    [selectedVideoClass, user.id, watchedClassesRepository]
-  );
 
   const updateNextPreviousClasses = useCallback(() => {
     if (!selectedVideoClass) return;
@@ -553,21 +518,6 @@ export default function WatchTraining() {
     getLastIncompletelyWatchedClass();
   }, [getLastIncompletelyWatchedClass]);
 
-  const onReady = useCallback(() => {
-    const timeToStart = lastClassExecutionTime;
-    const watchedClassHaveBenAdded = watchedVideoClasses.some(
-      (wc) => wc.videoclass_id === selectedVideoClass!.id
-    );
-    if (
-      playerRef.current &&
-      watchedClassHaveBenAdded &&
-      lastClassExecutionTime > 0 &&
-      lastClassExecutionTime !== selectedVideoClass?.duration
-    ) {
-      playerRef.current.seekTo(timeToStart, "seconds");
-    }
-  }, [lastClassExecutionTime, selectedVideoClass, watchedVideoClasses]);
-
   const getQuizByTraining = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -706,8 +656,8 @@ export default function WatchTraining() {
 
   const totalQuizQuestions = quiz ? quiz.questions.length : 0;
 
-  const handleSeeCertificates = () =>
-    navigate("/dashboard/acessar-meus-certificados");
+  // const handleSeeCertificates = () =>
+  //   navigate("/dashboard/acessar-meus-certificados");
 
   const classWasWatched = useMemo(() => {
     if (selectedVideoClass) {
@@ -735,14 +685,30 @@ export default function WatchTraining() {
   }, [addClassToWatchedAsIncomplete, handleMarkClassAsCompletelyWatched]);
 
   useEffect(() => {
-    if (trainingIdQueryParam && videoClassIdQueryParam) {
+    const handleMessage = (event: MessageEvent) => {
+      const { data } = event;
+      if (data.message === "panda_play") {
+        addClassToWatchedAsIncomplete();
+      }
+      if (data.message === "panda_ended") {
+        handleMarkClassAsCompletelyWatched(true);
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+    };
+  }, [addClassToWatchedAsIncomplete, handleMarkClassAsCompletelyWatched]);
+
+  useEffect(() => {
+    if (videoClassIdQueryParam && !selectedVideoClass) {
       getVideoClass(videoClassIdQueryParam);
     }
-  }, [getVideoClass, trainingIdQueryParam, videoClassIdQueryParam]);
+  }, [videoClassIdQueryParam, getVideoClass, selectedVideoClass]);
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
-      {isLoading || !selectedVideoClass ? (
+      {!selectedVideoClass ? (
         <div className="w-full mt-[10vh]">
           <Loading color={PRIMARY_COLOR} />
         </div>
@@ -762,22 +728,9 @@ export default function WatchTraining() {
               </h1>
             </div>
             <div className="flex flex-col  w-full aspect-video min-h-[200px] mb-4">
-              {
-                <Player
-                  ref={playerRef}
-                  url={selectedVideoClass.hls_encoding_url}
-                  controls
-                  width="100%"
-                  height="100%"
-                  volume={1}
-                  onReady={onReady}
-                  onStart={addClassToWatchedAsIncomplete}
-                  onProgress={(state) =>
-                    updateWatchedClassExecutionTime(state.playedSeconds)
-                  }
-                  onEnded={() => handleMarkClassAsCompletelyWatched(true)}
-                />
-              }
+              {selectedVideoClass && selectedVideoClass.video_url && (
+                <PandaVideoPlayer iframeSrc={selectedVideoClass.video_url} />
+              )}
             </div>
             <div className="flex flex-row w-full items-center mb-6">
               <Subtitle
@@ -836,7 +789,7 @@ export default function WatchTraining() {
               />
             </div>
           </div>
-          <div className="w-full xl:w-[35%] xl:max-w-[480px] xl:ml-6">
+          <div className="w-full xl:w-[35%] xl:max-w-[480px] xl:ml-6 xl:mt-8">
             <PlayerListCard
               selectedVideoClassId={selectedVideoClass.id}
               classes={videoClasses}
@@ -857,8 +810,7 @@ export default function WatchTraining() {
         para emitir seu certificado."
                 buttonTitle="Refazer questionário"
               />
-            ) : null
-            }
+            ) : null}
           </div>
         </div>
       )}
