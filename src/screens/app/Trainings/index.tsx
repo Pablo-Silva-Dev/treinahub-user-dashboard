@@ -14,6 +14,7 @@ import { ICreateTrainingMetricsDTO } from "@/repositories/dtos/TrainingMetricDTO
 import { IWatchedClassDTO } from "@/repositories/dtos/WatchedClassDTO";
 import { TrainingMetricsRepository } from "@/repositories/trainingMetricsRepository";
 import { TrainingsRepository } from "@/repositories/trainingsRepository";
+import { VideoClassesRepository } from "@/repositories/videoClassesRepository";
 import { WatchedClassesRepository } from "@/repositories/watchedClassesRepository";
 import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
@@ -53,6 +54,10 @@ export default function Trainings() {
     return new WatchedClassesRepository();
   }, []);
 
+  const videoClassesRepository = useMemo(() => {
+    return new VideoClassesRepository();
+  }, []);
+
   const certificatesRepository = useMemo(() => {
     return new CertificatesRepository();
   }, []);
@@ -89,14 +94,25 @@ export default function Trainings() {
         const lastWatchedClass = watchedClasses
           .filter((wc) => wc.training_id === trainingId)
           .slice(-1)[0];
-        return lastWatchedClass;
+
+        const trainingVideoClasses =
+          await videoClassesRepository.listVideoClassesByTraining(trainingId);
+
+        const lastWatchedClassIndex = trainingVideoClasses.findIndex(
+          (wc) => wc.id === lastWatchedClass?.videoclass_id
+        );
+
+        const nextClassToWatch =
+          trainingVideoClasses[lastWatchedClassIndex + 1];
+
+        return nextClassToWatch;
       } catch (error) {
         console.log(error);
       } finally {
         setIsLoading(false);
       }
     },
-    [setIsLoading, user.id, watchedClassesRepository]
+    [setIsLoading, user.id, videoClassesRepository, watchedClassesRepository]
   );
 
   const checkIfUserHasCertificate = useCallback(
@@ -141,11 +157,9 @@ export default function Trainings() {
             );
             return {
               ...training,
-              last_watched_class_duration:
-                lastWatchedClass?.videoclass?.duration ?? null,
-              last_watched_class_name:
-                lastWatchedClass?.videoclass?.name ?? null,
-              last_watched_class_id: lastWatchedClass?.videoclass?.id ?? null,
+              last_watched_class_duration: lastWatchedClass?.duration ?? null,
+              last_watched_class_name: lastWatchedClass?.name ?? null,
+              last_watched_class_id: lastWatchedClass?.id ?? null,
             };
           })
         );
@@ -192,23 +206,24 @@ export default function Trainings() {
 
   const handleSeeTraining = async (
     trainingId: string,
-    videoClassId?: string
+    lastWatchedClassId?: string
   ) => {
     const training = await trainingsRepository.getTrainingById(trainingId);
     const firstTrainingVideoClass = training.video_classes?.slice(0, 1)[0];
-    if (videoClassId) {
+    if (lastWatchedClassId) {
       navigate(
-        `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${videoClassId}`
+        `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${lastWatchedClassId}`
       );
-    }else{
+    } else {
       navigate(
         `/dashboard/assistir-treinamento?trainingId=${trainingId}&classId=${firstTrainingVideoClass!.id}`
       );
     }
- 
   };
 
-  const totalCourseWatchedClasses = watchedClasses.filter(wc => wc.completely_watched).length
+  const totalCourseWatchedClasses = watchedClasses.filter(
+    (wc) => wc.completely_watched
+  ).length;
 
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8">
@@ -275,9 +290,7 @@ export default function Trainings() {
                       training.last_watched_class_duration || 0
                     )}
                     totalCourseClasses={training.video_classes?.length || 0}
-                    totalWatchedClasses={
-                      totalCourseWatchedClasses|| 0
-                    }
+                    totalWatchedClasses={totalCourseWatchedClasses || 0}
                     userStartedTraining={
                       !!training.training_metrics?.find(
                         (t) => t.user_id === user.id
@@ -313,9 +326,7 @@ export default function Trainings() {
                       training.last_watched_class_duration || 0
                     )}
                     totalCourseClasses={training.video_classes?.length || 0}
-                    totalWatchedClasses={
-                      totalCourseWatchedClasses || 0
-                    }
+                    totalWatchedClasses={totalCourseWatchedClasses || 0}
                     userStartedTraining={
                       !!training.training_metrics?.find(
                         (t) => t.user_id === user.id
