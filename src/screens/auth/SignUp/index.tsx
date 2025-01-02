@@ -64,7 +64,7 @@ export default function SignUp() {
       const completePhone = brazilianPhoneCode + phone;
       const user = await usersRepository.registerUser({
         ...data,
-        is_admin: true,
+        is_admin: false,
         phone: completePhone,
       });
 
