@@ -708,7 +708,7 @@ export default function WatchTraining() {
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
-      {isLoading || !selectedVideoClass ? (
+      {!selectedVideoClass ? (
         <div className="w-full mt-[10vh]">
           <Loading color={PRIMARY_COLOR} />
         </div>
@@ -728,13 +728,8 @@ export default function WatchTraining() {
               </h1>
             </div>
             <div className="flex flex-col  w-full aspect-video min-h-[200px] mb-4">
-              {selectedVideoClass && selectedVideoClass.video_url ? (
-                <PandaVideoPlayer
-                  key={selectedVideoClass.video_url}
-                  iframeSrc={selectedVideoClass.video_url}
-                />
-              ) : (
-                <Loading />
+              {selectedVideoClass && selectedVideoClass.video_url && (
+                <PandaVideoPlayer iframeSrc={selectedVideoClass.video_url} />
               )}
             </div>
             <div className="flex flex-row w-full items-center mb-6">
