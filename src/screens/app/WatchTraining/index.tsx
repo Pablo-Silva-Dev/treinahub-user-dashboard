@@ -52,7 +52,6 @@ export default function WatchTraining() {
     null
   );
   const [trainingCompleteModal, setTrainingCompleteModal] = useState(false);
-  const [, setLastClassExecutionTime] = useState(0);
   const [hasError, setHasError] = useState(false);
 
   const [enableQuiz, setEnableQuiz] = useState(false);
@@ -504,7 +503,6 @@ export default function WatchTraining() {
         if (!lastWatchedClass) {
           return;
         }
-        setLastClassExecutionTime(lastWatchedClass.execution_time!);
       }
     } catch (error) {
       console.log(error);
