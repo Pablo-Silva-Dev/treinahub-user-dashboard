@@ -685,17 +685,6 @@ export default function WatchTraining() {
   }, [addClassToWatchedAsIncomplete, handleMarkClassAsCompletelyWatched]);
 
   useEffect(() => {
-    if (trainingIdQueryParam && videoClassIdQueryParam && !selectedVideoClass) {
-      getVideoClass(videoClassIdQueryParam);
-    }
-  }, [
-    getVideoClass,
-    selectedVideoClass,
-    trainingIdQueryParam,
-    videoClassIdQueryParam,
-  ]);
-
-  useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const { data } = event;
       if (data.message === "panda_play") {
@@ -710,6 +699,12 @@ export default function WatchTraining() {
       window.removeEventListener("message", handleMessage);
     };
   }, [addClassToWatchedAsIncomplete, handleMarkClassAsCompletelyWatched]);
+
+  useEffect(() => {
+    if (videoClassIdQueryParam && !selectedVideoClass) {
+      getVideoClass(videoClassIdQueryParam);
+    }
+  }, [videoClassIdQueryParam, getVideoClass, selectedVideoClass]);
 
   return (
     <div className="w-full flex flex-col p-8 md:pl-[40px] xl:pl-[8%]">
@@ -733,23 +728,14 @@ export default function WatchTraining() {
               </h1>
             </div>
             <div className="flex flex-col  w-full aspect-video min-h-[200px] mb-4">
-              {
-                <>
-                  {!selectedVideoClass ? (
-                    <Loading />
-                  ) : (
-                    selectedVideoClass &&
-                    selectedVideoClass.video_url && (
-                      <>
-                        <PandaVideoPlayer
-                          key={selectedVideoClass.video_url}
-                          iframeSrc={selectedVideoClass.video_url}
-                        />
-                      </>
-                    )
-                  )}
-                </>
-              }
+              {selectedVideoClass && selectedVideoClass.video_url ? (
+                <PandaVideoPlayer
+                  key={selectedVideoClass.video_url}
+                  iframeSrc={selectedVideoClass.video_url}
+                />
+              ) : (
+                <Loading />
+              )}
             </div>
             <div className="flex flex-row w-full items-center mb-6">
               <Subtitle
