@@ -1,8 +1,10 @@
 import { AVATAR_PLACEHOLDER_URL, NAVIGATION_TIMER } from "@/appConstants/index";
 import { HeaderNavigation } from "@/components/miscellaneous/HeaderNavigation";
+import { useStripe } from "@/hooks/useStripe";
 import { AvatarsRepository } from "@/repositories/avatarsRepository";
 import { CompaniesRepository } from "@/repositories/companiesRepository";
 import { ICompanyDTO } from "@/repositories/dtos/CompanyDTO";
+import { ICreateUserDTO } from "@/repositories/dtos/UserDTO";
 import { UsersRepository } from "@/repositories/usersRepository";
 import { useLoading } from "@/store/loading";
 import { showAlertError, showAlertSuccess } from "@/utils/alerts";
@@ -57,7 +59,9 @@ export default function SignUp() {
     getCompanies();
   }, [getCompanies]);
 
-  const handleRegisterUser = async (data: any) => {
+  const { reportNewAdditionalUser } = useStripe();
+
+  const handleRegisterUser = async (data: ICreateUserDTO) => {
     try {
       const { phone } = data;
       const brazilianPhoneCode = "+55";
@@ -68,10 +72,38 @@ export default function SignUp() {
         phone: completePhone,
       });
 
-      await avatarsRepository.createAvatar({
-        url: AVATAR_PLACEHOLDER_URL,
-        user_id: user.id,
-      });
+      const companyId = user.company_id;
+
+      if (companyId) {
+        try {
+          const userCompany = await companiesRepository.getCompany(companyId);
+          if (userCompany) {
+            try {
+              await reportNewAdditionalUser({
+                totalCompanyUsers: userCompany.users!.length,
+                subscriptionId: userCompany.subscription_id!,
+                companyPlan: userCompany.current_plan,
+                companyEmail: userCompany.email,
+              });
+            } catch (error) {
+              console.log(
+                "Error at trying to report new additional user: ",
+                error
+              );
+            }
+          }
+        } catch (error) {
+          console.log("Error at trying to get company: ", error);
+        }
+      }
+      try {
+        await avatarsRepository.createAvatar({
+          url: AVATAR_PLACEHOLDER_URL,
+          user_id: user.id,
+        });
+      } catch (error) {
+        console.log("Error at trying to create avatar: ", error);
+      }
       showAlertSuccess("Cadastro realizado com sucesso!");
       setTimeout(() => {
         navigate("/");
@@ -83,7 +115,7 @@ export default function SignUp() {
           showAlertError(
             "Já existe um usuário cadastrado com os dados informados."
           );
-        console.log(error);
+        console.log("Error at trying to register user: ", error);
       }
     } finally {
       setIsLoading(false);

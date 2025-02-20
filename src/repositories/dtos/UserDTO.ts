@@ -16,6 +16,7 @@ export interface IUserDTO {
   residence_number?: string;
   is_admin: boolean;
   company?: ICompanyDTO;
+  company_id?: string;
 }
 
 export interface ICreateUserDTO {
