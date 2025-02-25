@@ -5,6 +5,7 @@ import { Subtitle } from "@/components/typography/Subtitle";
 import { Title } from "@/components/typography/Title";
 import { menuItems } from "@/data/dashboardMenu";
 import { AvatarsRepository } from "@/repositories/avatarsRepository";
+import { UsersRepository } from "@/repositories/usersRepository";
 import { useAuthenticationStore } from "@/store/auth";
 import { useThemeStore } from "@/store/theme";
 import {
@@ -12,6 +13,7 @@ import {
   reactModalCustomStyles,
   reactModalCustomStylesDark,
 } from "@/styles/react-modal";
+import { showAlertError } from "@/utils/alerts";
 import {
   Accordion,
   AccordionBody,
@@ -86,6 +88,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   const ref = useRef<LoadingBarProps>(null);
 
+  const usersRepository = useMemo(() => {
+    return new UsersRepository();
+  }, []);
+
   const handleOpenedAccordionIndexes = (idx: number) => {
     const filteredAccordionIndexes = openedAccordionIndexes.filter(
       (index) => index !== idx
@@ -135,8 +141,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     };
   }, [updateBreadcrumbs]);
 
-  const handleSignOut = () => {
+  const unAuthenticateUser = useCallback(async () => {
+    try {
+      await usersRepository.unAuthenticateUser({ email: user.email });
+    } catch (error) {
+      showAlertError("Erro ao sair da conta.");
+    }
+  }, [user.email, usersRepository]);
+
+  const handleSignOut = async () => {
     navigate("/");
+    await unAuthenticateUser();
     signOut();
   };
 

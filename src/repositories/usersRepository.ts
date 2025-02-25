@@ -1,5 +1,10 @@
 import { api, IApiSuccessResponse } from "@/services/api";
-import { ICreateUserDTO, IUpdateUserDTO, IUserDTO } from "./dtos/UserDTO";
+import {
+  ICreateUserDTO,
+  IUnAuthenticateUserRequest,
+  IUpdateUserDTO,
+  IUserDTO,
+} from "./dtos/UserDTO";
 import {
   IAuthenticateUserRequest,
   IAuthenticateUserResponse,
@@ -103,6 +108,19 @@ export class UsersRepository implements IUsersRepository {
     try {
       const response = await api.delete<IApiSuccessResponse<void>>(
         `/users/delete/${userId}`
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async unAuthenticateUser(
+    data: IUnAuthenticateUserRequest
+  ): Promise<string | null> {
+    try {
+      const response = await api.post<IApiSuccessResponse<string | null>>(
+        "/users/logout",
+        data
       );
       return response.data.RES;
     } catch (error) {

@@ -41,3 +41,7 @@ export interface IUpdateUserDTO {
   uf?: string | null;
   residence_number?: string | null;
 }
+
+export interface IUnAuthenticateUserRequest {
+  email: string;
+}

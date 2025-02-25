@@ -13,27 +13,31 @@ export default function InitialScreen() {
   const usersRepository = useMemo(() => {
     return new UsersRepository();
   }, []);
-  const handleSignIn = useCallback(async (data: SignInFormInputs) => {
-    try {
-      setIsLoading(true);
-      const user = await usersRepository.authenticateUser(data);
-      signIn(user);
-    } catch (error) {
-      if (typeof error === "object" && error !== null && "STATUS" in error) {
-        const typedError = error as { STATUS: number };
-        if (typedError.STATUS === 409) {
-          showAlertError("Credenciais incorretas!");
-        } else {
-          showAlertError(
-            "Houve um erro ao tentar realizar login. Por favor, tente novamente mais tarde."
-          );
+  const handleSignIn = useCallback(
+    async (data: SignInFormInputs) => {
+      try {
+        setIsLoading(true);
+        const user = await usersRepository.authenticateUser(data);
+        signIn(user);
+      } catch (error) {
+        if (typeof error === "object" && error !== null && "STATUS" in error) {
+          const typedError = error as { STATUS: number };
+          if (typedError.STATUS === 409) {
+            showAlertError("Credenciais incorretas.");
+          }
+          if (typedError.STATUS === 406) {
+            showAlertError(
+              "Usuário já autenticado em outro dispositivo. Por favor, deslogue-se do outro dispositivo e tente novamente."
+            );
+          }
         }
+        console.log(error);
+      } finally {
+        setIsLoading(false);
       }
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [setIsLoading, signIn, usersRepository]);
+    },
+    [setIsLoading, signIn, usersRepository]
+  );
 
   return (
     <div className="flex flex-col lg:mt-[16vh] items-center lg:mb-2 mb-8">
