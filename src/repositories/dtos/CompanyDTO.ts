@@ -20,4 +20,4 @@ export interface IReportNewUserDTO {
   subscriptionId: string;
   companyPlan: TPlan;
   companyEmail: string;
-};
+}

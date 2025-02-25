@@ -1,6 +1,8 @@
 import { api, IApiSuccessResponse } from "@/services/api";
+import { IExplainQuestionDTO } from "./dtos/QuizQuiestionDTO";
 import {
   ICreateQuizResultDTO,
+  IExplainQuestionResponse,
   IGetQuizResultDTO,
   IQuizResultDTO,
 } from "./dtos/QuizResultDTO";
@@ -52,5 +54,13 @@ export class QuizResultsRepository implements IQuizResultsRepository {
     } catch (error) {
       throw error;
     }
+  }
+  async explainQuestion(
+    data: IExplainQuestionDTO
+  ): Promise<IExplainQuestionResponse> {
+    const response = await api.post<
+      IApiSuccessResponse<IExplainQuestionResponse>
+    >("/quizzes-questions/explain-question", data);
+    return response.data.RES;
   }
 }

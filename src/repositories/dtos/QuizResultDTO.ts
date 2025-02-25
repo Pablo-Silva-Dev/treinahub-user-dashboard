@@ -21,3 +21,18 @@ export interface IGetQuizResultDTO {
   quiz_attempt_id: string;
   user_id: string;
 }
+
+export interface IExplainQuestionResponse {
+  choices: [
+    {
+      index: number;
+      message: {
+        role: string;
+        content: string;
+        refusal: string | null;
+      };
+      logprobs: any;
+      finish_reason: string;
+    }
+  ];
+}

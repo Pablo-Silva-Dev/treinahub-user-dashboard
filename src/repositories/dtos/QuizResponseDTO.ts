@@ -11,6 +11,7 @@ export interface IQuizResponseDTO {
   correct_option: IQuestionOptionDTO;
   quiz_attempt?: IQuizAttemptDTO;
   question: IQuizQuestionDTO;
+  ai_response?: string;
 }
 
 export interface ICreateQuizResponseDTO {

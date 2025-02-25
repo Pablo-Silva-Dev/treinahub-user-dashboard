@@ -16,3 +16,11 @@ export interface IUpdateQuizQuestionDTO {
   id: string;
   content?: string;
 }
+
+export interface IExplainQuestionDTO {
+  question: string;
+  questionId?: string;
+  selectedOptionContent: string;
+  correctOptionContent: string;
+}
+
