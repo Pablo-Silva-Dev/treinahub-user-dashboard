@@ -27,12 +27,6 @@ const AuthenticationLayout: React.FC<AuthenticationLayoutProps> = ({
               width={200}
               height={120}
             />
-            <div className="flex flex-col lg:flex-row w-full mt-6 mb-2 justify-center">
-              <CompanyFooterLink
-                companyText="Desenvolvido por PS Code. Acesse nosso site "
-                companyLink="https://www.pablosilvadev.com.br"
-              />
-            </div>
           </div>
         </div>
       </section>

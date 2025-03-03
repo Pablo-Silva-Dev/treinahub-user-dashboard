@@ -299,12 +299,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </div>
           </header>
           <div className="mt-[72px]">{children}</div>
-          <footer className="flex bg-gray-100 dark:bg-slate-800 items-center justify-center md:p-8 px-2 my-8 mx-auto">
-            <CompanyFooterLink
-              companyText="Desenvolvido por PS Code. Acesse nosso site "
-              companyLink="https://www.pablosilvadev.com.br"
-            />
-          </footer>
         </div>
       </div>
       <Modal

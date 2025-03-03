@@ -26,7 +26,7 @@ export function PreviousClassCard({
         className="w-full flex flex-col"
         disabled={!showsPreviousClassButton}
       >
-        <div className="flex flex-row mb-2 justify-end">
+        <div className="flex flex-row mb-2 justify-start">
           <FaArrowLeft className="w-6 h-6 mr-3 text-gray-800 dark:text-gray-100" />
           <span className="text-gray-800 dark:text-gray-100 text-[13px] md:text-[14px] font-bold">
             Aula anterior
