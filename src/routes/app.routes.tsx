@@ -1,22 +1,19 @@
-import { Loading } from "@/components/miscellaneous/Loading";
-import { lazy, ReactNode, Suspense } from "react";
+import { ReactNode } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-const NotFound = lazy(() => import("@/screens/404"));
-const ErrorPage = lazy(() => import("@/screens/error"));
-const DashboardLayout = lazy(() => import("@/screens/app/layout"));
-const Certificates = lazy(() => import("@/screens/app/Certificates"));
-const CheckQuizResponse = lazy(
-  () => import("@/screens/app/CheckQuizResponses")
-);
-const FAQPage = lazy(() => import("@/screens/app/FAQ"));
-const Home = lazy(() => import("@/screens/app/Home"));
-const Profile = lazy(() => import("@/screens/app/Profile"));
-const Quizzes = lazy(() => import("@/screens/app/Quizzes"));
-const RespondQuiz = lazy(() => import("@/screens/app/RespondQuizz"));
-const SupportPage = lazy(() => import("@/screens/app/Support"));
-const Trainings = lazy(() => import("@/screens/app/Trainings"));
-const WatchTraining = lazy(() => import("@/screens/app/WatchTraining"));
+import NotFound from "@/screens/404";
+import Certificates from "@/screens/app/Certificates";
+import CheckQuizResponse from "@/screens/app/CheckQuizResponses";
+import FAQPage from "@/screens/app/FAQ";
+import Home from "@/screens/app/Home";
+import DashboardLayout from "@/screens/app/layout";
+import Profile from "@/screens/app/Profile";
+import Quizzes from "@/screens/app/Quizzes";
+import RespondQuiz from "@/screens/app/RespondQuizz";
+import SupportPage from "@/screens/app/Support";
+import Trainings from "@/screens/app/Trainings";
+import WatchTraining from "@/screens/app/WatchTraining";
+import ErrorPage from "@/screens/error";
 
 type route = {
   path: string;
@@ -74,27 +71,10 @@ const appRoutesBase: route[] = [
   },
 ];
 
-const LoadingFallback = () => {
-  return (
-    <div className="w-full h-screen flex items-center justify-center">
-      <Loading />
-    </div>
-  );
-};
-
 const appRoutes = appRoutesBase.map((route) => ({
   path: route.path,
-  element: (
-    <Suspense fallback={<LoadingFallback />}>
-      <DashboardLayout>{route.element}</DashboardLayout>
-    </Suspense>
-  ),
-  errorElement: (
-    <Suspense fallback={<LoadingFallback />}>
-      {" "}
-      <ErrorPage />
-    </Suspense>
-  ),
+  element: <DashboardLayout>{route.element}</DashboardLayout>,
+  errorElement: <ErrorPage />,
 }));
 
 const appRouter = createBrowserRouter(appRoutes);
