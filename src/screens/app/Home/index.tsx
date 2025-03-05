@@ -29,6 +29,10 @@ export default function Home() {
   const [lastWatchedClassInfo, setLastWatchedClassInfo] =
     useState<IWatchedClassDTO | null>(null);
 
+  const [certificatesStatus, setCertificatesStatus] = useState<{
+    [key: string]: boolean;
+  }>({});
+
   const { user } = useAuthenticationStore();
   const { theme } = useThemeStore();
   const navigate = useNavigate();
@@ -98,14 +102,43 @@ export default function Home() {
     }
   }, [trainingMetricsRepository, user.id]);
 
+  const checkIfUserHasCertificate = useCallback(
+    async (trainingId: string) => {
+      try {
+        const hasCertificate =
+          await certificatesRepository.getCertificateByUserAndTraining({
+            user_id: user.id,
+            training_id: trainingId,
+          });
+        if (hasCertificate) {
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    [certificatesRepository, user.id]
+  );
+
   const getTrainings = useCallback(async () => {
     try {
       const trainings = await trainingsRepository.listTrainings(user.companyId);
+      trainings.map(async (training) => {
+        const hasCertificate = await checkIfUserHasCertificate(training.id);
+        setCertificatesStatus(
+          (prevStatus) =>
+            ({
+              ...prevStatus,
+              [training.id]: hasCertificate,
+            }) as never
+        );
+      });
       return trainings;
     } catch (error) {
       console.log("Error at trying to list trainings: ", error);
     }
-  }, [trainingsRepository, user.companyId]);
+  }, [checkIfUserHasCertificate, trainingsRepository, user.companyId]);
 
   const getCertificatesByUser = useCallback(async () => {
     try {
@@ -281,40 +314,75 @@ export default function Home() {
                         className="mb-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%]"
                       />
                       <div className="w-full flex flex-col md:flex-row items-center">
-                        {allCompletedTrainings.map((t) => (
-                          <TrainingInfoCard
-                            trainingId={t.training.id}
-                            lastClassDuration={""}
-                            key={t.training.id}
-                            showSeeCertificateButton={true}
-                            watchedClasses={watchedClasses}
-                            cover_url={
-                              t.training.cover_url
-                                ? t.training.cover_url
-                                : infocard_placeholder
-                            }
-                            training={t.training.name}
-                            description={t.training.description}
-                            lastClassName={
-                              t.training.last_watched_class_name ||
-                              "Nenhuma aula foi assistida"
-                            }
-                            totalCourseClasses={t.total_training_classes}
-                            totalWatchedClasses={t.total_watched_classes || 0}
-                            userStartedTraining={
-                              !!t.training.training_metrics?.find(
-                                (t) => t.user_id === user.id
-                              )
-                            }
-                            onSeeTraining={() =>
-                              handleSeeTraining(
-                                t.training.id,
-                                t.training.last_watched_class_id
-                              )
-                            }
-                            onSeeCertificate={handleSeeCertificate}
-                          />
-                        ))}
+                        {allCompletedTrainings.map((t) =>
+                          certificatesStatus[t.training_id] ? (
+                            <TrainingInfoCard
+                              trainingId={t.training.id}
+                              lastClassDuration={""}
+                              key={t.training.id}
+                              showSeeCertificateButton
+                              watchedClasses={watchedClasses}
+                              cover_url={
+                                t.training.cover_url
+                                  ? t.training.cover_url
+                                  : infocard_placeholder
+                              }
+                              training={t.training.name}
+                              description={t.training.description}
+                              lastClassName={
+                                t.training.last_watched_class_name ||
+                                "Nenhuma aula foi assistida"
+                              }
+                              totalCourseClasses={t.total_training_classes}
+                              totalWatchedClasses={t.total_watched_classes || 0}
+                              userStartedTraining={
+                                !!t.training.training_metrics?.find(
+                                  (t) => t.user_id === user.id
+                                )
+                              }
+                              onSeeTraining={() =>
+                                handleSeeTraining(
+                                  t.training.id,
+                                  t.training.last_watched_class_id
+                                )
+                              }
+                              onSeeCertificate={handleSeeCertificate}
+                            />
+                          ) : (
+                            <TrainingInfoCard
+                              trainingId={t.training.id}
+                              lastClassDuration={""}
+                              key={t.training.id}
+                              showSeeCertificateButton={false}
+                              watchedClasses={watchedClasses}
+                              cover_url={
+                                t.training.cover_url
+                                  ? t.training.cover_url
+                                  : infocard_placeholder
+                              }
+                              training={t.training.name}
+                              description={t.training.description}
+                              lastClassName={
+                                t.training.last_watched_class_name ||
+                                "Nenhuma aula foi assistida"
+                              }
+                              totalCourseClasses={t.total_training_classes}
+                              totalWatchedClasses={t.total_watched_classes || 0}
+                              userStartedTraining={
+                                !!t.training.training_metrics?.find(
+                                  (t) => t.user_id === user.id
+                                )
+                              }
+                              onSeeTraining={() =>
+                                handleSeeTraining(
+                                  t.training.id,
+                                  t.training.last_watched_class_id
+                                )
+                              }
+                              onSeeCertificate={handleSeeCertificate}
+                            />
+                          )
+                        )}
                       </div>
                     </div>
                   )}
