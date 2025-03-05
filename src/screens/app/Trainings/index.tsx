@@ -221,9 +221,6 @@ export default function Trainings() {
     }
   };
 
-  const totalCourseWatchedClasses = watchedClasses.filter(
-    (wc) => wc.completely_watched
-  ).length;
 
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8">
@@ -272,11 +269,12 @@ export default function Trainings() {
               </div>
             </div>
           ) : (
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {trainings.map((training) =>
                 certificatesStatus[training.id] ? (
                   <TrainingInfoCard
                     key={training.id}
+                    trainingId={training.id}
                     showSeeCertificateButton
                     watchedClasses={watchedClasses}
                     cover_url={training.cover_url || infocard_placeholder}
@@ -290,7 +288,17 @@ export default function Trainings() {
                       training.last_watched_class_duration || 0
                     )}
                     totalCourseClasses={training.video_classes?.length || 0}
-                    totalWatchedClasses={totalCourseWatchedClasses || 0}
+                    totalWatchedClasses={
+                      training.training_metrics &&
+                      training.training_metrics.find(
+                        (t) => t.user_id === user.id
+                      ) &&
+                      training.training_metrics.find(
+                        (t) => t.user_id === user.id
+                      )?.total_watched_classes
+                        ? training.training_metrics[0].total_watched_classes
+                        : 0
+                    }
                     userStartedTraining={
                       !!training.training_metrics?.find(
                         (t) => t.user_id === user.id
@@ -313,6 +321,7 @@ export default function Trainings() {
                 ) : (
                   <TrainingInfoCard
                     key={training.id}
+                    trainingId={training.id}
                     showSeeCertificateButton={false}
                     watchedClasses={watchedClasses}
                     cover_url={training.cover_url || infocard_placeholder}
@@ -326,7 +335,17 @@ export default function Trainings() {
                       training.last_watched_class_duration || 0
                     )}
                     totalCourseClasses={training.video_classes?.length || 0}
-                    totalWatchedClasses={totalCourseWatchedClasses || 0}
+                    totalWatchedClasses={
+                      training.training_metrics &&
+                      training.training_metrics.find(
+                        (t) => t.user_id === user.id
+                      ) &&
+                      training.training_metrics.find(
+                        (t) => t.user_id === user.id
+                      )?.total_watched_classes
+                        ? training.training_metrics[0].total_watched_classes
+                        : 0
+                    }
                     userStartedTraining={
                       !!training.training_metrics?.find(
                         (t) => t.user_id === user.id

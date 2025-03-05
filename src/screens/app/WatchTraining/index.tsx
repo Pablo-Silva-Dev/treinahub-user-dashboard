@@ -297,6 +297,11 @@ export default function WatchTraining() {
             training_id: trainingIdQueryParam!,
           })
           .then((res) => setWatchedVideoClasses(res));
+        await trainingMetricsRepository.updateTrainingMetrics({
+          id: trainingMetrics!.id,
+          training_id: trainingIdQueryParam!,
+          user_id: user.id,
+        });
         if (shouldCallNextClass) {
           getNextVideoClass();
         }
@@ -311,6 +316,8 @@ export default function WatchTraining() {
       getNextVideoClass,
       selectedVideoClass,
       trainingIdQueryParam,
+      trainingMetrics,
+      trainingMetricsRepository,
       user.id,
       videoClassesRepository,
       watchedClassesRepository,
@@ -387,6 +394,7 @@ export default function WatchTraining() {
   const checkUserQuizAttempts = useCallback(async () => {
     try {
       setIsLoading(true);
+      //TODO-PABLO: Fix to list by user and quiz
       const quizAttempts = await quizAttemptsRepository.listQuizAttemptsByUser(
         user.id
       );
