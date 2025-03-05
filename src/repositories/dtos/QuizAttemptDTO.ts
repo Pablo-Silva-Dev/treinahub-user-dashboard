@@ -15,3 +15,9 @@ export interface ICreateQuizAttemptDTO {
   quiz_id: string;
   user_id: string;
 }
+
+export interface IListQuizAttemptsByUserAndQuizDTO {
+  quiz_id: string;
+  user_id: string;
+}
+

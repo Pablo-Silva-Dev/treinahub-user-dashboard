@@ -394,17 +394,18 @@ export default function WatchTraining() {
   const checkUserQuizAttempts = useCallback(async () => {
     try {
       setIsLoading(true);
-      //TODO-PABLO: Fix to list by user and quiz
-      const quizAttempts = await quizAttemptsRepository.listQuizAttemptsByUser(
-        user.id
-      );
+      const quizAttempts =
+        await quizAttemptsRepository.listQuizAttemptsByUserAndQuiz({
+          quiz_id: quiz!.id,
+          user_id: user.id,
+        });
       setQuizAttempts(quizAttempts.length);
     } catch (error) {
       console.log(error);
     } finally {
       setIsLoading(false);
     }
-  }, [quizAttemptsRepository, setIsLoading, user.id]);
+  }, [quiz, quizAttemptsRepository, setIsLoading, user.id]);
 
   useEffect(() => {
     checkUserQuizAttempts();

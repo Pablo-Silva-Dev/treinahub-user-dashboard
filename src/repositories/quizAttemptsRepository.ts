@@ -1,5 +1,9 @@
 import { api, IApiSuccessResponse } from "@/services/api";
-import { ICreateQuizAttemptDTO, IQuizAttemptDTO } from "./dtos/QuizAttemptDTO";
+import {
+  ICreateQuizAttemptDTO,
+  IListQuizAttemptsByUserAndQuizDTO,
+  IQuizAttemptDTO,
+} from "./dtos/QuizAttemptDTO";
 import { IQuizAttemptsRepository } from "./interfaces/quizAttemptsRepository";
 
 export class QuizAttemptsRepository implements IQuizAttemptsRepository {
@@ -20,6 +24,19 @@ export class QuizAttemptsRepository implements IQuizAttemptsRepository {
     try {
       const response = await api.get<IApiSuccessResponse<IQuizAttemptDTO[]>>(
         `/quizzes-attempts/list-by-user/${userId}`
+      );
+      return response.data.RES;
+    } catch (error) {
+      throw error;
+    }
+  }
+  async listQuizAttemptsByUserAndQuiz(
+    data: IListQuizAttemptsByUserAndQuizDTO
+  ): Promise<IQuizAttemptDTO[]> {
+    try {
+      const response = await api.post<IApiSuccessResponse<IQuizAttemptDTO[]>>(
+        "/quizzes-attempts/list-by-user-and-quiz",
+        data
       );
       return response.data.RES;
     } catch (error) {
