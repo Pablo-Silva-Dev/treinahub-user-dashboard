@@ -15,6 +15,9 @@ const FILE_TYPE_UNSUPPORTED_MESSAGE =
 const NAVIGATION_TIMER = 1000;
 const PRIMARY_COLOR = "#0267FF";
 const SUCCESS_COLOR = "#049810";
+const MIN_ID_LENGTH = 32;
+const WRONG_COMPANY_ID_MESSAGE =
+  "O identificador da empresa deve ser um código hexadecimal de pelo menos 32 caracteres. Exemplo: 'cce69c68-0c47-491a-9954-1fa7e627aa72'";
 
 const SUPPORT_STARTING_MESSAGE =
   "Você está acessando o suporte. Para iniciar o atendimento, informe sua dúvida.";
@@ -31,6 +34,7 @@ export {
   EMAIL_INVALID_MESSAGE,
   FILE_MAX_SIZE_MESSAGE,
   FILE_TYPE_UNSUPPORTED_MESSAGE,
+  MIN_ID_LENGTH,
   MIN_PASSWORD_LENGTH,
   NAVIGATION_TIMER,
   PASSWORD_MESSAGES_NOT_MATCH,
@@ -40,4 +44,5 @@ export {
   REQUIRED_FIELD_MESSAGE,
   SUCCESS_COLOR,
   SUPPORT_STARTING_MESSAGE,
+  WRONG_COMPANY_ID_MESSAGE,
 };

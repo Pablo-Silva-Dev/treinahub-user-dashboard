@@ -111,10 +111,21 @@ export default function SignUp() {
     } catch (error) {
       if (typeof error === "object" && error !== null && "STATUS" in error) {
         const typedError = error as { STATUS: number };
-        if (typedError.STATUS === 409)
-          showAlertError(
-            "Já existe um usuário cadastrado com os dados informados."
-          );
+        switch (typedError.STATUS) {
+          case 404:
+            showAlertError(
+              "Empresa não encontrada. Solicite ao administrador o identificador da empresa."
+            );
+            break;
+          case 403:
+            showAlertError("Empresa ainda não realizou a assinatura.");
+            break;
+          case 409:
+            showAlertError("Já existe um usuário com os dados informados.");
+            break;
+          default:
+            console.log(error);
+        }
         console.log("Error at trying to register user: ", error);
       }
     } finally {

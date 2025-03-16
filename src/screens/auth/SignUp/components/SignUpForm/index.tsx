@@ -2,16 +2,17 @@ import {
   BIRTH_DATE_INVALID_MESSAGE,
   CPF_INVALID_MESSAGE,
   EMAIL_INVALID_MESSAGE,
+  MIN_ID_LENGTH,
   MIN_PASSWORD_LENGTH,
   PASSWORD_MIN_LENGTH_MESSAGE,
   PHONE_INVALID_MESSAGE,
   REQUIRED_FIELD_MESSAGE,
+  WRONG_COMPANY_ID_MESSAGE,
 } from "@/appConstants/index";
 import { Button } from "@/components/buttons/Button";
 import { ErrorMessage } from "@/components/inputs/ErrorMessage";
 import { MaskedTextInput } from "@/components/inputs/MaskedTextInput";
 import { PasswordTextInput } from "@/components/inputs/PasswordInput";
-import { SelectInput } from "@/components/inputs/SelectInput";
 import { TextInput } from "@/components/inputs/TextInput";
 import { PasswordRequirements } from "@/components/miscellaneous/PasswordRequirements";
 import { ICompanyDTO } from "@/repositories/dtos/CompanyDTO";
@@ -78,7 +79,10 @@ export default function SignUpForm({
       .string()
       .min(MIN_PASSWORD_LENGTH, PASSWORD_MIN_LENGTH_MESSAGE)
       .required(REQUIRED_FIELD_MESSAGE),
-    company_id: yup.string().required(REQUIRED_FIELD_MESSAGE),
+    company_id: yup
+      .string()
+      .min(MIN_ID_LENGTH, WRONG_COMPANY_ID_MESSAGE)
+      .required(REQUIRED_FIELD_MESSAGE),
   });
   const passwordValidated = useRef(false);
 
@@ -192,15 +196,11 @@ export default function SignUpForm({
               )}
             </div>
             <div className="w-full ml-0.5">
-              <SelectInput
-                options={companiesSelectInputs}
-                label="Empresa"
-                placeholder="Selecione sua empresa"
-                onSelectOption={(value) => {
-                  setValue("company_id", value.value as string, {
-                    shouldValidate: true,
-                  });
-                }}
+              <TextInput
+                inputLabel="Identificador da empresa"
+                placeholder="Identificador da empresa"
+                style={{ width: "99%" }}
+                {...register("company_id")}
               />
               {errors.company_id && (
                 <ErrorMessage errorMessage={errors.company_id.message} />
