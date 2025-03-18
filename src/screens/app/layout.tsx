@@ -1,6 +1,5 @@
 import logo_text from "@/assets/logo_text.svg";
 import logo_text_dark from "@/assets/logo_text_dark.svg";
-import { CompanyFooterLink } from "@/components/miscellaneous/CompanyFooterLink";
 import { Subtitle } from "@/components/typography/Subtitle";
 import { Title } from "@/components/typography/Title";
 import { menuItems } from "@/data/dashboardMenu";

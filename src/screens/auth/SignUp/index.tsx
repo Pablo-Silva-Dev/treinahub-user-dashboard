@@ -3,12 +3,11 @@ import { HeaderNavigation } from "@/components/miscellaneous/HeaderNavigation";
 import { useStripe } from "@/hooks/useStripe";
 import { AvatarsRepository } from "@/repositories/avatarsRepository";
 import { CompaniesRepository } from "@/repositories/companiesRepository";
-import { ICompanyDTO } from "@/repositories/dtos/CompanyDTO";
 import { ICreateUserDTO } from "@/repositories/dtos/UserDTO";
 import { UsersRepository } from "@/repositories/usersRepository";
 import { useLoading } from "@/store/loading";
 import { showAlertError, showAlertSuccess } from "@/utils/alerts";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { PrivacyPolicyModal } from "./components/PrivacyPolicyModal";
 import SignUpForm from "./components/SignUpForm";
@@ -19,7 +18,6 @@ export default function SignUp() {
   const [privacyPolicyModal, setPrivacyPolicyModal] = useState(false);
   const navigate = useNavigate();
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [companiesList, setCompaniesList] = useState<ICompanyDTO[]>([]);
 
   const { isLoading, setIsLoading } = useLoading();
 
@@ -42,22 +40,6 @@ export default function SignUp() {
   const companiesRepository = useMemo(() => {
     return new CompaniesRepository();
   }, []);
-
-  const getCompanies = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const companies = await companiesRepository.listCompanies();
-      setCompaniesList(companies);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [companiesRepository, setIsLoading]);
-
-  useEffect(() => {
-    getCompanies();
-  }, [getCompanies]);
 
   const { reportNewAdditionalUser } = useStripe();
 
@@ -146,7 +128,6 @@ export default function SignUp() {
           isLoading={isLoading}
           passwordConfirmation={passwordConfirmation}
           setPasswordConfirmation={setPasswordConfirmation}
-          companiesList={companiesList}
         />
       )}
       <UseTermsModal

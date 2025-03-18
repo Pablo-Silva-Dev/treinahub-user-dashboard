@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "ps-trainings-user-dsb"
-  }
+    "default": "treinahub-user",
+    "treinahubuser": "treinahub-user"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }

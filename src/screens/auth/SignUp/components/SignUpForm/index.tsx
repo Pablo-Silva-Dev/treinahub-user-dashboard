@@ -15,7 +15,6 @@ import { MaskedTextInput } from "@/components/inputs/MaskedTextInput";
 import { PasswordTextInput } from "@/components/inputs/PasswordInput";
 import { TextInput } from "@/components/inputs/TextInput";
 import { PasswordRequirements } from "@/components/miscellaneous/PasswordRequirements";
-import { ICompanyDTO } from "@/repositories/dtos/CompanyDTO";
 import { birthDateMask, cpfMask } from "@/utils/masks";
 import {
   birthDateValidationRegex,
@@ -45,7 +44,6 @@ interface SignUpFormProps {
   passwordConfirmation: string;
   setPasswordConfirmation: Dispatch<SetStateAction<string>>;
   isLoading: boolean;
-  companiesList: ICompanyDTO[];
 }
 
 export default function SignUpForm({
@@ -55,7 +53,6 @@ export default function SignUpForm({
   passwordConfirmation,
   setPasswordConfirmation,
   isLoading,
-  companiesList,
 }: SignUpFormProps) {
   const validationSchema = yup.object({
     name: yup.string().required(REQUIRED_FIELD_MESSAGE),
@@ -90,7 +87,6 @@ export default function SignUpForm({
     register,
     handleSubmit,
     formState: { errors, isValid },
-    setValue,
     watch,
   } = useForm<SignUpFormInputs>({
     resolver: yupResolver(validationSchema),
@@ -110,16 +106,6 @@ export default function SignUpForm({
   const companyId = watch("company_id");
 
   const [wasTermsAccepted, setWasTermsAccepted] = useState(false);
-
-  type IOption = {
-    label: string;
-    value: string;
-  };
-
-  const companiesSelectInputs: IOption[] = companiesList.map((company) => ({
-    value: company.id,
-    label: company.fantasy_name,
-  }));
 
   return (
     <form
