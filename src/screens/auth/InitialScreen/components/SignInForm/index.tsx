@@ -72,7 +72,11 @@ export function SignInForm({ onSubmit, isLoading }: SignInFormProps) {
           <LinkButton title="Esqueci minha senha" />
         </Link>
       </div>
-      <Button title="Acessar a plataforma" type="submit" disabled={!isValid || isLoading} />
+      <Button
+        title="Acessar a plataforma"
+        type="submit"
+        disabled={!isValid || isLoading}
+      />
       <div className="flex flex-row w-full mt-6 justify-between items-center">
         <span className="text-gray-700 dark:text-gray-100 text-sm">
           Não tem uma conta?

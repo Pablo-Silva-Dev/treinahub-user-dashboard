@@ -5,6 +5,7 @@ import { Title } from "@/components/typography/Title";
 import { menuItems } from "@/data/dashboardMenu";
 import { AvatarsRepository } from "@/repositories/avatarsRepository";
 import { UsersRepository } from "@/repositories/usersRepository";
+import { socket } from "@/services/socket";
 import { useAuthenticationStore } from "@/store/auth";
 import { useThemeStore } from "@/store/theme";
 import {
@@ -54,6 +55,41 @@ interface LoadingBarProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
 }: DashboardLayoutProps) => {
+  const { user, signOut } = useAuthenticationStore();
+  const disconnectedAlertRef = useRef(false);
+
+  const unAuthenicateUser = useCallback(() => {
+    const timer = setTimeout(() => {
+      signOut();
+      disconnectedAlertRef.current = false;
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [signOut]);
+
+  const showDisconnectedAlert = useCallback(() => {
+    const timer = setTimeout(() => {
+      if (disconnectedAlertRef.current) return;
+      disconnectedAlertRef.current = true;
+      showAlertError("Você foi desconectado. Por favor, faça login novamente.");
+      unAuthenicateUser();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [unAuthenicateUser]);
+
+  useEffect(() => {
+    if (socket.disconnected) {
+      socket.connect();
+    } else {
+      socket.offAny();
+    }
+    socket.on("user-disconnected", (val) => {
+      const userEmail = val.split(":")[1];
+      if (userEmail === user.email) {
+        showDisconnectedAlert();
+      }
+    });
+  }, [showDisconnectedAlert, signOut, unAuthenicateUser, user.email]);
+
   const [pathSegments, setPathSegments] = useState({ base: "", action: "" });
 
   useEffect(() => {
@@ -78,10 +114,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [isMobileMenuModalOpen, setIsMobileMenuModalOpen] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
 
-  const { signOut } = useAuthenticationStore();
-
   const { theme, toggleTheme } = useThemeStore();
-  const { user } = useAuthenticationStore();
 
   const navigate = useNavigate();
 

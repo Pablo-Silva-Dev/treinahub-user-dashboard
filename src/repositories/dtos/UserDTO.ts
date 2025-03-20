@@ -17,6 +17,7 @@ export interface IUserDTO {
   is_admin: boolean;
   company?: ICompanyDTO;
   company_id?: string;
+  is_authenticated?: string;
 }
 
 export interface ICreateUserDTO {

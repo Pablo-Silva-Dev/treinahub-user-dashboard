@@ -36,6 +36,7 @@
     "react-top-loading-bar": "2.3.1",
     "react-usestateref": "^1.0.9",
     "react-verification-input": "4.1.2",
+    "socket.io-client": "^4.8.1",
     "stripe": "^17.6.0",
     "yup": "1.4.0",
     "zustand": "4.5.4"

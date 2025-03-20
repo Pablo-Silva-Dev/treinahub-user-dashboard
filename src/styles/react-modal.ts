@@ -110,7 +110,7 @@ const reactTermsAndPolicyModalCustomStylesDark = {
     opacity: 1,
     borderRadius: 8,
     padding: 32,
-    maxWidth: "90vw",
+    maxWidth: "70vw",
     backgroundColor: "#1e293b",
     maxHeight: "80vh",
     zIndex: 1000,
