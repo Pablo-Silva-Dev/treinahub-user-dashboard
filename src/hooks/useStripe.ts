@@ -51,11 +51,11 @@ export const useStripe = () => {
     const { totalCompanyUsers, companyPlan, subscriptionId, companyEmail } =
       data;
     if (
-      (companyPlan === "bronze" &&
+      (companyPlan?.includes("bronze") &&
         totalCompanyUsers > maxAllowedFreeUsersBronzePlan) ||
-      (companyPlan === "silver" &&
+      (companyPlan?.includes("silver") &&
         totalCompanyUsers > maxAllowedFreeUsersSilverPlan) ||
-      (companyPlan === "gold" &&
+      (companyPlan?.includes("gold") &&
         totalCompanyUsers > maxAllowedFreeUsersGoldPlan)
     ) {
       try {

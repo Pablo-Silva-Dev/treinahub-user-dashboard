@@ -50,7 +50,7 @@ export function QuizResultCard({
         </span>
       ) : (
         <div className="w-full flex justify-end">
-          {companyPlan && companyPlan !== "bronze" && (
+          {companyPlan && !companyPlan.includes("bronze") && (
             <Button
               title="Solicitar explicação da IA"
               className="w-full md:w-60 h-[52px] flex items-center justify-center bg-gradient-to-r from-[#4e5081] to-[#0000FF] normal-case text-[12px] md:text-md  font-medium font-poppins rounded-lg disabled:opacity-[0.5] text-gray-50 font-secondary"
