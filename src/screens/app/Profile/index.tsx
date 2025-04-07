@@ -145,6 +145,10 @@ export default function Profile() {
         handleToggleUpdateAvatarModal();
         showAlertSuccess("Foto de perfil atualizada com sucesso!");
         getUserInfo();
+        const timer = setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+        return () => clearTimeout(timer);
       } catch (error) {
         showAlertError("Houve um erro ao atualizar avatar.");
         console.log(error);

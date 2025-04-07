@@ -33,7 +33,7 @@ export default function InitialScreen() {
         if (typeof error === "object" && error !== null && "STATUS" in error) {
           const typedError = error as { STATUS: number };
           if (typedError.STATUS === 409) {
-            showAlertError("Credenciais incorretas.");
+            showAlertError("Credenciais incorretas ou usuário não encontrado.");
           }
           if (typedError.STATUS === 406) {
             showAlertError(
