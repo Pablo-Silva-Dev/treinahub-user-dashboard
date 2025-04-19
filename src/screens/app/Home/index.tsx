@@ -262,7 +262,7 @@ export default function Home() {
     <main className="w-full flex flex-1  flex-col p-4 mt-4">
       <div className=" w-full flex flex-col md:ml-4 ">
         <div className="flex flex-col mb-4 mx-auto md:mx-[80px] w-[80%]">
-          <GreetUser userName="John Doe" />
+          <GreetUser userName={user.name}/>
           {isLoading ? (
             <div className="w-full flex flex-col items-center mt-[10vh]">
               <Loading color={PRIMARY_COLOR} />
