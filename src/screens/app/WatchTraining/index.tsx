@@ -433,10 +433,11 @@ export default function WatchTraining() {
           trainingsVideoClassesLength > 0 &&
           watchedTrainingClassesLength === trainingsVideoClassesLength &&
           allClassesWatched &&
-          !userHasCertificate
+          !userHasCertificate &&
+          quiz
         ) {
           setEnableQuiz(true);
-          if (quizAttempts === 0) {
+          if (quizAttempts === 0 && quiz) {
             setTrainingCompleteModal(true);
           }
         }
@@ -543,6 +544,8 @@ export default function WatchTraining() {
   useEffect(() => {
     getQuizByTraining();
   }, [getQuizByTraining]);
+
+  console.log('quiz', quiz)
 
   const handleStartNewQuizAttempt = async () => {
     try {
@@ -803,14 +806,14 @@ export default function WatchTraining() {
               watchedClasses={watchedVideoClasses}
               onSelectClass={selectVideoClass}
             />
-            {enableQuiz && quizAttempts === 0 ? (
+            {enableQuiz && quiz && quizAttempts === 0 ? (
               <TrainingFinishedWarningCard
                 onStartQuiz={handleToggleTrainingCompleteModal}
                 content="Você assistiu todas as aulas deste treinamento. Realize o questionário
         para emitir seu certificado."
                 buttonTitle="Realizar questionário"
               />
-            ) : enableQuiz && quizAttempts !== 0 ? (
+            ) : enableQuiz && quiz && quizAttempts !== 0 ? (
               <TrainingFinishedWarningCard
                 onStartQuiz={handleToggleTrainingCompleteModal}
                 content="Você assistiu todas as aulas deste treinamento, mas não atingiu a pontuação mínima para a emissão do certificado. Refaça o questionário

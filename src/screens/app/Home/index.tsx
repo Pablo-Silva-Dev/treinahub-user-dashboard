@@ -198,8 +198,10 @@ export default function Home() {
     return lastClassInfoQuery.data || [];
   }, [lastClassInfoQuery.data]);
 
+  const COMPLETE_PERCENTAGE = 100
+
   const allCompletedTrainings = allTrainingMetrics.filter(
-    (t) => t.total_watched_classes_percentage === 100
+    (t) => t.total_watched_classes_percentage === COMPLETE_PERCENTAGE
   );
 
   const dashboardMetrics = [
@@ -208,6 +210,12 @@ export default function Home() {
       iconName: "book-open",
       metric: totalTrainings,
       link: "/dashboard/acessar-meus-treinamentos",
+    },
+    {
+      title: "Treinamentos realizados",
+      iconName: "check-circle",
+      metric: allCompletedTrainings.length,
+      link: "",
     },
     {
       title: "Questionários respondidos",
@@ -281,7 +289,7 @@ export default function Home() {
                   />
                 </div>
               </div>
-              <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
                 {dashboardMetrics.map((metric) => (
                   <MetricsCard
                     key={metric.title}
