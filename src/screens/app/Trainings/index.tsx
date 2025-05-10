@@ -71,8 +71,18 @@ export default function Trainings() {
           training.video_classes &&
           training.video_classes?.length > 0 &&
           training.quizes &&
-          training.quizes.length > 0
+          training.quizes.some(
+            (quiz) =>
+              quiz.questions &&
+              quiz.questions.some(
+                (question) =>
+                  question.options &&
+                  question.options?.length > 0 &&
+                  question.options.some((option) => option.is_correct)
+              )
+          )
       );
+      console.log("filteredTrainings", filteredTrainings);
       setTrainings(filteredTrainings);
       return filteredTrainings;
     } catch (error) {
@@ -167,7 +177,20 @@ export default function Trainings() {
           })
         );
         trainingsWithLastWatchedClass.filter((training) => {
-          training.quizes && training.quizes.length > 0;
+          training.video_classes &&
+            training.video_classes?.length > 0 &&
+            training.quizes &&
+            training.quizes.length > 0 &&
+            training.quizes.some(
+              (quiz) =>
+                quiz.questions &&
+                quiz.questions.some(
+                  (question) =>
+                    question.options &&
+                    question.options?.length > 0 &&
+                    question.options.some((option) => option.is_correct)
+                )
+            );
         });
         setTrainings(trainingsWithLastWatchedClass as never);
       }
@@ -226,10 +249,6 @@ export default function Trainings() {
       );
     }
   };
-
-  useEffect(() => {
-    console.log("Trainings", trainings);
-  }, [trainings]);
 
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8">
