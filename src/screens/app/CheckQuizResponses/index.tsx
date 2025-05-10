@@ -16,7 +16,7 @@ import { useAuthenticationStore } from "@/store/auth";
 import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
 import { showAlertError } from "@/utils/alerts";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { QuizResultCard } from "./components/QuizResultCard";
@@ -83,6 +83,7 @@ export default function CheckQuizResponse() {
             user_id: user.id,
           });
         setQuizResult(quizResult);
+        return quizResult;
       }
     } catch (error) {
       console.log(error);
@@ -121,13 +122,10 @@ export default function CheckQuizResponse() {
     getQuizResponses();
   }, [getQuizResponses]);
 
-  const { error } = useQuery({
-    queryKey: ["quizzes"],
-    queryFn: getQuizResponses,
-  });
 
   const handleRetryQuiz = useCallback(async () => {
     try {
+      setIsLoading(true);
       if (
         quizResult &&
         quizResponses &&
@@ -149,6 +147,8 @@ export default function CheckQuizResponse() {
       showAlertError(
         "Houve um erro ao tentar refazer questionário. Por favor, tente novamente mais tarde."
       );
+    } finally {
+      setIsLoading(false);
     }
   }, [
     navigate,
@@ -156,6 +156,7 @@ export default function CheckQuizResponse() {
     quizResponsesRepository,
     quizResult,
     quizResultsRepository,
+    setIsLoading,
   ]);
 
   const handleSeeCertificates = () =>
@@ -192,13 +193,32 @@ export default function CheckQuizResponse() {
     }
   };
 
+  const results = useQueries({
+    queries: [
+      {
+        queryKey: ["quizResponses"],
+        queryFn: getQuizResponses,
+        enabled: !!quizAttemptIdQueryParam,
+      },
+      {
+        queryKey: ["quizResult"],
+        queryFn: getQuizResult,
+        enabled: !!quizAttemptIdQueryParam,
+      },
+    ],
+  })
+
+  const isLoadingQuery = results.some((result) => result.isLoading);
+  const hasErrorQuery = results.some((result) => result.isError);
+
+
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8 md:pl-[80px]">
-      {isLoading ? (
+      {isLoading || isLoadingQuery ? (
         <div className="w-full mt-[10vh]">
           <Loading color={PRIMARY_COLOR} />
         </div>
-      ) : error ? (
+      ) : hasErrorQuery ? (
         <div className="w-full flex flex-row justify-center">
           <img
             src={theme === "light" ? error_warning : error_warning_dark}
@@ -218,7 +238,7 @@ export default function CheckQuizResponse() {
                 <ScreenTitleIcon screenTitle="Questionários" iconName="edit" />
                 <div className="w-60 mt-4 md:mt-0">
                   {quizResult &&
-                  quizResult.total_correct_questions_percentage <
+                    quizResult.total_correct_questions_percentage <
                     MIN_QUIZ_APPROVAL_PERCENTAGE ? (
                     <Button
                       title="Refazer questionário"
@@ -241,34 +261,44 @@ export default function CheckQuizResponse() {
             </div>
 
             <div className="w-full max-h-[60vh] overflow-y-auto">
-              {companyPlan &&
-                quizResponses.map((quizResult) => (
-                  <div key={quizResult.id}>
-                    <QuizResultCard
-                      questionId={quizResult.id}
-                      requestedAiQuestions={requestedAIQuestions}
-                      question={quizResult.question.content}
-                      selectedOptionContent={quizResult.selected_option.content}
-                      correctOptionContent={quizResult.correct_option.content}
-                      onRequestAiExplanation={() =>
-                        requestAIExplanation({
-                          question: quizResult.question.content,
-                          selectedOptionContent:
-                            quizResult.selected_option.content,
-                          correctOptionContent:
-                            quizResult.correct_option.content,
-                          questionId: quizResult.id,
-                        })
-                      }
-                      aiExplanation={quizResult.ai_response}
-                      companyPlan={companyPlan}
-                      isLoading={
-                        isLoadingAiResponse &&
-                        selectedQuestionId === quizResult.id
-                      }
-                    />
-                  </div>
-                ))}
+              {
+                isLoading ?
+                  (
+                    <div className="w-full my-8">
+                      <Loading type="cylon" color="#0267FF" text="Gerando explicação da IA..." />
+                    </div>
+                  ) :
+                  (
+                    companyPlan &&
+                    quizResponses.map((quizResult) => (
+                      <div key={quizResult.id}>
+                        <QuizResultCard
+                          questionId={quizResult.id}
+                          requestedAiQuestions={requestedAIQuestions}
+                          question={quizResult.question.content}
+                          selectedOptionContent={quizResult.selected_option.content}
+                          correctOptionContent={quizResult.correct_option.content}
+                          onRequestAiExplanation={() =>
+                            requestAIExplanation({
+                              question: quizResult.question.content,
+                              selectedOptionContent:
+                                quizResult.selected_option.content,
+                              correctOptionContent:
+                                quizResult.correct_option.content,
+                              questionId: quizResult.id,
+                            })
+                          }
+                          aiExplanation={quizResult.ai_response}
+                          companyPlan={companyPlan}
+                          isLoading={
+                            isLoadingAiResponse &&
+                            selectedQuestionId === quizResult.id
+                          }
+                        />
+                      </div>
+                    ))
+                  )
+              }
             </div>
           </>
         )

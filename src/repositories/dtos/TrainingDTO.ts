@@ -1,4 +1,5 @@
 import { ICertificateDTO } from "./CertificateDTO";
+import { IQuizDTO } from "./QuizDTO";
 import { ITrainingMetricsDTO } from "./TrainingMetricDTO";
 import { IUserDTO } from "./UserDTO";
 import { IVideoClassDTO } from "./VideoClassDTO";
@@ -13,6 +14,7 @@ export interface ITrainingDTO {
   video_classes?: IVideoClassDTO[];
   certificates?: ICertificateDTO[];
   training_metrics?: ITrainingMetricsDTO[];
+  quizes: IQuizDTO[];
   formatted_duration?: string;
   last_watched_class_id?: string | undefined;
   last_watched_class_name?: string | null;

@@ -68,10 +68,13 @@ export default function Trainings() {
       const trainings = await trainingsRepository.listTrainings(user.companyId);
       const filteredTrainings = trainings.filter(
         (training) =>
-          training.video_classes && training.video_classes?.length > 0
+          training.video_classes &&
+          training.video_classes?.length > 0 &&
+          training.quizes &&
+          training.quizes.length > 0
       );
       setTrainings(filteredTrainings);
-      return trainings;
+      return filteredTrainings;
     } catch (error) {
       console.log(error);
     } finally {
@@ -163,6 +166,9 @@ export default function Trainings() {
             };
           })
         );
+        trainingsWithLastWatchedClass.filter((training) => {
+          training.quizes && training.quizes.length > 0;
+        });
         setTrainings(trainingsWithLastWatchedClass as never);
       }
     };
@@ -221,6 +227,9 @@ export default function Trainings() {
     }
   };
 
+  useEffect(() => {
+    console.log("Trainings", trainings);
+  }, [trainings]);
 
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8">
@@ -269,7 +278,7 @@ export default function Trainings() {
               </div>
             </div>
           ) : (
-            <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="w-full grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {trainings.map((training) =>
                 certificatesStatus[training.id] ? (
                   <TrainingInfoCard
