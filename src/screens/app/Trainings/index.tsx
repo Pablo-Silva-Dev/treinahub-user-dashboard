@@ -82,7 +82,6 @@ export default function Trainings() {
               )
           )
       );
-      console.log("filteredTrainings", filteredTrainings);
       setTrainings(filteredTrainings);
       return filteredTrainings;
     } catch (error) {

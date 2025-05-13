@@ -124,7 +124,23 @@ export default function Home() {
   const getTrainings = useCallback(async () => {
     try {
       const trainings = await trainingsRepository.listTrainings(user.companyId);
-      trainings.map(async (training) => {
+      const filteredTrainings = trainings.filter(
+        (training) =>
+          training.video_classes &&
+          training.video_classes?.length > 0 &&
+          training.quizes &&
+          training.quizes.some(
+            (quiz) =>
+              quiz.questions &&
+              quiz.questions.some(
+                (question) =>
+                  question.options &&
+                  question.options?.length > 0 &&
+                  question.options.some((option) => option.is_correct)
+              )
+          )
+      );
+      filteredTrainings.map(async (training) => {
         const hasCertificate = await checkIfUserHasCertificate(training.id);
         setCertificatesStatus(
           (prevStatus) =>
@@ -134,7 +150,7 @@ export default function Home() {
             }) as never
         );
       });
-      return trainings;
+      return filteredTrainings;
     } catch (error) {
       console.log("Error at trying to list trainings: ", error);
     }
