@@ -45,6 +45,7 @@ export default function SignUp() {
 
   const handleRegisterUser = async (data: ICreateUserDTO) => {
     try {
+      setIsLoading(true);
       const { phone } = data;
       const brazilianPhoneCode = "+55";
       const completePhone = brazilianPhoneCode + phone;
@@ -120,16 +121,14 @@ export default function SignUp() {
       <div className="flex flex-row mb-2 w-full sm:w-[400px] ml-8 sm:mx-auto">
         <HeaderNavigation screenTitle="Cadastro" />
       </div>
-      {!isLoading && (
-        <SignUpForm
-          onSubmit={handleRegisterUser}
-          onOpenUseTermsModal={handleToggleUseTermsModal}
-          onOpenPrivacyPolicyModal={handleTogglePrivacyPolicyModal}
-          isLoading={isLoading}
-          passwordConfirmation={passwordConfirmation}
-          setPasswordConfirmation={setPasswordConfirmation}
-        />
-      )}
+      <SignUpForm
+        onSubmit={handleRegisterUser}
+        onOpenUseTermsModal={handleToggleUseTermsModal}
+        onOpenPrivacyPolicyModal={handleTogglePrivacyPolicyModal}
+        isLoading={isLoading}
+        passwordConfirmation={passwordConfirmation}
+        setPasswordConfirmation={setPasswordConfirmation}
+      />
       <UseTermsModal
         onClose={handleToggleUseTermsModal}
         isOpen={useTermsModal}
