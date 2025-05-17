@@ -117,8 +117,8 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row mb-2 w-full sm:w-[400px] ml-8 sm:mx-auto">
+    <div className="flex flex-col items-center">
+      <div className="flex flex-row mb-4 mx-auto">
         <HeaderNavigation screenTitle="Cadastro" />
       </div>
       <SignUpForm

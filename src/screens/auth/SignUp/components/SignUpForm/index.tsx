@@ -119,36 +119,37 @@ export default function SignUpForm({
 
   return (
     <form
-      className="max-w-lg bg-gray-50 dark:bg-slate-800 p-6 shadow-xl rounded-lg mx-auto w-[100%]  max-h-[560px] overflow-x-auto  mb-[40px]"
+      className="max-w-2xl bg-gray-50 dark:bg-slate-800 p-6 shadow-xl rounded-lg mx-auto w-[100%] overflow-x-auto  mb-8"
       onSubmit={handleSubmit(handleSubmitForm)}
     >
       <div className="flex flex-col w-full">
         {
           <>
-            <div className="w-full my-2">
-              <TextInput
-                inputLabel="Nome"
-                placeholder="Seu nome"
-                autoComplete="name"
-                {...register("name")}
-              />
-              {errors.name && (
-                <ErrorMessage errorMessage={errors.name.message} />
-              )}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-1">
+              <div className="w-full">
+                <TextInput
+                  inputLabel="Nome"
+                  placeholder="Seu nome"
+                  autoComplete="name"
+                  {...register("name")}
+                />
+                {errors.name && (
+                  <ErrorMessage errorMessage={errors.name.message} />
+                )}
+              </div>
+              <div className="w-full">
+                <TextInput
+                  inputLabel="Email"
+                  placeholder="Seu email"
+                  autoComplete="email"
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <ErrorMessage errorMessage={errors.email.message} />
+                )}
+              </div>
             </div>
-            <div className="w-full mr-2">
-              <TextInput
-                inputLabel="Email"
-                placeholder="Seu email"
-                autoComplete="email"
-                style={{ width: "99%" }}
-                {...register("email")}
-              />
-              {errors.email && (
-                <ErrorMessage errorMessage={errors.email.message} />
-              )}
-            </div>
-            <div className="w-full flex flex-row mb-4">
+            <div className="w-full flex flex-row gap-4">
               <div className="w-full">
                 <MaskedTextInput
                   mask={birthDateMask}
@@ -178,30 +179,32 @@ export default function SignUpForm({
                 )}
               </div>
             </div>
-            <div className="w-full ml-0.5">
-              <MaskedTextInput
-                mask={phoneMask}
-                inputLabel="Telefone"
-                placeholder="DDD + telefone, sem espaços"
-                autoComplete="off"
-                style={{ width: "99%" }}
-                inputMode="numeric"
-                {...register("phone")}
-              />
-              {errors.phone && (
-                <ErrorMessage errorMessage={errors.phone.message} />
-              )}
-            </div>
-            <div className="w-full ml-0.5">
-              <TextInput
-                inputLabel="Identificador da empresa"
-                placeholder="Identificador da empresa"
-                style={{ width: "99%" }}
-                {...register("company_id")}
-              />
-              {errors.company_id && (
-                <ErrorMessage errorMessage={errors.company_id.message} />
-              )}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-1">
+              <div className="w-full">
+                <MaskedTextInput
+                  mask={phoneMask}
+                  inputLabel="Telefone"
+                  placeholder="DDD + telefone, sem espaços"
+                  autoComplete="off"
+                  style={{ width: "99%" }}
+                  inputMode="numeric"
+                  {...register("phone")}
+                />
+                {errors.phone && (
+                  <ErrorMessage errorMessage={errors.phone.message} />
+                )}
+              </div>
+              <div className="w-full">
+                <TextInput
+                  inputLabel="Identificador da empresa"
+                  placeholder="Identificador da empresa"
+                  style={{ width: "99%" }}
+                  {...register("company_id")}
+                />
+                {errors.company_id && (
+                  <ErrorMessage errorMessage={errors.company_id.message} />
+                )}
+              </div>
             </div>
           </>
         }
@@ -219,34 +222,38 @@ export default function SignUpForm({
                   passwordValidated={passwordValidated}
                 />
               </div>
-              <div className="w-full mb-4">
-                <PasswordTextInput
-                  inputLabel="Senha"
-                  autoComplete="new-password"
-                  placeholder="Mínimo de 8 dígitos"
-                  {...register("password")}
-                />
-                {errors.password && (
-                  <ErrorMessage errorMessage={errors.password.message} />
-                )}
-              </div>
-              <div className="w-full mb-4">
-                <PasswordTextInput
-                  inputLabel="Confirmação da senha"
-                  placeholder="Confirme a senha"
-                  autoComplete="new-password"
-                  value={passwordConfirmation}
-                  onChange={(val) => setPasswordConfirmation(val.target.value)}
-                />
-                {passwordValue.length >= MIN_PASSWORD_LENGTH &&
-                  passwordConfirmation.length >= MIN_PASSWORD_LENGTH &&
-                  passwordValue !== passwordConfirmation && (
-                    <ErrorMessage errorMessage="As senhas não correspondem" />
+              <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="w-full mb-4">
+                  <PasswordTextInput
+                    inputLabel="Senha"
+                    autoComplete="new-password"
+                    placeholder="Mínimo de 8 dígitos"
+                    {...register("password")}
+                  />
+                  {errors.password && (
+                    <ErrorMessage errorMessage={errors.password.message} />
                   )}
+                </div>
+                <div className="w-full mb-4">
+                  <PasswordTextInput
+                    inputLabel="Confirmação da senha"
+                    placeholder="Confirme a senha"
+                    autoComplete="new-password"
+                    value={passwordConfirmation}
+                    onChange={(val) =>
+                      setPasswordConfirmation(val.target.value)
+                    }
+                  />
+                  {passwordValue.length >= MIN_PASSWORD_LENGTH &&
+                    passwordConfirmation.length >= MIN_PASSWORD_LENGTH &&
+                    passwordValue !== passwordConfirmation && (
+                      <ErrorMessage errorMessage="As senhas não correspondem" />
+                    )}
+                </div>
               </div>
             </>
           )}
-        <div className="w-full flex flex-col my-2">
+        <div className="w-full flex flex-col mb-2">
           <div className="flex flex-row items-center">
             <Checkbox
               defaultChecked={wasTermsAccepted}
