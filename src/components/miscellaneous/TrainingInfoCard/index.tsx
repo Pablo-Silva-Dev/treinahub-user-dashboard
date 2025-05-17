@@ -47,7 +47,7 @@ export function TrainingInfoCard({
     .every((wc) => wc.completely_watched);
 
   return (
-    <div className="w-full flex flex-col shadow-sm bg-white dark:bg-slate-700 rounded-md mr-0 md:mr-8">
+    <div className="w-full max-w-[560px] flex flex-col shadow-sm bg-white dark:bg-slate-700 rounded-md mr-0 md:mr-8">
       <img
         src={cover_url}
         alt="info_card_placeholder"

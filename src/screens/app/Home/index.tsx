@@ -337,7 +337,7 @@ export default function Home() {
                         content="Treinamentos realizados"
                         className="mb-2 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%]"
                       />
-                      <div className="w-full flex flex-col md:flex-row items-center">
+                      <div className="w-full flex flex-col md:flex-row">
                         {allCompletedTrainings.map((t) =>
                           certificatesStatus[t.training_id] ? (
                             <TrainingInfoCard
