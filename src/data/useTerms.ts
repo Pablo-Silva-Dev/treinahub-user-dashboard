@@ -4,22 +4,23 @@ export const userTerms = [
     texts: [
       "Ao acessar e utilizar esta plataforma, você concorda em cumprir os termos e condições estabelecidos neste documento.",
       "Se você não concordar com algum dos termos, por favor, não utilize essa plataforma.",
-      "Ao reealizar seu cadastro você automaticamente concorda com nossos Termos de Uso e Política de Privacidade.",
+      "Ao realizar seu cadastro você automaticamente concorda com nossos Termos de Uso e Política de Privacidade.",
     ],
   },
   {
     title: "Responsabilidades do usuário",
     texts: [
       "Responsabilizar-se pelas informações fornecidas no momento do seu cadastro na plataforma.",
-      "Não usar o serviço para qualquer propósito ilegal ou para a transmissão de material ilícito",
-      "Manter a confidencialidade de sua senha e demais informações de sua conta",
+      "Não usar o serviço para qualquer propósito ilegal ou para a transmissão de material ilícito.",
+      "Manter a confidencialidade de sua senha e demais informações de sua conta.",
       "Reportar qualquer erro encontrado no conteúdo do seus treinamento ao seu respectivo administrador.",
+      "Reportar qualquer erro encontrado no desenvolvimento desse software através do email pscodecontato@gmail.com.",
     ],
   },
   {
     title: "Uso do conteúdo",
     texts: [
-      "O conteúdo fornecido na plataforma é propriedade do admnistrador do seu treinamento e está protegido por direitos autorais e outras leis de propriedade intelectual.",
+      "O conteúdo fornecido na plataforma é propriedade do administrador do seu treinamento e está protegido por direitos autorais e outras leis de propriedade intelectual.",
       "Você pode usar o conteúdo para fins pessoais, mas não comerciais, e não pode redistribuir, transmitir ou publicar o conteúdo sem a permissão prévia e por escrito do seu administrador.",
     ],
   },
