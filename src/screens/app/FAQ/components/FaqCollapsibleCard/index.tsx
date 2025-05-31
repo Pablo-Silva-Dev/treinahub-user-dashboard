@@ -31,7 +31,7 @@ export function FaqCollapsibleCard({ questions }: FaqCollapsibleCardProps) {
           <div className="mb-4">
             <div className="w-full flex flex-row justify-between items-center mb-2">
               <button onClick={() => toggleQuestion(i)}>
-                <h3 className="text-gray-800 dark:text-gray-50 text-[13px] md:text-[14px] font-bold mr-3 text-left">
+                <h3 className="text-gray-800 dark:text-gray-50 text-[13px] md:text-[16px] font-bold mr-3 text-left">
                   {question.question}
                 </h3>
               </button>
@@ -60,7 +60,7 @@ export function FaqCollapsibleCard({ questions }: FaqCollapsibleCardProps) {
           </div>
           <Collapse isOpened={openedQuestions.includes(i)}>
             <div className="w-full flex flex-col">
-              <p className="text-gray-800 dark:text-gray-300 text-[12px] md:text-[13px] font-primary text-pretty mt-[-16px] mb-2">
+              <p className="text-gray-800 dark:text-gray-300 text-[12px] md:text-[14px] font-primary text-pretty mt-[-16px] mb-2">
                 {question.answer}
               </p>
             </div>
