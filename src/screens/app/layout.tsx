@@ -66,11 +66,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     return () => clearTimeout(timer);
   }, [signOut]);
 
-  const showDisconnectedAlert = useCallback(() => {
+  const logoutUser = useCallback(() => {
     const timer = setTimeout(() => {
-      if (disconnectedAlertRef.current) return;
-      disconnectedAlertRef.current = true;
-      showAlertError("Você foi desconectado. Por favor, faça login novamente.");
       unAuthenicateUser();
     }, 1000);
     return () => clearTimeout(timer);
@@ -82,13 +79,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     } else {
       socket.offAny();
     }
-    socket.on("user-disconnected", (val) => {
+    const handler = (val: string) => {
       const userEmail = val.split(":")[1];
       if (userEmail === user.email) {
-        showDisconnectedAlert();
+        logoutUser();
       }
-    });
-  }, [showDisconnectedAlert, signOut, unAuthenicateUser, user.email]);
+    };
+    socket.on("user-disconnected", handler);
+    return () => {
+      socket.off("user-disconnected", handler);
+    };
+  }, [logoutUser, user.email]);
 
   const [pathSegments, setPathSegments] = useState({ base: "", action: "" });
 
