@@ -1,5 +1,4 @@
 import { PRIMARY_COLOR } from "@/appConstants/index";
-import empty_box_animation from "@/assets/empty_box_animation.json";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
 import { Loading } from "@/components/miscellaneous/Loading";
@@ -12,11 +11,11 @@ import { useLoading } from "@/store/loading";
 import { useThemeStore } from "@/store/theme";
 
 import { Button } from "@/components/buttons/Button";
+import { NoData } from "@/components/miscellaneous/NoData";
 import { QuizResponsesRepository } from "@/repositories/quizResponsesRepository";
 import { showAlertError } from "@/utils/alerts";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Lottie from "react-lottie";
 import { useNavigate } from "react-router-dom";
 import { QuizBriefResultCard } from "./components/QuizBriefResultCard";
 
@@ -106,15 +105,6 @@ export default function Quizzes() {
     selectedQuizResult,
   ]);
 
-  const animationOptions = {
-    animationData: empty_box_animation,
-    loop: true,
-    autoplay: true,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-
   return (
     <div className="w-full lg:w-[95%] flex flex-col p-8 md:pl-[80px]">
       <div className="mr-3 mb-4">
@@ -138,20 +128,8 @@ export default function Quizzes() {
       ) : quizzesResults.length === 0 ? (
         <div className="w-full flex flex-col items-center">
           <div className="w-full flex flex-col items-start relative max-w-[480px]">
-            <Lottie
-              speed={0.25}
-              height={200}
-              width={200}
-              options={animationOptions}
-            />
-            <Subtitle
-              content="Seus questionário estarão disponíveis a medida que você concluir seus treinamentos."
-              className="mt-6 mb-4 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty"
-            />
-            <Subtitle
-              content="Você não possui nenhum questionário disponível no momento."
-              className="mb-4 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty"
-            />
+            <NoData description="Seus questionários estarão disponíveis a medida que você concluir seus treinamentos." />
+
             <div className="w-full mt-5">
               <Button
                 title="Acessar meus treinamentos"

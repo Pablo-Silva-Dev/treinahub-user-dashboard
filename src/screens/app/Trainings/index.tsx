@@ -1,10 +1,10 @@
 import { PRIMARY_COLOR } from "@/appConstants/index";
-import empty_box_animation from "@/assets/empty_box_animation.json";
 import error_warning from "@/assets/error_warning.svg";
 import error_warning_dark from "@/assets/error_warning_dark.svg";
 import infocard_placeholder from "@/assets/infocard_placeholder.svg";
 import { Button } from "@/components/buttons/Button";
 import { Loading } from "@/components/miscellaneous/Loading";
+import { NoData } from "@/components/miscellaneous/NoData";
 import { ScreenTitleIcon } from "@/components/miscellaneous/ScreenTitleIcon";
 import { TrainingInfoCard } from "@/components/miscellaneous/TrainingInfoCard";
 import { Subtitle } from "@/components/typography/Subtitle";
@@ -22,7 +22,6 @@ import { useThemeStore } from "@/store/theme";
 import { secondsToFullTimeString } from "@/utils/formats";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Lottie from "react-lottie";
 import { useNavigate } from "react-router-dom";
 
 export default function Trainings() {
@@ -219,15 +218,6 @@ export default function Trainings() {
     [getTrainings, trainingMetricsRepository]
   );
 
-  const animationOptions = {
-    animationData: empty_box_animation,
-    loop: true,
-    autoplay: true,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-
   const handleContactSupport = () => {
     navigate("/dashboard/acessar-suporte");
   };
@@ -275,18 +265,13 @@ export default function Trainings() {
             </div>
           ) : trainings.length === 0 ? (
             <div className="w-full flex flex-col items-center">
-              <div className="w-full flex flex-col items-start relative max-w-[480px]">
-                <Lottie
-                  speed={0.25}
-                  height={200}
-                  width={200}
-                  options={animationOptions}
-                />
-                <span className="mt-3 text-gray-600 dark:text-gray-300 text-sm md:text-[15px] text-center">
-                  Ainda não há treinamentos disponíveis. Contate seu
+              <div className="w-full flex flex-col items-start relative max-w-[480px] xs:ml-40">
+                <NoData
+                  description="Ainda não há treinamentos disponíveis. Contate seu
                   administrador para se informar sobre a disponibilidade dos
-                  treinamentos.
-                </span>
+                  treinamentos."
+                />
+
                 <div className="w-full mt-5">
                   <Button
                     title="Acessar suporte"
