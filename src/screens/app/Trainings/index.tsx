@@ -240,8 +240,7 @@ export default function Trainings() {
   };
 
   return (
-    <div className="w-full lg:w-[95%] flex flex-col p-8">
-      <div className="flex flex-col justify-between mb-6 mx-auto md:mx-[80px] w-[80%]">
+    <div className="w-full lg:w-[95%] flex flex-col p-8 md:pl-[80px]">
         <div className="flex flex-col w-full">
           <ScreenTitleIcon
             iconName="play-circle"
@@ -249,7 +248,7 @@ export default function Trainings() {
           />
           <Subtitle
             content="Aqui estão todos os seus treinamentos disponíveis"
-            className="mt-6 mb-4 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%]"
+            className="mt-6 mb-8 text-gray-800 dark:text-gray-50 text-sm md:text-[15px] text-pretty w-[90%]"
           />
           {loading || isLoading ? (
             <div className="w-full flex flex-col items-center mt-[10vh]">
@@ -265,7 +264,7 @@ export default function Trainings() {
             </div>
           ) : trainings.length === 0 ? (
             <div className="w-full flex flex-col items-center">
-              <div className="w-full flex flex-col items-start relative max-w-[480px] xs:ml-40">
+              <div className="w-full flex flex-col items-start relative max-w-[480px]">
                 <NoData
                   description="Ainda não há treinamentos disponíveis. Contate seu
                   administrador para se informar sobre a disponibilidade dos
@@ -382,7 +381,6 @@ export default function Trainings() {
             </div>
           )}
         </div>
-      </div>
       <div className="flex flex-row  w-full justify-center flex-wrap"></div>
     </div>
   );
