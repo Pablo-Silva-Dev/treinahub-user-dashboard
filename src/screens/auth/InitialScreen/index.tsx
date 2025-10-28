@@ -29,17 +29,20 @@ export default function InitialScreen() {
         setIsLoading(true);
         const user = await usersRepository.authenticateUser(data);
         signIn(user);
-      } catch (error) {
-        if (typeof error === "object" && error !== null && "STATUS" in error) {
-          const typedError = error as { STATUS: number };
-          if (typedError.STATUS === 409) {
-            showAlertError("Credenciais incorretas ou usuário não encontrado.");
-          }
-          if (typedError.STATUS === 406) {
-            showAlertError(
-              "Usuário já autenticado em outro dispositivo. Por favor, deslogue-se do outro dispositivo e tente novamente."
-            );
-          }
+      } catch (error: any) {
+        const status =
+          error?.STATUS ??
+          error?.status ??
+          error?.response?.status ??
+          error?.response?.data?.STATUS;
+
+        if (status === 409) {
+          showAlertError("Credenciais incorretas ou usuário não encontrado.");
+        }
+        if (status === 406) {
+          showAlertError(
+            "Usuário já autenticado em outro dispositivo. Por favor, deslogue-se do outro dispositivo e tente novamente."
+          );
         }
         console.log(error);
       } finally {
